@@ -1,0 +1,337 @@
+{
+  "analytics": [
+    {
+      "id": 1,
+      "name": "LEAP UI Component Load Time",
+      "value": 1.2,
+      "category": "UI Performance",
+      "status": "active",
+      "date": "2025-01-15T08:30:00Z",
+      "description": "Average LEAP UI component rendering time in seconds",
+      "target": 2.0,
+      "trend": "improving"
+    },
+    {
+      "id": 2,
+      "name": "Dashboard Page Load Performance",
+      "value": 1.8,
+      "category": "Performance",
+      "status": "active",
+      "date": "2025-01-15T09:15:00Z",
+      "description": "Time to load dashboard with 10,000+ data points (Target: <2s)",
+      "target": 2.0,
+      "trend": "improving"
+    },
+    {
+      "id": 3,
+      "name": "Interactive Chart Response Time",
+      "value": 245,
+      "category": "UI Performance",
+      "status": "active",
+      "date": "2025-01-15T08:45:00Z",
+      "description": "Average response time for chart interactions in milliseconds",
+      "target": 300,
+      "trend": "stable"
+    },
+    {
+      "id": 4,
+      "name": "User Satisfaction Score",
+      "value": 87,
+      "category": "User Experience",
+      "status": "active",
+      "date": "2025-01-15T10:00:00Z",
+      "description": "User satisfaction rating for dashboard relevance (Target: 90%)",
+      "target": 90,
+      "trend": "improving"
+    },
+    {
+      "id": 5,
+      "name": "Visualization Rendering Efficiency",
+      "value": 94.3,
+      "category": "Performance",
+      "status": "active",
+      "date": "2025-01-15T07:20:00Z",
+      "description": "Percentage of visualizations rendering under 2 seconds",
+      "target": 95,
+      "trend": "stable"
+    },
+    {
+      "id": 6,
+      "name": "Active Daily Users",
+      "value": 47,
+      "category": "Adoption",
+      "status": "active",
+      "date": "2025-01-15T09:00:00Z",
+      "description": "Number of daily active users on the interactive dashboard",
+      "target": 50,
+      "trend": "improving"
+    },
+    {
+      "id": 7,
+      "name": "Dashboard Customization Rate",
+      "value": 73.5,
+      "category": "Personalization",
+      "status": "active",
+      "date": "2025-01-15T08:15:00Z",
+      "description": "Percentage of users who customized their dashboard layout",
+      "target": 80,
+      "trend": "improving"
+    },
+    {
+      "id": 8,
+      "name": "Time Saved per User",
+      "value": 35,
+      "category": "Efficiency",
+      "status": "active",
+      "date": "2025-01-15T10:30:00Z",
+      "description": "Percentage reduction in data interpretation time (Target: 35%)",
+      "target": 35,
+      "trend": "achieved"
+    },
+    {
+      "id": 9,
+      "name": "API Response Time",
+      "value": 187,
+      "category": "Backend",
+      "status": "active",
+      "date": "2025-01-15T07:45:00Z",
+      "description": "Average API response time for dashboard data queries in milliseconds",
+      "target": 200,
+      "trend": "stable"
+    },
+    {
+      "id": 10,
+      "name": "Recommendation Engine Accuracy",
+      "value": 89.2,
+      "category": "Personalization",
+      "status": "active",
+      "date": "2025-01-15T09:30:00Z",
+      "description": "Accuracy of adaptive dashboard widget recommendations",
+      "target": 90,
+      "trend": "improving"
+    },
+    {
+      "id": 11,
+      "name": "System Uptime",
+      "value": 99.8,
+      "category": "Reliability",
+      "status": "active",
+      "date": "2025-01-15T06:00:00Z",
+      "description": "Dashboard system availability percentage",
+      "target": 99.5,
+      "trend": "stable"
+    },
+    {
+      "id": 12,
+      "name": "Data Refresh Rate",
+      "value": 5,
+      "category": "Performance",
+      "status": "active",
+      "date": "2025-01-15T08:00:00Z",
+      "description": "Dashboard data refresh interval in seconds",
+      "target": 5,
+      "trend": "stable"
+    }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "title": "LEAP UI Dashboard - Sprint 1 Progress Report",
+      "type": "Project Update",
+      "status": "published",
+      "author": "Huang Wan Ying",
+      "department": "Data & Technology Architecture",
+      "date": "2025-01-10T14:00:00Z",
+      "summary": "Initial sprint completion report covering dashboard framework setup, component library integration, and preliminary performance benchmarks"
+    },
+    {
+      "id": 2,
+      "title": "Interactive Visualization Performance Analysis",
+      "type": "Technical Analysis",
+      "status": "published",
+      "author": "Huang Wan Ying",
+      "department": "Data & Technology Architecture",
+      "date": "2025-01-08T16:30:00Z",
+      "summary": "Detailed analysis of Chart.js performance with large datasets, including benchmark results for 10,000+ data points and optimization recommendations"
+    },
+    {
+      "id": 3,
+      "title": "User Testing Feedback - Phase 1",
+      "type": "User Research",
+      "status": "draft",
+      "author": "Huang Wan Ying",
+      "department": "Data & Technology Architecture",
+      "date": "2025-01-14T11:00:00Z",
+      "summary": "Compilation of user feedback from initial testing with 10 representative users across different roles, including usability issues and enhancement requests"
+    },
+    {
+      "id": 4,
+      "title": "Dashboard Personalization Framework Design",
+      "type": "Technical Specification",
+      "status": "published",
+      "author": "Huang Wan Ying",
+      "department": "Data & Technology Architecture",
+      "date": "2025-01-05T09:00:00Z",
+      "summary": "Technical design document for role-based personalization system including user profile structure and recommendation algorithm approach"
+    },
+    {
+      "id": 5,
+      "title": "Q4 2024 Infrastructure Performance Report",
+      "type": "Quarterly",
+      "status": "published",
+      "author": "Farris Chua",
+      "department": "Data & Technology Architecture",
+      "date": "2024-12-31T17:00:00Z",
+      "summary": "Comprehensive quarterly analysis of DTA infrastructure performance metrics and capacity planning recommendations"
+    },
+    {
+      "id": 6,
+      "title": "LEAP UI Component Library Evaluation",
+      "type": "Technical Review",
+      "status": "published",
+      "author": "Technical Team - DTA",
+      "department": "Data & Technology Architecture",
+      "date": "2024-12-15T10:30:00Z",
+      "summary": "Evaluation of LEAP UI component library capabilities, limitations, and suitability for enterprise dashboard development"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin Lee",
+      "email": "admin_lee@mas.gov.sg",
+      "role": "admin",
+      "department": "Data & Technology Architecture",
+      "designation": "Assistant Director & Infrastructure Engineer",
+      "status": "active",
+      "joinDate": "2018-03-15",
+      "phoneExt": "+6562299701"
+    },
+    {
+      "id": 2,
+      "name": "Lin Shang Wei",
+      "email": "shangwei.lin@singaporetech.edu.sg",
+      "role": "admin",
+      "department": "Academic Supervision",
+      "designation": "Associate Professor (SIT)",
+      "status": "active",
+      "joinDate": "2020-01-10",
+      "phoneExt": "+6590172456"
+    },
+    {
+      "id": 3,
+      "name": "Huang Wan Ying",
+      "email": "wanying.huang@mas.gov.sg",
+      "role": "associate",
+      "department": "Data & Technology Architecture",
+      "designation": "Technical Associate (Capstone Project)",
+      "status": "active",
+      "joinDate": "2025-09-02",
+      "studentId": "2301113"
+    },
+    {
+      "id": 4,
+      "name": "Sarah Tan",
+      "email": "sarah_tan@mas.gov.sg",
+      "role": "officer",
+      "department": "Data & Technology Architecture",
+      "designation": "Senior Technical Officer",
+      "status": "active",
+      "joinDate": "2020-06-01"
+    },
+    {
+      "id": 5,
+      "name": "Michael Wong",
+      "email": "michael_wong@mas.gov.sg",
+      "role": "officer",
+      "department": "Information Security",
+      "designation": "Security Operations Officer",
+      "status": "active",
+      "joinDate": "2019-09-12"
+    },
+    {
+      "id": 6,
+      "name": "David Lim",
+      "email": "david_lim@mas.gov.sg",
+      "role": "officer",
+      "department": "Database Administration",
+      "designation": "Database Technical Officer",
+      "status": "active",
+      "joinDate": "2021-02-20"
+    }
+  ],
+  "settings": [
+    {
+      "id": 1,
+      "category": "System",
+      "name": "Application Name",
+      "value": "MAS LEAP UI Interactive Dashboard",
+      "description": "Official name of the capstone project dashboard system",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-10T14:00:00Z"
+    },
+    {
+      "id": 2,
+      "category": "Performance",
+      "name": "Data Point Limit",
+      "value": "10000",
+      "description": "Maximum number of data points for visualization performance target",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-08T09:30:00Z"
+    },
+    {
+      "id": 3,
+      "category": "Performance",
+      "name": "Target Load Time",
+      "value": "2 seconds",
+      "description": "Target dashboard load time for complex visualizations",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-08T09:30:00Z"
+    },
+    {
+      "id": 4,
+      "category": "User Experience",
+      "name": "Personalization Enabled",
+      "value": "true",
+      "description": "Enable role-based dashboard personalization features",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-12T11:00:00Z"
+    },
+    {
+      "id": 5,
+      "category": "User Experience",
+      "name": "Auto-save Dashboard Layout",
+      "value": "true",
+      "description": "Automatically save user dashboard customizations",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-12T11:00:00Z"
+    },
+    {
+      "id": 6,
+      "category": "Visualization",
+      "name": "Default Chart Library",
+      "value": "Chart.js",
+      "description": "Primary charting library for dashboard visualizations",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-05T16:20:00Z"
+    },
+    {
+      "id": 7,
+      "category": "Security",
+      "name": "Session Timeout",
+      "value": "30 minutes",
+      "description": "Automatic session timeout for inactive users",
+      "modifiedBy": "Information Security Office",
+      "lastModified": "2024-12-15T09:30:00Z"
+    },
+    {
+      "id": 8,
+      "category": "Display",
+      "name": "Default Theme",
+      "value": "Professional Light",
+      "description": "Default color theme for dashboard interface",
+      "modifiedBy": "Huang Wan Ying",
+      "lastModified": "2025-01-05T16:20:00Z"
+    }
+  ]
+}

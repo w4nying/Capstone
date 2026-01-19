@@ -7,7 +7,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions,
+  ChartData
 } from 'chart.js';
 
 ChartJS.register(
@@ -19,50 +19,30 @@ ChartJS.register(
   Legend
 );
 
-interface BarChartWidgetProps {
-  data: any;
-  height?: number;
+interface BarChartProps {
+    data: ChartData<'bar'>;
+    height?: number;
 }
 
-export const BarChartWidget = ({ data, height = 300 }: BarChartWidgetProps) => {
-  const options: ChartOptions<'bar'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
+export const BarChartWidget = ({ data, height = 300 }: BarChartProps) => {
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top' as const,
+            },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
             }
-            if (context.parsed.y !== null) {
-              label += new Intl.NumberFormat('en-US').format(context.parsed.y);
-            }
-            return label;
-          }
         }
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-    onClick: (_event, elements) => {
-      if (elements.length > 0) {
-        const element = elements[0];
-        console.log('Clicked:', element);
-      }
-    },
-  };
+    };
 
-  return (
-    <div style={{ height: `${height}px` }}>
-      <Bar data={data} options={options} />
-    </div>
-  );
+    return (
+        <div style={{ height: height, width: '100%' }}>
+            <Bar options={options} data={data} />
+        </div>
+    );
 };

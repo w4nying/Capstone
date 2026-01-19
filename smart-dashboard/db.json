@@ -1,29 +1,48 @@
 {
+  "servers": [
+    { "id": 1, "name": "DTA-WEB-01", "type": "Web Server", "status": "online", "cpu": 45, "memory": 62, "uptime": "14d 2h" },
+    { "id": 2, "name": "DTA-WEB-02", "type": "Web Server", "status": "online", "cpu": 38, "memory": 55, "uptime": "14d 2h" },
+    { "id": 3, "name": "DTA-DB-PRI", "type": "Database", "status": "online", "cpu": 78, "memory": 85, "uptime": "45d 12h" },
+    { "id": 4, "name": "DTA-DB-SEC", "type": "Database", "status": "degraded", "cpu": 12, "memory": 30, "uptime": "45d 12h" },
+    { "id": 5, "name": "DTA-AUTH-01", "type": "Auth Service", "status": "online", "cpu": 25, "memory": 40, "uptime": "2d 5h" },
+    { "id": 6, "name": "DTA-BAK-01", "type": "Backup Svc", "status": "maintenance", "cpu": 5, "memory": 10, "uptime": "0h" }
+  ],
+  "users": [
+    { "id": 1, "name": "Admin Lee", "role": "admin", "department": "DTA", "status": "active" },
+    { "id": 2, "name": "Lin Shang Wei", "role": "admin", "department": "Academic", "status": "active" },
+    { "id": 3, "name": "Huang Wan Ying", "role": "associate", "department": "DTA", "status": "active" },
+    { "id": 4, "name": "Sarah Tan", "role": "officer", "department": "DTA", "status": "active" },
+    { "id": 5, "name": "Michael Wong", "role": "officer", "department": "InfoSec", "status": "locked" },
+    { "id": 6, "name": "David Lim", "role": "officer", "department": "DB Admin", "status": "active" },
+    { "id": 7, "name": "New User 1", "role": "associate", "department": "Intern", "status": "pending" },
+    { "id": 8, "name": "New User 2", "role": "associate", "department": "Intern", "status": "pending" }
+  ],
+
   "analytics": [
     {
-      "id": 1,
+      "id": "1",
       "name": "LEAP UI Component Load Time",
       "value": 1.2,
       "category": "UI Performance",
       "status": "active",
       "date": "2025-01-15T08:30:00Z",
       "description": "Average LEAP UI component rendering time in seconds",
-      "target": 2.0,
+      "target": 2,
       "trend": "improving"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Dashboard Page Load Performance",
       "value": 1.8,
       "category": "Performance",
       "status": "active",
       "date": "2025-01-15T09:15:00Z",
       "description": "Time to load dashboard with 10,000+ data points (Target: <2s)",
-      "target": 2.0,
+      "target": 2,
       "trend": "improving"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Interactive Chart Response Time",
       "value": 245,
       "category": "UI Performance",
@@ -34,7 +53,7 @@
       "trend": "stable"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "User Satisfaction Score",
       "value": 87,
       "category": "User Experience",
@@ -45,7 +64,7 @@
       "trend": "improving"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Visualization Rendering Efficiency",
       "value": 94.3,
       "category": "Performance",
@@ -56,7 +75,7 @@
       "trend": "stable"
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "Active Daily Users",
       "value": 47,
       "category": "Adoption",
@@ -67,7 +86,7 @@
       "trend": "improving"
     },
     {
-      "id": 7,
+      "id": "7",
       "name": "Dashboard Customization Rate",
       "value": 73.5,
       "category": "Personalization",
@@ -78,7 +97,7 @@
       "trend": "improving"
     },
     {
-      "id": 8,
+      "id": "8",
       "name": "Time Saved per User",
       "value": 35,
       "category": "Efficiency",
@@ -89,7 +108,7 @@
       "trend": "achieved"
     },
     {
-      "id": 9,
+      "id": "9",
       "name": "API Response Time",
       "value": 187,
       "category": "Backend",
@@ -100,7 +119,7 @@
       "trend": "stable"
     },
     {
-      "id": 10,
+      "id": "10",
       "name": "Recommendation Engine Accuracy",
       "value": 89.2,
       "category": "Personalization",
@@ -111,7 +130,7 @@
       "trend": "improving"
     },
     {
-      "id": 11,
+      "id": "11",
       "name": "System Uptime",
       "value": 99.8,
       "category": "Reliability",
@@ -122,7 +141,7 @@
       "trend": "stable"
     },
     {
-      "id": 12,
+      "id": "12",
       "name": "Data Refresh Rate",
       "value": 5,
       "category": "Performance",
@@ -135,7 +154,7 @@
   ],
   "reports": [
     {
-      "id": 1,
+      "id": "1",
       "title": "LEAP UI Dashboard - Sprint 1 Progress Report",
       "type": "Project Update",
       "status": "published",
@@ -145,7 +164,7 @@
       "summary": "Initial sprint completion report covering dashboard framework setup, component library integration, and preliminary performance benchmarks"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Interactive Visualization Performance Analysis",
       "type": "Technical Analysis",
       "status": "published",
@@ -155,7 +174,7 @@
       "summary": "Detailed analysis of Chart.js performance with large datasets, including benchmark results for 10,000+ data points and optimization recommendations"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "User Testing Feedback - Phase 1",
       "type": "User Research",
       "status": "draft",
@@ -165,7 +184,7 @@
       "summary": "Compilation of user feedback from initial testing with 10 representative users across different roles, including usability issues and enhancement requests"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Dashboard Personalization Framework Design",
       "type": "Technical Specification",
       "status": "published",
@@ -175,7 +194,7 @@
       "summary": "Technical design document for role-based personalization system including user profile structure and recommendation algorithm approach"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Q4 2024 Infrastructure Performance Report",
       "type": "Quarterly",
       "status": "published",
@@ -185,7 +204,7 @@
       "summary": "Comprehensive quarterly analysis of DTA infrastructure performance metrics and capacity planning recommendations"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "LEAP UI Component Library Evaluation",
       "type": "Technical Review",
       "status": "published",
@@ -195,74 +214,9 @@
       "summary": "Evaluation of LEAP UI component library capabilities, limitations, and suitability for enterprise dashboard development"
     }
   ],
-  "users": [
-    {
-      "id": 1,
-      "name": "Admin Lee",
-      "email": "admin_lee@mas.gov.sg",
-      "role": "admin",
-      "department": "Data & Technology Architecture",
-      "designation": "Assistant Director & Infrastructure Engineer",
-      "status": "active",
-      "joinDate": "2018-03-15",
-      "phoneExt": "+6562299701"
-    },
-    {
-      "id": 2,
-      "name": "Lin Shang Wei",
-      "email": "shangwei.lin@singaporetech.edu.sg",
-      "role": "admin",
-      "department": "Academic Supervision",
-      "designation": "Associate Professor (SIT)",
-      "status": "active",
-      "joinDate": "2020-01-10",
-      "phoneExt": "+6590172456"
-    },
-    {
-      "id": 3,
-      "name": "Huang Wan Ying",
-      "email": "wanying.huang@mas.gov.sg",
-      "role": "associate",
-      "department": "Data & Technology Architecture",
-      "designation": "Technical Associate (Capstone Project)",
-      "status": "active",
-      "joinDate": "2025-09-02",
-      "studentId": "2301113"
-    },
-    {
-      "id": 4,
-      "name": "Sarah Tan",
-      "email": "sarah_tan@mas.gov.sg",
-      "role": "officer",
-      "department": "Data & Technology Architecture",
-      "designation": "Senior Technical Officer",
-      "status": "active",
-      "joinDate": "2020-06-01"
-    },
-    {
-      "id": 5,
-      "name": "Michael Wong",
-      "email": "michael_wong@mas.gov.sg",
-      "role": "officer",
-      "department": "Information Security",
-      "designation": "Security Operations Officer",
-      "status": "active",
-      "joinDate": "2019-09-12"
-    },
-    {
-      "id": 6,
-      "name": "David Lim",
-      "email": "david_lim@mas.gov.sg",
-      "role": "officer",
-      "department": "Database Administration",
-      "designation": "Database Technical Officer",
-      "status": "active",
-      "joinDate": "2021-02-20"
-    }
-  ],
   "settings": [
     {
-      "id": 1,
+      "id": "1",
       "category": "System",
       "name": "Application Name",
       "value": "MAS LEAP UI Interactive Dashboard",
@@ -271,7 +225,7 @@
       "lastModified": "2025-01-10T14:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "category": "Performance",
       "name": "Data Point Limit",
       "value": "10000",
@@ -280,7 +234,7 @@
       "lastModified": "2025-01-08T09:30:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "category": "Performance",
       "name": "Target Load Time",
       "value": "2 seconds",
@@ -289,7 +243,7 @@
       "lastModified": "2025-01-08T09:30:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "category": "User Experience",
       "name": "Personalization Enabled",
       "value": "true",
@@ -298,7 +252,7 @@
       "lastModified": "2025-01-12T11:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "category": "User Experience",
       "name": "Auto-save Dashboard Layout",
       "value": "true",
@@ -307,7 +261,7 @@
       "lastModified": "2025-01-12T11:00:00Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "category": "Visualization",
       "name": "Default Chart Library",
       "value": "Chart.js",
@@ -316,7 +270,7 @@
       "lastModified": "2025-01-05T16:20:00Z"
     },
     {
-      "id": 7,
+      "id": "7",
       "category": "Security",
       "name": "Session Timeout",
       "value": "30 minutes",
@@ -325,7 +279,7 @@
       "lastModified": "2024-12-15T09:30:00Z"
     },
     {
-      "id": 8,
+      "id": "8",
       "category": "Display",
       "name": "Default Theme",
       "value": "Professional Light",

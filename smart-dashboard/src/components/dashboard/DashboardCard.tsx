@@ -1,87 +1,59 @@
 import { Card, CardContent, Box, Typography } from '@mui/material';
-import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
+import { ReactNode } from 'react';
+import { TrendingUp, TrendingDown } from '@mui/icons-material';
 
 interface DashboardCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-  trend?: string;
-  trendDirection?: 'up' | 'down';
+    title: string;
+    value: string | number;
+    icon: ReactNode;
+    color: string;
+    trend?: string;
+    trendDirection?: 'up' | 'down';
 }
 
-export const DashboardCard = ({
-  title,
-  value,
-  icon,
-  color,
-  trend,
-  trendDirection,
-}: DashboardCardProps) => {
-  return (
-    <Card 
-      sx={{ 
-        height: '100%',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 3,
-        },
-      }}
-    >
-      <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Box
-            sx={{
-              width: 48,
-              height: 48,
-              borderRadius: 2,
-              backgroundColor: color,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-            }}
-          >
-            {icon}
-          </Box>
-          
-          {trend && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                color: trendDirection === 'up' ? 'success.main' : 'error.main',
-              }}
-            >
-              {trendDirection === 'up' ? (
-                <ArrowUpward fontSize="small" />
-              ) : (
-                <ArrowDownward fontSize="small" />
-              )}
-              <Typography variant="body2" sx={{ ml: 0.5, fontWeight: 600 }}>
-                {trend}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-        
-        <Typography 
-          variant="h4" 
-          component="div" 
-          sx={{ fontWeight: 700, mb: 0.5 }}
-        >
-          {value}
-        </Typography>
-        
-        <Typography 
-          variant="body2" 
-          color="text.secondary"
-          sx={{ fontWeight: 500 }}
-        >
-          {title}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+export const DashboardCard = ({ title, value, icon, color, trend, trendDirection }: DashboardCardProps) => {
+    return (
+        <Card sx={{ height: '100%', position: 'relative', overflow: 'visible' }}>
+            <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Box 
+                        sx={{ 
+                            p: 1.5, 
+                            borderRadius: 2, 
+                            bgcolor: `${color}15`, // 15% opacity version of color
+                            color: color,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        {icon}
+                    </Box>
+                    {trend && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                    color: trendDirection === 'up' ? 'success.main' : 'error.main',
+                                    fontWeight: 'bold',
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                {trendDirection === 'up' ? <TrendingUp sx={{ fontSize: 16, mr: 0.5 }} /> : <TrendingDown sx={{ fontSize: 16, mr: 0.5 }} />}
+                                {trend}
+                            </Typography>
+                        </Box>
+                    )}
+                </Box>
+                
+                <Typography color="text.secondary" variant="subtitle2" gutterBottom>
+                    {title}
+                </Typography>
+                <Typography variant="h4" component="div" fontWeight="bold">
+                    {value}
+                </Typography>
+            </CardContent>
+        </Card>
+    );
 };

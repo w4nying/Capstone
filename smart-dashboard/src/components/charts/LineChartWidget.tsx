@@ -8,8 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler,
-  ChartOptions,
+  ChartData
 } from 'chart.js';
 
 ChartJS.register(
@@ -19,43 +18,42 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend,
-  Filler
+  Legend
 );
 
-interface LineChartWidgetProps {
-  data: any;
-  height?: number;
+interface LineChartProps {
+    data: ChartData<'line'>;
+    height?: number;
 }
 
-export const LineChartWidget = ({ data, height = 300 }: LineChartWidgetProps) => {
-  const options: ChartOptions<'line'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-    interaction: {
-      mode: 'nearest',
-      axis: 'x',
-      intersect: false,
-    },
-  };
+export const LineChartWidget = ({ data, height = 300 }: LineChartProps) => {
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top' as const,
+            },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    display: true,
+                    drawBorder: false,
+                }
+            },
+            x: {
+                grid: {
+                    display: false,
+                }
+            }
+        }
+    };
 
-  return (
-    <div style={{ height: `${height}px` }}>
-      <Line data={data} options={options} />
-    </div>
-  );
+    return (
+        <div style={{ height: height, width: '100%' }}>
+            <Line options={options} data={data} />
+        </div>
+    );
 };

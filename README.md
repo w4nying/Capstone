@@ -13,6 +13,12 @@ Follow the steps below to run the project locally.
 Ensure you have the following installed:
 - Node.js (v16 or later recommended)
 - npm
+
+Install json-server globally:
+```bash
+npm install
+```
+
 - json-server
 
 Install json-server globally:

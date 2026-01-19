@@ -189,7 +189,7 @@ export const LoginPage = () => {
             color="text.secondary"
             sx={{ display: 'block', mt: 3, textAlign: 'center' }}
           >
-            © 2025 Monetary Authority of Singapore
+            © 2025 Monetary Authority of Singapore (MAS) 
           </Typography>
         </CardContent>
       </Card>

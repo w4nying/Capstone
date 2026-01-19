@@ -11,14 +11,14 @@ Follow the steps below to run the project locally.
 ## 📦 Prerequisites
 
 Ensure you have the following installed:
-1. Node.js (v16 or later recommended)
-2. npm
+1. **Node.js** (v16 or later recommended)
+2. **npm**
 
-Install json-server globally:
+Install npm:
 ```bash
 npm install
 ```
-3. json-server
+3. **json-server**
 
 Install json-server globally:
 ```bash

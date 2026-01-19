@@ -4,9 +4,13 @@ A dashboard application built using **React Admin**.
 
 
 
+
+
 ## 🚀 Getting Started
 
 Follow the steps below to run the project locally.
+
+
 
 
 
@@ -24,6 +28,8 @@ npm install -g json-server
 
 
 
+
+
 ## 🗄️ Run Database Server
 
 Start the JSON server:
@@ -38,6 +44,8 @@ http://localhost:3000
 
 
 
+
+
 ## 💻 Run Development Server
 
 Start the Vite development server:
@@ -49,6 +57,8 @@ The application will be available at:
 ```
 http://localhost:5173
 ```
+
+
 
 
 

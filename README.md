@@ -2,13 +2,13 @@
 
 A dashboard application built using **React Admin**.
 
----
+
 
 ## 🚀 Getting Started
 
 Follow the steps below to run the project locally.
 
----
+
 
 ## 📦 Prerequisites
 
@@ -22,7 +22,7 @@ Install json-server globally:
 npm install -g json-server
 ```
 
----
+
 
 ## 🗄️ Run Database Server
 
@@ -36,7 +36,7 @@ API will be available at:
 http://localhost:3000
 ```
 
----
+
 
 ## 💻 Run Development Server
 
@@ -50,7 +50,7 @@ The application will be available at:
 http://localhost:5173
 ```
 
----
+
 
 ## 🧭 Notes
 

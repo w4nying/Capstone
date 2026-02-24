@@ -8,9 +8,9 @@
     { "id": 6, "name": "DTA-BAK-01", "type": "Backup Svc", "status": "maintenance", "cpu": 5, "memory": 10, "uptime": "0h" }
   ],
   "users": [
-    { "id": 1, "name": "Admin Lee", "role": "admin", "department": "DTA", "status": "active" },
+    { "id": 1, "name": "Admin Lee", "role": "admin", "department": "DTA", "status": "active", "theme": "light" },
     { "id": 2, "name": "Lin Shang Wei", "role": "admin", "department": "Academic", "status": "active" },
-    { "id": 3, "name": "Huang Wan Ying", "role": "associate", "department": "DTA", "status": "active" },
+    { "id": 3, "name": "Huang Wan Ying", "role": "associate", "department": "DTA", "status": "active" , "theme": "dark" },
     { "id": 4, "name": "Sarah Tan", "role": "officer", "department": "DTA", "status": "active" },
     { "id": 5, "name": "Michael Wong", "role": "officer", "department": "InfoSec", "status": "locked" },
     { "id": 6, "name": "David Lim", "role": "officer", "department": "DB Admin", "status": "active" },

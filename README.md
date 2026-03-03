@@ -10,6 +10,11 @@ Follow the steps below to run the project locally.
 
 ## 📦 Prerequisites
 
+Go to smart-dashboard directory
+```bash
+cd smart-dashboard
+```
+
 Ensure you have the following installed:
 1. **Node.js** (v16 or later recommended)
 2. **npm**

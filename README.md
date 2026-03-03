@@ -19,16 +19,17 @@ Ensure you have the following installed:
 1. **Node.js** (v16 or later recommended)
 2. **npm**
 
-Install npm:
-```bash
-npm install
-```
+    Install npm:
+    ```bash
+    npm install
+    ```
+
 3. **json-server**
 
-Install json-server globally:
-```bash
-npm install -g json-server
-```
+    Install json-server globally:
+    ```bash
+    npm install -g json-server
+    ```
 
 
 ## 🗄️ Run Database Server

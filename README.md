@@ -10,55 +10,32 @@ Follow the steps below to run the project locally.
 
 ## 📦 Prerequisites
 
+Ensure you have the following installed:
+1. **Node.js** (v16 or later recommended)
+
 Go to smart-dashboard directory
 ```bash
 cd smart-dashboard
 ```
 
-Ensure you have the following installed:
-1. **Node.js** (v16 or later recommended)
-2. **npm**
-
-    Install npm:
-    ```bash
-    npm install
-    ```
-
-3. **json-server**
-
-    Install json-server globally:
-    ```bash
-    npm install -g json-server
-    ```
-
-
-## 🗄️ Run Database Server
-
-Start the JSON server:
+Install npm
 ```bash
-json-server --watch db.json --port 3000
+npm install --save-dev concurrently
 ```
 
-API will be available at:
-```
-http://localhost:3000
-```
-
-
-
-
-
-## 💻 Run Development Server
-
-Start the Vite development server:
+Run Database Server and Development Server
 ```bash
-npm run dev
+npm start
 ```
 
-The application will be available at:
-```
-http://localhost:5173
-```
+    Database API will be available at:
+    ```
+    http://localhost:3000
+    ```
+    The application will be available at:
+    ```
+    http://localhost:5173
+    ```
 
 
 ## 🧭 Notes

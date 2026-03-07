@@ -29,12 +29,12 @@ npm start
 ```
 
 APIs will be available at:
-    Database API:
-    ```bash
+    &nbsp;Database API:
+    &nbsp;```bash
     http://localhost:3000
     ```
-    React Application:
-    ```bash
+    &nbsp;React Application:
+    &nbsp;```bash
     http://localhost:5173
     ```
 

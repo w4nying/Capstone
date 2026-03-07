@@ -28,15 +28,15 @@ Run Database Server and Development Server
 npm start
 ```
 
-APIs will be available at:
-    &nbsp;Database API:
-    &nbsp;```bash
+APIs will be available at:  
+    Database API:  
+    ```bash
     http://localhost:3000
-    ```
-    &nbsp;React Application:
-    &nbsp;```bash
+    ```  
+    React Application:  
+    ```bash
     http://localhost:5173
-    ```
+    ```  
 
 
 ## 🧭 Notes

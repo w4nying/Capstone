@@ -110,17 +110,6 @@ export const authProvider: AuthProvider = {
     return '/login';
   },
 
-  checkError: async ({ status }: { status: number }) => {
-    if (status === 401 || status === 403) {
-      localStorage.removeItem('auth');
-      localStorage.removeItem('role');
-
-      const error: any = new Error();
-      error.message = false;
-      throw error;
-    }
-  },
-
   checkAuth: async () => {
     if (!localStorage.getItem('auth')) {
       const error: any = new Error();
@@ -129,19 +118,27 @@ export const authProvider: AuthProvider = {
     }
   },
 
+  checkError: async ({ status }: { status: number }) => {
+    if (status === 401 || status === 403) {
+      localStorage.removeItem('auth');
+      localStorage.removeItem('role');
+      emitThemeChanged();
+
+      const error: any = new Error();
+      error.message = false;
+      throw error;
+    }
+  },
+
   getPermissions: async () => {
     const role = localStorage.getItem('role');
-    if (!role) {
-      throw new Error();
-    }
+    if (!role) throw new Error();
     return role;
   },
 
   getIdentity: async () => {
     const auth = localStorage.getItem('auth');
-    if (!auth) {
-      throw new Error();
-    }
+    if (!auth) throw new Error();
 
     const user: User = JSON.parse(auth);
 
@@ -165,7 +162,8 @@ export const getCurrentUser = (): User | null => {
 
 export const getCurrentTheme = (): ThemeMode => {
   const user = getCurrentUser();
-  return normalizeTheme(user?.theme);
+  if (!user) return 'light';
+  return normalizeTheme(user.theme);
 };
 
 export const updateCurrentUserInStorage = (updatedFields: Partial<User>) => {

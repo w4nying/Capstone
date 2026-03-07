@@ -1,46 +1,101 @@
-import { Layout, LayoutProps, AppBar } from 'react-admin';
-import { IconButton } from '@mui/material';
+import { useEffect, useState } from 'react';
+import {
+  AppBar,
+  Layout,
+  LayoutProps,
+  TitlePortal,
+  useLogout,
+} from 'react-admin';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import { useState, useEffect } from 'react';
+import LogoutIcon from '@mui/icons-material/Logout';
+import {
+  getCurrentTheme,
+  getCurrentUser,
+  ThemeMode,
+  updateCurrentUserInStorage,
+} from '../../providers/authProvider';
 
-const CustomAppBar = (props: any) => {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
+type CustomAppBarProps = {
+  onThemeChange: (mode: ThemeMode) => void;
+} & Record<string, unknown>;
+
+const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
+  const logout = useLogout();
+  const [mode, setMode] = useState<ThemeMode>('light');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user?.theme) setMode(user.theme);
+    setMode(getCurrentTheme());
   }, []);
 
   const toggleTheme = async () => {
-    const newMode = mode === 'light' ? 'dark' : 'light';
+    const user = getCurrentUser();
+    if (!user || isSaving) return;
+
+    const previousMode = mode;
+    const newMode: ThemeMode = mode === 'light' ? 'dark' : 'light';
+
     setMode(newMode);
+    onThemeChange(newMode);
+    updateCurrentUserInStorage({ theme: newMode });
+    setIsSaving(true);
 
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    try {
+      const response = await fetch(`http://localhost:3000/users/${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ theme: newMode }),
+      });
 
-    await fetch(`http://localhost:3000/users/${user.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ theme: newMode }),
-    });
-
-    localStorage.setItem('user', JSON.stringify({
-      ...user,
-      theme: newMode,
-    }));
-
-    window.location.reload();
+      if (!response.ok) {
+        throw new Error('Failed to save theme');
+      }
+    } catch (error) {
+      setMode(previousMode);
+      onThemeChange(previousMode);
+      updateCurrentUserInStorage({ theme: previousMode });
+      console.error('Unable to save theme preference:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <AppBar {...props}>
-      <IconButton color="inherit" onClick={toggleTheme}>
-        {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
-      </IconButton>
+      <TitlePortal />
+      <Box sx={{ flex: 1 }} />
+
+      <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+        <IconButton color="inherit" onClick={toggleTheme} disabled={isSaving}>
+          {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+        </IconButton>
+      </Tooltip>
+
+      <Button
+        color="inherit"
+        startIcon={<LogoutIcon />}
+        onClick={() => logout()}
+        sx={{ ml: 1, textTransform: 'none' }}
+      >
+        Logout
+      </Button>
     </AppBar>
   );
 };
 
-export const AppLayout = (props: LayoutProps) => (
-  <Layout {...props} appBar={CustomAppBar} />
+type AppLayoutProps = LayoutProps & {
+  onThemeChange: (mode: ThemeMode) => void;
+};
+
+export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
+  <Layout
+    {...props}
+    appBar={(appBarProps) => (
+      <CustomAppBar {...appBarProps} onThemeChange={onThemeChange} />
+    )}
+  />
 );

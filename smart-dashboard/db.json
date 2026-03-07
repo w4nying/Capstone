@@ -1,23 +1,95 @@
 {
   "servers": [
-    { "id": 1, "name": "DTA-WEB-01", "type": "Web Server", "status": "online", "cpu": 45, "memory": 62, "uptime": "14d 2h" },
-    { "id": 2, "name": "DTA-WEB-02", "type": "Web Server", "status": "online", "cpu": 38, "memory": 55, "uptime": "14d 2h" },
-    { "id": 3, "name": "DTA-DB-PRI", "type": "Database", "status": "online", "cpu": 78, "memory": 85, "uptime": "45d 12h" },
-    { "id": 4, "name": "DTA-DB-SEC", "type": "Database", "status": "degraded", "cpu": 12, "memory": 30, "uptime": "45d 12h" },
-    { "id": 5, "name": "DTA-AUTH-01", "type": "Auth Service", "status": "online", "cpu": 25, "memory": 40, "uptime": "2d 5h" },
-    { "id": 6, "name": "DTA-BAK-01", "type": "Backup Svc", "status": "maintenance", "cpu": 5, "memory": 10, "uptime": "0h" }
+    {
+      "id": "1",
+      "name": "DTA-WEB-01",
+      "type": "Web Server",
+      "status": "online",
+      "cpu": 45,
+      "memory": 62,
+      "uptime": "14d 2h"
+    },
+    {
+      "id": "2",
+      "name": "DTA-WEB-02",
+      "type": "Web Server",
+      "status": "online",
+      "cpu": 38,
+      "memory": 55,
+      "uptime": "14d 2h"
+    },
+    {
+      "id": "3",
+      "name": "DTA-DB-PRI",
+      "type": "Database",
+      "status": "online",
+      "cpu": 78,
+      "memory": 85,
+      "uptime": "45d 12h"
+    },
+    {
+      "id": "4",
+      "name": "DTA-DB-SEC",
+      "type": "Database",
+      "status": "degraded",
+      "cpu": 12,
+      "memory": 30,
+      "uptime": "45d 12h"
+    },
+    {
+      "id": "5",
+      "name": "DTA-AUTH-01",
+      "type": "Auth Service",
+      "status": "online",
+      "cpu": 25,
+      "memory": 40,
+      "uptime": "2d 5h"
+    },
+    {
+      "id": "6",
+      "name": "DTA-BAK-01",
+      "type": "Backup Svc",
+      "status": "maintenance",
+      "cpu": 5,
+      "memory": 10,
+      "uptime": "0h"
+    }
   ],
   "users": [
-    { "id": 1, "name": "Admin Lee", "role": "admin", "department": "DTA", "status": "active", "theme": "light" },
-    { "id": 2, "name": "Lin Shang Wei", "role": "admin", "department": "Academic", "status": "active" },
-    { "id": 3, "name": "Huang Wan Ying", "role": "associate", "department": "DTA", "status": "active" , "theme": "dark" },
-    { "id": 4, "name": "Sarah Tan", "role": "officer", "department": "DTA", "status": "active" },
-    { "id": 5, "name": "Michael Wong", "role": "officer", "department": "InfoSec", "status": "locked" },
-    { "id": 6, "name": "David Lim", "role": "officer", "department": "DB Admin", "status": "active" },
-    { "id": 7, "name": "New User 1", "role": "associate", "department": "Intern", "status": "pending" },
-    { "id": 8, "name": "New User 2", "role": "associate", "department": "Intern", "status": "pending" }
+    {
+      "id": "1",
+      "email": "admin@mas.gov.sg",
+      "username": "admin",
+      "fullName": "System Administrator",
+      "role": "admin",
+      "department": "IT & Systems",
+      "avatar": "https://i.pravatar.cc/150?img=1",
+      "status": "active",
+      "theme": "dark"
+    },
+    {
+      "id": "2",
+      "email": "officer@mas.gov.sg",
+      "username": "officer",
+      "fullName": "Technical Officer",
+      "role": "officer",
+      "department": "Data & Technology",
+      "avatar": "https://i.pravatar.cc/150?img=2",
+      "status": "active",
+      "theme": "dark"
+    },
+    {
+      "id": "3",
+      "email": "associate@mas.gov.sg",
+      "username": "associate",
+      "fullName": "Technical Associate",
+      "role": "associate",
+      "department": "Data & Technology",
+      "avatar": "https://i.pravatar.cc/150?img=3",
+      "status": "active",
+      "theme": "dark"
+    }
   ],
-
   "analytics": [
     {
       "id": "1",

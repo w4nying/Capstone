@@ -34,7 +34,7 @@ APIs will be available at:
     http://localhost:3000
     ```
     React Application:
-    ```
+    ```bash
     http://localhost:5173
     ```
 

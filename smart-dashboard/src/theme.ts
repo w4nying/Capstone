@@ -214,21 +214,89 @@ export const darkTheme: Theme = createTheme({
   ...defaultTheme,
   palette: {
     mode: 'dark',
+
     primary: {
       main: '#e5e7eb',
       contrastText: '#111827',
     },
+
     background: {
-      default: '#0f172a',
-      paper: '#111827',
+      default: '#0f172a', // overall page background
+      paper: '#ffffff',   // cards stay white
     },
+
     text: {
-      primary: '#f8fafc',
-      secondary: '#cbd5e1',
+      primary: '#0f172a',  // text inside cards
+      secondary: '#475569',
     },
+
     divider: '#334155',
   },
+
   shape: {
     borderRadius: 16,
+  },
+
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#0f172a',
+        },
+        '#root': {
+          backgroundColor: '#0f172a',
+        },
+      },
+    },
+
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+          color: '#0f172a',
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 18px 40px rgba(0,0,0,0.25)',
+        },
+      },
+    },
+
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+          color: '#0f172a',
+        },
+      },
+    },
+
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+          borderRadius: 20,
+          border: '1px solid #e5e7eb',
+        },
+      },
+    },
+
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#111827', // sidebar dark
+          color: '#e5e7eb',
+          borderRight: '1px solid #1f2937',
+        },
+      },
+    },
+
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: '#111827',
+          color: '#e5e7eb',
+          borderBottom: '1px solid #1f2937',
+        },
+      },
+    },
   },
 });

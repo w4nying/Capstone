@@ -113,7 +113,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
       userMenu={false}
       sx={{
         '& .RaAppBar-toolbar': {
-          minHeight: { xs: 64, md: 72 },
+          minHeight: { xs: 60, md: 72 },
           px: { xs: 1.5, sm: 2, md: 3 },
           display: 'flex',
           alignItems: 'center',
@@ -128,31 +128,35 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
         <IconButton
           onClick={handleMenuOpen}
           size="small"
-          sx={{
+          sx={(theme) => ({
             borderRadius: '999px',
-            px: 0.75,
+            px: { xs: 0.5, sm: 0.75 },
             py: 0.5,
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            border: '1px solid #e5e7eb',
-            backgroundColor: '#ffffff',
+            border: `1px solid ${
+              theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+            }`,
+            backgroundColor:
+              theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
             '&:hover': {
-              backgroundColor: '#f8fafc',
+              backgroundColor:
+                theme.palette.mode === 'dark' ? '#1e293b' : '#f8fafc',
             },
-          }}
+          })}
         >
           <Avatar
-            sx={{
+            sx={(theme) => ({
               width: 34,
               height: 34,
               fontSize: '0.9rem',
               fontWeight: 700,
-              bgcolor: '#e2e8f0',
-              color: '#0f172a',
-            }}
+              bgcolor: theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0',
+              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+            })}
           >
-            {getInitials(user?.fullName, user?.username)}
+            {getInitials((user as any)?.fullName, (user as any)?.username)}
           </Avatar>
 
           <Box
@@ -161,28 +165,36 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
               flexDirection: 'column',
               alignItems: 'flex-start',
               lineHeight: 1.1,
-              mr: 0.5,
+              mr: 0.25,
+              maxWidth: 140,
             }}
           >
             <Typography
               variant="body2"
-              sx={{ fontWeight: 700, color: '#0f172a' }}
+              noWrap
+              sx={(theme) => ({
+                fontWeight: 700,
+                color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+              })}
             >
-              {user?.fullName || user?.username || 'User'}
+              {(user as any)?.fullName || (user as any)?.username || 'User'}
             </Typography>
             <Typography
               variant="caption"
-              sx={{ color: '#64748b' }}
+              noWrap
+              sx={(theme) => ({
+                color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+              })}
             >
-              {user?.role || 'Account'}
+              {(user as any)?.role || 'Account'}
             </Typography>
           </Box>
 
           <KeyboardArrowDownIcon
-            sx={{
-              color: '#64748b',
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
               display: { xs: 'none', sm: 'block' },
-            }}
+            })}
           />
         </IconButton>
       </Tooltip>
@@ -195,29 +207,48 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         PaperProps={{
           elevation: 0,
-          sx: {
+          sx: (theme) => ({
             mt: 1,
             minWidth: 220,
             borderRadius: 3,
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 18px 40px rgba(15, 23, 42, 0.08)',
+            border: `1px solid ${
+              theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+            }`,
+            boxShadow:
+              theme.palette.mode === 'dark'
+                ? '0 18px 40px rgba(0, 0, 0, 0.35)'
+                : '0 18px 40px rgba(15, 23, 42, 0.08)',
             overflow: 'hidden',
-          },
+            backgroundColor:
+              theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+            color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+          }),
         }}
       >
         <Box sx={{ px: 2, py: 1.5 }}>
-          <Typography variant="body2" sx={{ fontWeight: 700, color: '#0f172a' }}>
-            {user?.fullName || user?.username || 'User'}
+          <Typography
+            variant="body2"
+            sx={(theme) => ({
+              fontWeight: 700,
+              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+            })}
+          >
+            {(user as any)?.fullName || (user as any)?.username || 'User'}
           </Typography>
-          <Typography variant="caption" sx={{ color: '#64748b' }}>
-            {user?.role || 'Account'}
+          <Typography
+            variant="caption"
+            sx={(theme) => ({
+              color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+            })}
+          >
+            {(user as any)?.role || 'Account'}
           </Typography>
         </Box>
 
         <Divider />
 
         <MenuItem onClick={handleToggleTheme} disabled={isSaving}>
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
             {mode === 'light' ? (
               <DarkModeIcon fontSize="small" />
             ) : (
@@ -228,7 +259,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
         </MenuItem>
 
         <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>
           Logout
@@ -252,34 +283,107 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
       '& .RaLayout-appFrame': {
         backgroundColor: 'background.default',
         width: '100%',
+        minWidth: 0,
       },
       '& .RaLayout-content': {
         backgroundColor: 'background.default',
         width: '100%',
+        minWidth: 0,
         overflowX: 'hidden',
       },
       '& .RaLayout-main': {
         backgroundColor: 'background.default',
         width: '100%',
+        minWidth: 0,
         overflowX: 'hidden',
       },
       '& .RaLayout-contentWithSidebar': {
-        paddingTop: { xs: '64px', md: '72px' },
+        paddingTop: { xs: '60px', md: '72px' },
+        width: '100%',
+        minWidth: 0,
       },
       '& .RaLayout-content > div': {
-        padding: { xs: 2, sm: 2.5, md: 3 },
+        padding: { xs: 1.25, sm: 2, md: 3 },
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
       },
+
       '& .RaSidebar-root': {
-        borderRight: '1px solid #e5e7eb',
+        borderRight: '1px solid',
+        borderColor: 'divider',
+        flexShrink: 0,
       },
+
+      '& .RaSidebar-fixed': {
+        backgroundColor: (theme) =>
+          theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+      },
+
+      '& .RaMenu-root': {
+        paddingTop: 0.5,
+        paddingBottom: 0.5,
+      },
+
       '& .RaMenuItemLink-root': {
-        borderRadius: '14px',
-        margin: '4px 8px',
+        margin: { xs: '4px 8px', sm: '6px 10px' },
+        padding: { xs: '10px 12px', sm: '10px 14px' },
+        minHeight: 44,
+        borderRadius: '12px',
+        color: (theme) =>
+          theme.palette.mode === 'dark' ? '#e5e7eb' : '#0f172a',
+        display: 'flex',
+        alignItems: 'center',
+        width: 'auto',
+        minWidth: 0,
+        transition: 'background-color 0.2s ease, color 0.2s ease',
       },
+
+      '& .RaMenuItemLink-root .RaMenuItemLink-icon': {
+        minWidth: 36,
+        color: (theme) =>
+          theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+        flexShrink: 0,
+      },
+
+      '& .RaMenuItemLink-root .RaMenuItemLink-text': {
+        minWidth: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      },
+
+      '& .RaMenuItemLink-root:hover': {
+        backgroundColor: 'action.hover',
+        color: (theme) =>
+          theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
+      },
+
+      '& .RaMenuItemLink-root:hover .RaMenuItemLink-icon': {
+        color: (theme) =>
+          theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
+      },
+
       '& .RaMenuItemLink-active': {
-        backgroundColor: '#eef2f7',
-        color: '#111827',
+        backgroundColor: 'action.selected',
+        color: (theme) =>
+          theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
         fontWeight: 700,
+      },
+
+      '& .RaMenuItemLink-active .RaMenuItemLink-icon': {
+        color: (theme) =>
+          theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
+      },
+
+      '@media (max-width:600px)': {
+        '& .RaLayout-contentWithSidebar': {
+          paddingTop: '60px',
+        },
+        '& .RaMenuItemLink-root': {
+          margin: '4px 8px',
+          padding: '10px 12px',
+        },
       },
     }}
   />

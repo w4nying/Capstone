@@ -18,12 +18,7 @@ Go to smart-dashboard directory
 cd smart-dashboard
 ```
 
-Install npm
-```bash
-npm install --save-dev concurrently
-```
-
-Run Database Server and Development Server
+Install required dependencies and Run Database Server and Development Server
 ```bash
 npm start
 ```

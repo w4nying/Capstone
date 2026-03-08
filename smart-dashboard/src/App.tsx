@@ -1,4 +1,4 @@
-import { Admin, Resource } from 'react-admin';
+import { Admin, EditGuesser, ListGuesser, Resource } from 'react-admin';
 import { useEffect, useState } from 'react';
 import {
   Assessment as AssessmentIcon,
@@ -56,38 +56,57 @@ function App() {
 
   return (
     <Admin
-      loginPage={LoginPage}
-      authProvider={authProvider}
       dataProvider={dataProvider}
+      authProvider={authProvider}
       dashboard={RoleDashboard}
-      layout={(props) => <AppLayout {...props} onThemeChange={setThemeMode} />}
+      layout={AppLayout}
+      loginPage={LoginPage}
+      title="MAS Dashboard System"
+      requireAuth
       theme={lightTheme}
       darkTheme={darkTheme}
       defaultTheme={themeMode}
     >
       {(permissions) => (
         <>
-          {(permissions === 'admin' || permissions === 'officer') && (
-            <Resource
-              name="analytics"
-              list={AnalyticsList}
-              show={AnalyticsShow}
-              icon={AssessmentIcon}
-            />
-          )}
+          <Resource
+            name="analytics"
+            list={AnalyticsList}
+            show={AnalyticsShow}
+            edit={permissions === 'associate' ? undefined : EditGuesser}
+            create={permissions === 'associate' ? undefined : EditGuesser}
+            icon={AssessmentIcon}
+            options={{ label: 'Analytics' }}
+          />
 
           <Resource
             name="reports"
             list={ReportsList}
             show={ReportsShow}
+            edit={permissions === 'associate' ? undefined : EditGuesser}
+            create={permissions === 'associate' ? undefined : EditGuesser}
             icon={DescriptionIcon}
+            options={{ label: 'Reports' }}
           />
 
+          {(permissions === 'admin' || permissions === 'officer') && (
+            <Resource
+              name="users"
+              list={ListGuesser}
+              edit={permissions === 'admin' ? EditGuesser : undefined}
+              icon={PeopleIcon}
+              options={{ label: 'User Management' }}
+            />
+          )}
+
           {permissions === 'admin' && (
-            <>
-              <Resource name="users" list={AnalyticsList} icon={PeopleIcon} />
-              <Resource name="settings" list={ReportsList} icon={SettingsIcon} />
-            </>
+            <Resource
+              name="settings"
+              list={ListGuesser}
+              edit={EditGuesser}
+              icon={SettingsIcon}
+              options={{ label: 'System Settings' }}
+            />
           )}
         </>
       )}

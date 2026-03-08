@@ -29,7 +29,7 @@ import {
 } from '../../providers/authProvider';
 
 type CustomAppBarProps = {
-  onThemeChange: (mode: ThemeMode) => void;
+  onThemeChange?: (mode: ThemeMode) => void;
 } & Record<string, any>;
 
 const getInitials = (name?: string, username?: string) => {
@@ -64,7 +64,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     const newMode: ThemeMode = mode === 'light' ? 'dark' : 'light';
 
     setMode(newMode);
-    onThemeChange(newMode);
+    onThemeChange?.(newMode);
     updateCurrentUserInStorage({ theme: newMode });
     setIsSaving(true);
 
@@ -80,7 +80,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
       }
     } catch (error) {
       setMode(previousMode);
-      onThemeChange(previousMode);
+      onThemeChange?.(previousMode);
       updateCurrentUserInStorage({ theme: previousMode });
       console.error('Unable to save theme preference:', error);
     } finally {
@@ -270,7 +270,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
 };
 
 type AppLayoutProps = LayoutProps & {
-  onThemeChange: (mode: ThemeMode) => void;
+  onThemeChange?: (mode: ThemeMode) => void;
 };
 
 export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
@@ -388,3 +388,5 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
     }}
   />
 );
+
+export default AppLayout;

@@ -32,9 +32,9 @@ export const LoginPage = () => {
     setLoading(true);
 
     try {
-      await login({ username, password });
+      await login({ username, password }, '/');
     } catch (error) {
-      notify('Invalid credentials. Please try again.', { type: 'error' });
+      notify('Invalid username or password');
       setLoading(false);
     }
   };

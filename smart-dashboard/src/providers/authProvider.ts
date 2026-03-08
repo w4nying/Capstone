@@ -67,9 +67,14 @@ const emitThemeChanged = () => {
   window.dispatchEvent(new Event('themeChanged'));
 };
 
-const fetchUserFromServer = async (email: string): Promise<Partial<User> | null> => {
+const fetchUserFromServer = async (
+  email: string
+): Promise<Partial<User> | null> => {
   try {
-    const response = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
+    const response = await fetch(
+      `${API_URL}/users?email=${encodeURIComponent(email)}`
+    );
+
     if (!response.ok) return null;
 
     const users = await response.json();
@@ -84,6 +89,7 @@ const fetchUserFromServer = async (email: string): Promise<Partial<User> | null>
 export const authProvider: AuthProvider = {
   login: async ({ username, password }: LoginInput) => {
     const credential = credentials[username];
+
     if (!credential || credential.password !== password) {
       throw new Error('Invalid credentials');
     }
@@ -100,7 +106,10 @@ export const authProvider: AuthProvider = {
 
     localStorage.setItem('auth', JSON.stringify(loggedInUser));
     localStorage.setItem('role', loggedInUser.role);
+
     emitThemeChanged();
+
+    return Promise.resolve('/');
   },
 
   logout: async () => {
@@ -154,6 +163,7 @@ export const getCurrentUser = (): User | null => {
   try {
     const auth = localStorage.getItem('auth');
     if (!auth) return null;
+
     return JSON.parse(auth) as User;
   } catch {
     return null;

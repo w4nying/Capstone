@@ -65,7 +65,7 @@
       "department": "IT & Systems",
       "avatar": "https://i.pravatar.cc/150?img=1",
       "status": "active",
-      "theme": "dark"
+      "theme": "light"
     },
     {
       "id": "2",
@@ -87,7 +87,7 @@
       "department": "Data & Technology",
       "avatar": "https://i.pravatar.cc/150?img=3",
       "status": "active",
-      "theme": "light"
+      "theme": "dark"
     }
   ],
   "analytics": [

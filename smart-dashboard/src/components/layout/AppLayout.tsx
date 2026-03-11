@@ -21,12 +21,14 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import {
   getCurrentTheme,
   getCurrentUser,
   ThemeMode,
   updateCurrentUserInStorage,
 } from '../../providers/authProvider';
+import { ProfileAvatarDialog } from './ProfileAvatarDialog';
 
 type CustomAppBarProps = {
   onThemeChange?: (mode: ThemeMode) => void;
@@ -48,12 +50,31 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
   const [mode, setMode] = useState<ThemeMode>('light');
   const [isSaving, setIsSaving] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
+  const [user, setUser] = useState(getCurrentUser());
 
-  const user = getCurrentUser();
   const menuOpen = Boolean(anchorEl);
 
   useEffect(() => {
     setMode(getCurrentTheme());
+    setUser(getCurrentUser());
+  }, []);
+
+  useEffect(() => {
+    const syncUser = () => {
+      setMode(getCurrentTheme());
+      setUser(getCurrentUser());
+    };
+
+    window.addEventListener('themeChanged', syncUser);
+    window.addEventListener('dashboardLayoutChanged', syncUser);
+    window.addEventListener('storage', syncUser);
+
+    return () => {
+      window.removeEventListener('themeChanged', syncUser);
+      window.removeEventListener('dashboardLayoutChanged', syncUser);
+      window.removeEventListener('storage', syncUser);
+    };
   }, []);
 
   const toggleTheme = async () => {
@@ -66,6 +87,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     setMode(newMode);
     onThemeChange?.(newMode);
     updateCurrentUserInStorage({ theme: newMode });
+    setUser(getCurrentUser());
     setIsSaving(true);
 
     try {
@@ -82,6 +104,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
       setMode(previousMode);
       onThemeChange?.(previousMode);
       updateCurrentUserInStorage({ theme: previousMode });
+      setUser(getCurrentUser());
       console.error('Unable to save theme preference:', error);
     } finally {
       setIsSaving(false);
@@ -101,171 +124,200 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     await toggleTheme();
   };
 
+  const handleOpenAvatarDialog = () => {
+    handleMenuClose();
+    setAvatarDialogOpen(true);
+  };
+
+  const handleCloseAvatarDialog = () => {
+    setAvatarDialogOpen(false);
+  };
+
+  const handleAvatarSaved = () => {
+    setUser(getCurrentUser());
+  };
+
   const handleLogout = () => {
     handleMenuClose();
     logout();
   };
 
   return (
-    <AppBar
-      {...props}
-      toolbar={false}
-      userMenu={false}
-      sx={{
-        '& .RaAppBar-toolbar': {
-          minHeight: { xs: 60, md: 72 },
-          px: { xs: 1.5, sm: 2, md: 3 },
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-        },
-      }}
-    >
-      <TitlePortal />
-      <Box sx={{ flex: 1 }} />
-
-      <Tooltip title="Account">
-        <IconButton
-          onClick={handleMenuOpen}
-          size="small"
-          sx={(theme) => ({
-            borderRadius: '999px',
-            px: { xs: 0.5, sm: 0.75 },
-            py: 0.5,
+    <>
+      <AppBar
+        {...props}
+        toolbar={false}
+        userMenu={false}
+        sx={{
+          '& .RaAppBar-toolbar': {
+            minHeight: { xs: 60, md: 72 },
+            px: { xs: 1.5, sm: 2, md: 3 },
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            border: `1px solid ${
-              theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
-            }`,
-            backgroundColor:
-              theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
-            '&:hover': {
-              backgroundColor:
-                theme.palette.mode === 'dark' ? '#1e293b' : '#f8fafc',
-            },
-          })}
-        >
-          <Avatar
+          },
+        }}
+      >
+        <TitlePortal />
+        <Box sx={{ flex: 1 }} />
+
+        <Tooltip title="Account">
+          <IconButton
+            onClick={handleMenuOpen}
+            size="small"
             sx={(theme) => ({
-              width: 34,
-              height: 34,
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              bgcolor: theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0',
-              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+              borderRadius: '999px',
+              px: { xs: 0.5, sm: 0.75 },
+              py: 0.5,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              border: `1px solid ${
+                theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+              }`,
+              backgroundColor:
+                theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+              '&:hover': {
+                backgroundColor:
+                  theme.palette.mode === 'dark' ? '#1e293b' : '#f8fafc',
+                },
             })}
           >
-            {getInitials((user as any)?.fullName, (user as any)?.username)}
-          </Avatar>
+            <Avatar
+              src={user?.avatar || undefined}
+              sx={(theme) => ({
+                width: 34,
+                height: 34,
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                bgcolor: theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0',
+                color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+              })}
+            >
+              {!user?.avatar ? getInitials(user?.fullName, user?.username) : null}
+            </Avatar>
 
-          <Box
-            sx={{
-              display: { xs: 'none', sm: 'flex' },
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              lineHeight: 1.1,
-              mr: 0.25,
-              maxWidth: 140,
-            }}
-          >
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'flex' },
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                lineHeight: 1.1,
+                mr: 0.25,
+                maxWidth: 140,
+              }}
+            >
+              <Typography
+                variant="body2"
+                noWrap
+                sx={(theme) => ({
+                  fontWeight: 700,
+                  color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+                })}
+              >
+                {user?.fullName || user?.username || 'User'}
+              </Typography>
+              <Typography
+                variant="caption"
+                noWrap
+                sx={(theme) => ({
+                  color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+                })}
+              >
+                {user?.role || 'Account'}
+              </Typography>
+            </Box>
+
+            <KeyboardArrowDownIcon
+              sx={(theme) => ({
+                color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+                display: { xs: 'none', sm: 'block' },
+              })}
+            />
+          </IconButton>
+        </Tooltip>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={menuOpen}
+          onClose={handleMenuClose}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          PaperProps={{
+            elevation: 0,
+            sx: (theme) => ({
+              mt: 1,
+              minWidth: 220,
+              borderRadius: 3,
+              border: `1px solid ${
+                theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+              }`,
+              boxShadow:
+                theme.palette.mode === 'dark'
+                  ? '0 18px 40px rgba(0, 0, 0, 0.35)'
+                  : '0 18px 40px rgba(15, 23, 42, 0.08)',
+              overflow: 'hidden',
+              backgroundColor:
+                theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+            }),
+          }}
+        >
+          <Box sx={{ px: 2, py: 1.5 }}>
             <Typography
               variant="body2"
-              noWrap
               sx={(theme) => ({
                 fontWeight: 700,
                 color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
               })}
             >
-              {(user as any)?.fullName || (user as any)?.username || 'User'}
+              {user?.fullName || user?.username || 'User'}
             </Typography>
             <Typography
               variant="caption"
-              noWrap
               sx={(theme) => ({
                 color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
               })}
             >
-              {(user as any)?.role || 'Account'}
+              {user?.role || 'Account'}
             </Typography>
           </Box>
 
-          <KeyboardArrowDownIcon
-            sx={(theme) => ({
-              color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
-              display: { xs: 'none', sm: 'block' },
-            })}
-          />
-        </IconButton>
-      </Tooltip>
+          <Divider />
 
-      <Menu
-        anchorEl={anchorEl}
-        open={menuOpen}
-        onClose={handleMenuClose}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        PaperProps={{
-          elevation: 0,
-          sx: (theme) => ({
-            mt: 1,
-            minWidth: 220,
-            borderRadius: 3,
-            border: `1px solid ${
-              theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
-            }`,
-            boxShadow:
-              theme.palette.mode === 'dark'
-                ? '0 18px 40px rgba(0, 0, 0, 0.35)'
-                : '0 18px 40px rgba(15, 23, 42, 0.08)',
-            overflow: 'hidden',
-            backgroundColor:
-              theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
-            color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
-          }),
-        }}
-      >
-        <Box sx={{ px: 2, py: 1.5 }}>
-          <Typography
-            variant="body2"
-            sx={(theme) => ({
-              fontWeight: 700,
-              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
-            })}
-          >
-            {(user as any)?.fullName || (user as any)?.username || 'User'}
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={(theme) => ({
-              color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
-            })}
-          >
-            {(user as any)?.role || 'Account'}
-          </Typography>
-        </Box>
+          <MenuItem onClick={handleOpenAvatarDialog}>
+            <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
+              <PhotoCameraIcon fontSize="small" />
+            </ListItemIcon>
+            Change profile picture
+          </MenuItem>
 
-        <Divider />
+          <MenuItem onClick={handleToggleTheme} disabled={isSaving}>
+            <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
+              {mode === 'light' ? (
+                <DarkModeIcon fontSize="small" />
+              ) : (
+                <LightModeIcon fontSize="small" />
+              )}
+            </ListItemIcon>
+            {mode === 'light' ? 'Dark mode' : 'Light mode'}
+          </MenuItem>
 
-        <MenuItem onClick={handleToggleTheme} disabled={isSaving}>
-          <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
-            {mode === 'light' ? (
-              <DarkModeIcon fontSize="small" />
-            ) : (
-              <LightModeIcon fontSize="small" />
-            )}
-          </ListItemIcon>
-          {mode === 'light' ? 'Dark mode' : 'Light mode'}
-        </MenuItem>
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
+              <LogoutIcon fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Menu>
+      </AppBar>
 
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
-            <LogoutIcon fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
-    </AppBar>
+      <ProfileAvatarDialog
+        open={avatarDialogOpen}
+        onClose={handleCloseAvatarDialog}
+        onSaved={handleAvatarSaved}
+      />
+    </>
   );
 };
 
@@ -308,23 +360,19 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
         maxWidth: '100%',
         minWidth: 0,
       },
-
       '& .RaSidebar-root': {
         borderRight: '1px solid',
         borderColor: 'divider',
         flexShrink: 0,
       },
-
       '& .RaSidebar-fixed': {
         backgroundColor: (theme) =>
           theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
       },
-
       '& .RaMenu-root': {
         paddingTop: 0.5,
         paddingBottom: 0.5,
       },
-
       '& .RaMenuItemLink-root': {
         margin: { xs: '4px 8px', sm: '6px 10px' },
         padding: { xs: '10px 12px', sm: '10px 14px' },
@@ -338,44 +386,37 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
         minWidth: 0,
         transition: 'background-color 0.2s ease, color 0.2s ease',
       },
-
       '& .RaMenuItemLink-root .RaMenuItemLink-icon': {
         minWidth: 36,
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
         flexShrink: 0,
       },
-
       '& .RaMenuItemLink-root .RaMenuItemLink-text': {
         minWidth: 0,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
       },
-
       '& .RaMenuItemLink-root:hover': {
         backgroundColor: 'action.hover',
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
       },
-
       '& .RaMenuItemLink-root:hover .RaMenuItemLink-icon': {
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
       },
-
       '& .RaMenuItemLink-active': {
         backgroundColor: 'action.selected',
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
         fontWeight: 700,
       },
-
       '& .RaMenuItemLink-active .RaMenuItemLink-icon': {
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
       },
-
       '@media (max-width:600px)': {
         '& .RaLayout-contentWithSidebar': {
           paddingTop: '60px',

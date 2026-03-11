@@ -1,96 +1,113 @@
-import { Card, CardContent, Box, Typography } from '@mui/material';
-import { ReactNode } from 'react';
-import { TrendingUp, TrendingDown } from '@mui/icons-material';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
-interface DashboardCardProps {
+type DashboardCardProps = {
   title: string;
   value: string | number;
-  icon: ReactNode;
-  color: string;
+  icon: React.ReactNode;
+  color?: string;
   trend?: string;
   trendDirection?: 'up' | 'down';
-}
+};
 
 export const DashboardCard = ({
   title,
   value,
   icon,
-  color,
+  color = '#1976d2',
   trend,
-  trendDirection,
+  trendDirection = 'up',
 }: DashboardCardProps) => {
   return (
     <Card
       sx={{
         height: '100%',
-        borderRadius: '20px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 18px 40px rgba(15, 23, 42, 0.06)',
+        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: 4,
+        },
       }}
     >
-      <CardContent sx={{ p: 3 }}>
-        <Box display="flex" alignItems="flex-start" justifyContent="space-between" mb={2}>
+      <CardContent
+        sx={{
+          px: 3,      // wider horizontal padding
+          py: 2.5,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 1.5,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 600,
+              color: 'text.secondary',
+            }}
+          >
+            {title}
+          </Typography>
+
           <Box
             sx={{
-              width: 44,
-              height: 44,
-              borderRadius: '12px',
+              color,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#f1f5f9',
-              color,
             }}
           >
             {icon}
           </Box>
-
-          {trend && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                px: 1,
-                py: 0.5,
-                borderRadius: '999px',
-                backgroundColor: '#f8fafc',
-                color: '#64748b',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-              }}
-            >
-              {trendDirection === 'up' ? (
-                <TrendingUp fontSize="inherit" />
-              ) : (
-                <TrendingDown fontSize="inherit" />
-              )}
-              {trend}
-            </Box>
-          )}
         </Box>
-
-        <Typography
-          variant="body2"
-          sx={{
-            color: '#64748b',
-            mb: 1,
-            fontWeight: 600,
-          }}
-        >
-          {title}
-        </Typography>
 
         <Typography
           variant="h4"
           sx={{
-            color: '#0f172a',
             fontWeight: 800,
-            lineHeight: 1.1,
+            letterSpacing: '-0.5px',
+            mb: 1,
           }}
         >
           {value}
         </Typography>
+
+        {trend && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+            }}
+          >
+            {trendDirection === 'up' ? (
+              <TrendingUpIcon fontSize="small" color="success" />
+            ) : (
+              <TrendingDownIcon fontSize="small" color="error" />
+            )}
+
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 600,
+                color: 'text.secondary',
+              }}
+            >
+              {trend}
+            </Typography>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );

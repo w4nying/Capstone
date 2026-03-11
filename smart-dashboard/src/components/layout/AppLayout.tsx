@@ -9,11 +9,13 @@ import {
 import {
   Avatar,
   Box,
+  Chip,
   Divider,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
+  Switch,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -21,7 +23,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   getCurrentTheme,
   getCurrentUser,
@@ -119,13 +121,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     setAnchorEl(null);
   };
 
-  const handleToggleTheme = async () => {
-    handleMenuClose();
-    await toggleTheme();
-  };
-
   const handleOpenAvatarDialog = () => {
-    handleMenuClose();
     setAvatarDialogOpen(true);
   };
 
@@ -135,6 +131,13 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
 
   const handleAvatarSaved = () => {
     setUser(getCurrentUser());
+  };
+
+  const handleThemeSwitch = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    event.stopPropagation();
+    await toggleTheme();
   };
 
   const handleLogout = () => {
@@ -180,7 +183,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
               '&:hover': {
                 backgroundColor:
                   theme.palette.mode === 'dark' ? '#1e293b' : '#f8fafc',
-                },
+              },
             })}
           >
             <Avatar
@@ -222,6 +225,7 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
                 noWrap
                 sx={(theme) => ({
                   color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+                  textTransform: 'capitalize',
                 })}
               >
                 {user?.role || 'Account'}
@@ -246,75 +250,204 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
           PaperProps={{
             elevation: 0,
             sx: (theme) => ({
-              mt: 1,
-              minWidth: 220,
+              mt: 1.25,
+              minWidth: 340,
               borderRadius: 3,
               border: `1px solid ${
                 theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
               }`,
               boxShadow:
                 theme.palette.mode === 'dark'
-                  ? '0 18px 40px rgba(0, 0, 0, 0.35)'
-                  : '0 18px 40px rgba(15, 23, 42, 0.08)',
+                  ? '0 24px 50px rgba(0, 0, 0, 0.35)'
+                  : '0 24px 50px rgba(15, 23, 42, 0.10)',
               overflow: 'hidden',
-              backgroundColor:
-                theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'linear-gradient(180deg, #111827 0%, #0f172a 100%)'
+                  : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
               color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
             }),
           }}
         >
-          <Box sx={{ px: 2, py: 1.5 }}>
-            <Typography
-              variant="body2"
-              sx={(theme) => ({
-                fontWeight: 700,
-                color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
-              })}
-            >
-              {user?.fullName || user?.username || 'User'}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={(theme) => ({
-                color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
-              })}
-            >
-              {user?.role || 'Account'}
-            </Typography>
+          <Box
+            sx={(theme) => ({
+              px: 2.5,
+              py: 2.3,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'linear-gradient(135deg, rgba(59,130,246,0.14), rgba(30,41,59,0.2))'
+                  : 'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(255,255,255,0.6))',
+            })}
+          >
+            <Box sx={{ position: 'relative', flexShrink: 0 }}>
+              <Avatar
+                src={user?.avatar || undefined}
+                sx={(theme) => ({
+                  width: 60,
+                  height: 60,
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  bgcolor: theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0',
+                  color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+                  boxShadow:
+                    theme.palette.mode === 'dark'
+                      ? '0 10px 24px rgba(0,0,0,0.28)'
+                      : '0 10px 24px rgba(15,23,42,0.08)',
+                })}
+              >
+                {!user?.avatar ? getInitials(user?.fullName, user?.username) : null}
+              </Avatar>
+
+              <Tooltip title="Edit profile picture">
+                <IconButton
+                  size="small"
+                  onClick={handleOpenAvatarDialog}
+                  sx={(theme) => ({
+                    position: 'absolute',
+                    right: -4,
+                    bottom: -4,
+                    width: 24,
+                    height: 24,
+                    border: `1px solid ${
+                      theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+                    }`,
+                    backgroundColor:
+                      theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+                    color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+                    '&:hover': {
+                      backgroundColor:
+                        theme.palette.mode === 'dark' ? '#374151' : '#f8fafc',
+                    },
+                  })}
+                >
+                  <EditIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography
+                variant="body1"
+                noWrap
+                sx={{ fontWeight: 800, mb: 0.25 }}
+              >
+                {user?.fullName || user?.username || 'User'}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                noWrap
+                sx={(theme) => ({
+                  color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+                  mb: 1,
+                })}
+              >
+                {user?.email || ''}
+              </Typography>
+
+              <Chip
+                label={user?.role || 'Account'}
+                size="small"
+                sx={(theme) => ({
+                  height: 24,
+                  textTransform: 'capitalize',
+                  fontWeight: 700,
+                  backgroundColor:
+                    theme.palette.mode === 'dark'
+                      ? 'rgba(59,130,246,0.18)'
+                      : 'rgba(59,130,246,0.10)',
+                  color:
+                    theme.palette.mode === 'dark' ? '#bfdbfe' : '#1d4ed8',
+                })}
+              />
+            </Box>
           </Box>
 
           <Divider />
 
-          <MenuItem onClick={handleOpenAvatarDialog}>
-            <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
-              <PhotoCameraIcon fontSize="small" />
-            </ListItemIcon>
-            Change profile picture
+          <MenuItem
+            disableRipple
+            sx={(theme) => ({
+              py: 1.4,
+              px: 2.2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2.5,
+              '&:hover': {
+                backgroundColor:
+                  theme.palette.mode === 'dark' ? '#172033' : '#f8fafc',
+              },
+            })}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <ListItemIcon sx={{ color: 'inherit', minWidth: 30 }}>
+                {mode === 'light' ? (
+                  <DarkModeIcon fontSize="small" />
+                ) : (
+                  <LightModeIcon fontSize="small" />
+                )}
+              </ListItemIcon>
+
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                  Dark mode
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={(theme) => ({
+                    color: theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
+                  })}
+                >
+                  {mode === 'dark' ? 'Enabled' : 'Disabled'}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Switch
+              checked={mode === 'dark'}
+              onChange={handleThemeSwitch}
+              disabled={isSaving}
+            />
           </MenuItem>
 
-          <MenuItem onClick={handleToggleTheme} disabled={isSaving}>
-            <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
-              {mode === 'light' ? (
-                <DarkModeIcon fontSize="small" />
-              ) : (
-                <LightModeIcon fontSize="small" />
-              )}
-            </ListItemIcon>
-            {mode === 'light' ? 'Dark mode' : 'Light mode'}
-          </MenuItem>
+          <Divider />
 
-          <MenuItem onClick={handleLogout}>
-            <ListItemIcon sx={{ color: 'inherit', minWidth: 34 }}>
+          <MenuItem
+            onClick={handleLogout}
+            sx={(theme) => ({
+              py: 1.4,
+              px: 2.2,
+              color: theme.palette.mode === 'dark' ? '#fca5a5' : '#b91c1c',
+              '&:hover': {
+                backgroundColor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(239,68,68,0.14)'
+                    : 'rgba(239,68,68,0.08)',
+              },
+            })}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 34,
+                color: 'inherit',
+              }}
+            >
               <LogoutIcon fontSize="small" />
             </ListItemIcon>
-            Logout
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>
+              Logout
+            </Typography>
           </MenuItem>
         </Menu>
       </AppBar>
 
       <ProfileAvatarDialog
         open={avatarDialogOpen}
-        onClose={handleCloseAvatarDialog}
+        onClose={() => setAvatarDialogOpen(false)}
         onSaved={handleAvatarSaved}
       />
     </>

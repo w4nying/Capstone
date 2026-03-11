@@ -7,12 +7,15 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Stack,
   Typography,
 } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { getCurrentUser } from '../../providers/authProvider';
 import { removeProfileAvatar, saveProfileAvatar } from '../../services/profileService';
@@ -102,64 +105,201 @@ export const ProfileAvatarDialog = ({
     onClose();
   };
 
+  const hasAvatar = Boolean(preview);
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle>Update Profile Picture</DialogTitle>
-
-      <DialogContent>
-        <Stack spacing={3} alignItems="center" sx={{ pt: 1 }}>
-          <Avatar
-            src={preview || undefined}
-            sx={{ width: 110, height: 110, fontSize: 32 }}
-          >
-            {!preview ? initials : null}
-          </Avatar>
-
-          <Typography variant="body2" color="text.secondary" textAlign="center">
-            Upload a JPG, PNG, or WEBP image smaller than 2MB.
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: (theme) => ({
+          borderRadius: 3,
+          overflow: 'hidden',
+          border: `1px solid ${
+            theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+          }`,
+          boxShadow:
+            theme.palette.mode === 'dark'
+              ? '0 24px 50px rgba(0,0,0,0.35)'
+              : '0 24px 50px rgba(15,23,42,0.10)',
+          background:
+            theme.palette.mode === 'dark'
+              ? 'linear-gradient(180deg, #111827 0%, #0f172a 100%)'
+              : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+        }),
+      }}
+    >
+      <DialogTitle
+        sx={(theme) => ({
+          px: 3,
+          py: 2.25,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: `1px solid ${
+            theme.palette.mode === 'dark' ? '#1f2937' : '#e5e7eb'
+          }`,
+        })}
+      >
+        <Box sx={{ pr: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 800, mb: 0.25 }}>
+            Profile Picture
           </Typography>
-
-          <Button
-            variant="outlined"
-            component="label"
-            startIcon={<PhotoCameraIcon />}
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
           >
-            Choose Image
-            <input
-              hidden
-              accept="image/*"
-              type="file"
-              onChange={handleFileChange}
-            />
-          </Button>
-        </Stack>
-      </DialogContent>
+            Add, change, or remove your avatar
+          </Typography>
+        </Box>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Box sx={{ display: 'flex', gap: 1, width: '100%', justifyContent: 'space-between' }}>
-          <Button
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={handleRemove}
-            disabled={saving}
+        <IconButton onClick={onClose} size="small">
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent sx={{ px: 3, py: 3.25 }}>
+        <Stack spacing={3.25} alignItems="center">
+          <Box sx={{ position: 'relative' }}>
+            <Avatar
+              src={preview || undefined}
+              sx={(theme) => ({
+                width: 124,
+                height: 124,
+                fontSize: 34,
+                fontWeight: 800,
+                bgcolor: theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0',
+                color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+                boxShadow:
+                  theme.palette.mode === 'dark'
+                    ? '0 14px 30px rgba(0,0,0,0.35)'
+                    : '0 14px 30px rgba(15,23,42,0.10)',
+              })}
+            >
+              {!preview ? initials : null}
+            </Avatar>
+
+            <IconButton
+              component="label"
+              size="small"
+              sx={(theme) => ({
+                position: 'absolute',
+                right: -2,
+                bottom: -2,
+                width: 34,
+                height: 34,
+                border: `1px solid ${
+                  theme.palette.mode === 'dark' ? '#334155' : '#e5e7eb'
+                }`,
+                backgroundColor:
+                  theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+                color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+                '&:hover': {
+                  backgroundColor:
+                    theme.palette.mode === 'dark' ? '#374151' : '#f8fafc',
+                },
+              })}
+            >
+              <EditIcon sx={{ fontSize: 16 }} />
+              <input
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={handleFileChange}
+              />
+            </IconButton>
+          </Box>
+
+          <Box sx={{ textAlign: 'center', maxWidth: 420, px: 1 }}>
+            <Typography variant="body1" sx={{ fontWeight: 700, mb: 0.75 }}>
+              {currentUser?.fullName || currentUser?.username || 'User'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Upload a JPG, PNG, or WEBP image smaller than 2MB.
+            </Typography>
+          </Box>
+
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1.5}
+            sx={{ width: '100%' }}
           >
-            Remove
-          </Button>
-
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button onClick={onClose} disabled={saving}>
-              Cancel
-            </Button>
             <Button
+              fullWidth
+              variant="outlined"
+              component="label"
+              startIcon={<PhotoCameraIcon />}
+              sx={{
+                borderRadius: 2.5,
+                py: 1.2,
+                px: 2,
+              }}
+            >
+              {hasAvatar ? 'Choose another image' : 'Choose image'}
+              <input
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={handleFileChange}
+              />
+            </Button>
+
+            <Button
+              fullWidth
               variant="contained"
-              startIcon={<SaveIcon />}
+              startIcon={<SaveOutlinedIcon />}
               onClick={handleSave}
               disabled={saving || !preview}
+              sx={{
+                borderRadius: 2.5,
+                py: 1.2,
+                px: 2,
+              }}
             >
               Save
             </Button>
-          </Box>
-        </Box>
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <DialogActions
+        sx={(theme) => ({
+          px: 3,
+          py: 2.25,
+          borderTop: `1px solid ${
+            theme.palette.mode === 'dark' ? '#1f2937' : '#e5e7eb'
+          }`,
+          justifyContent: 'space-between',
+          gap: 1.5,
+        })}
+      >
+        <Button
+          color="error"
+          startIcon={<DeleteOutlineIcon />}
+          onClick={handleRemove}
+          disabled={saving || !hasAvatar}
+          sx={{
+            borderRadius: 2.5,
+            px: 1.5,
+          }}
+        >
+          Remove
+        </Button>
+
+        <Button
+          onClick={onClose}
+          disabled={saving}
+          sx={{
+            borderRadius: 2.5,
+            px: 1.5,
+          }}
+        >
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

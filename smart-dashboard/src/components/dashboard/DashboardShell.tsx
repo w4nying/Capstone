@@ -1,10 +1,24 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Fade,
+  Stack,
+  Typography,
+} from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Responsive, WidthProvider, type Layout } from 'react-grid-layout/legacy';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import '../../index.css';
 
 import {
   getSavedDashboardLayouts,
@@ -62,11 +76,19 @@ const createLayoutsFromWidgets = (
   return layouts;
 };
 
-export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) => {
+export const DashboardShell = ({
+  dashboardKey,
+  widgets,
+}: DashboardShellProps) => {
   const defaultLayouts = useMemo(() => createLayoutsFromWidgets(widgets), [widgets]);
+
   const [layouts, setLayouts] = useState<DashboardBreakpointLayouts>(defaultLayouts);
   const [saving, setSaving] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+
   const saveTimeoutRef = useRef<number | null>(null);
+  const savedTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const saved = getSavedDashboardLayouts(dashboardKey);
@@ -83,16 +105,31 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
       if (saveTimeoutRef.current) {
         window.clearTimeout(saveTimeoutRef.current);
       }
+
+      if (savedTimeoutRef.current) {
+        window.clearTimeout(savedTimeoutRef.current);
+      }
     };
   }, []);
 
   const persistLayouts = async (nextLayouts: DashboardBreakpointLayouts) => {
     const normalized = normalizeLayouts(nextLayouts);
+
     setSaving(true);
+    setShowSaved(false);
     setLayouts(normalized);
 
     try {
       await saveDashboardLayouts(dashboardKey, normalized);
+      setShowSaved(true);
+
+      if (savedTimeoutRef.current) {
+        window.clearTimeout(savedTimeoutRef.current);
+      }
+
+      savedTimeoutRef.current = window.setTimeout(() => {
+        setShowSaved(false);
+      }, 2000);
     } finally {
       setSaving(false);
     }
@@ -114,13 +151,23 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
     }, 250);
   };
 
-  const handleReset = async () => {
+  const openResetDialog = () => {
+    setResetDialogOpen(true);
+  };
+
+  const closeResetDialog = () => {
+    setResetDialogOpen(false);
+  };
+
+  const confirmReset = async () => {
     if (saveTimeoutRef.current) {
       window.clearTimeout(saveTimeoutRef.current);
     }
 
     await resetDashboardLayouts(dashboardKey);
     setLayouts(defaultLayouts);
+    setResetDialogOpen(false);
+    setShowSaved(false);
   };
 
   return (
@@ -131,17 +178,49 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
         alignItems="center"
         sx={{ mb: 2 }}
       >
-        <Typography variant="body2" color="text.secondary">
-          {saving ? 'Saving layout...' : 'Layout is saved per user'}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minHeight: 24 }}>
+          <Fade in={saving} unmountOnExit>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircularProgress size={14} thickness={6} />
+              <Typography variant="body2" color="text.secondary">
+                Saving layout...
+              </Typography>
+            </Box>
+          </Fade>
+
+          <Fade in={!saving && showSaved} unmountOnExit>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CheckCircleIcon sx={{ fontSize: 16, color: 'success.main' }} />
+              <Typography variant="body2" color="text.secondary">
+                Layout saved
+              </Typography>
+            </Box>
+          </Fade>
+
+          {!saving && !showSaved && (
+            <Typography variant="body2" color="text.secondary">
+              Layout is saved per user
+            </Typography>
+          )}
+        </Box>
 
         <Button
-          variant="outlined"
+          variant="contained"
+          color="warning"
           size="small"
           startIcon={<RefreshIcon />}
-          onClick={handleReset}
+          onClick={openResetDialog}
+          sx={{
+            fontWeight: 700,
+            px: 2,
+            borderRadius: 2,
+            boxShadow: 'none',
+            '&:hover': {
+              boxShadow: 'none',
+            },
+          }}
         >
-          Reset layout
+          Reset Widget Layout
         </Button>
       </Stack>
 
@@ -172,6 +251,33 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
           </Box>
         ))}
       </ResponsiveGridLayout>
+
+      <Dialog
+        open={resetDialogOpen}
+        onClose={closeResetDialog}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Reset widget layout?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This will restore all widgets to their default positions and sizes for this dashboard.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={closeResetDialog} variant="text">
+            Cancel
+          </Button>
+          <Button onClick={confirmReset} variant="contained" color="error" 
+            sx={{
+              fontWeight: 700,
+              borderRadius: 2,
+            }}
+          >
+            Reset Layout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

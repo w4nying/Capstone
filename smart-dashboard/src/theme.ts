@@ -532,18 +532,18 @@ export const darkTheme: Theme = createTheme({
           borderRadius: 14,
           backgroundColor: '#0D1A2D',
           color: '#F8FAFC',
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#5E7695',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#5B8DEF',
+          },
         },
         input: {
           color: '#F8FAFC',
         },
         notchedOutline: {
           borderColor: '#415471',
-        },
-        '&:hover .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#5E7695',
-        },
-        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#5B8DEF',
         },
       },
     },

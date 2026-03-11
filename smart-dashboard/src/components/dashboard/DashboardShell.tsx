@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Responsive, WidthProvider, type Layout } from 'react-grid-layout/legacy';
 
@@ -125,7 +125,12 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
 
   return (
     <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: 2 }}
+      >
         <Typography variant="body2" color="text.secondary">
           {saving ? 'Saving layout...' : 'Layout is saved per user'}
         </Typography>
@@ -150,33 +155,20 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
         containerPadding={[0, 0]}
         isDraggable
         isResizable
-        draggableHandle=".dashboard-widget-drag-handle"
         compactType="vertical"
         preventCollision={false}
         onLayoutChange={handleLayoutChange}
       >
         {widgets.map((widget) => (
-          <Box key={widget.id}>
-            <Card sx={{ height: '100%', borderRadius: 3 }}>
-              {widget.title ? (
-                <CardHeader
-                  className="dashboard-widget-drag-handle"
-                  title={widget.title}
-                  sx={{
-                    cursor: 'move',
-                    userSelect: 'none',
-                    '& .MuiCardHeader-title': {
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                    },
-                  }}
-                />
-              ) : null}
-
-              <CardContent sx={{ height: widget.title ? 'calc(100% - 72px)' : '100%' }}>
-                {widget.content}
-              </CardContent>
-            </Card>
+          <Box
+            key={widget.id}
+            sx={{
+              height: '100%',
+              minHeight: 0,
+              overflow: 'hidden',
+            }}
+          >
+            {widget.content}
           </Box>
         ))}
       </ResponsiveGridLayout>

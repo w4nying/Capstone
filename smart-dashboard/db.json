@@ -74,7 +74,7 @@
               "x": 0,
               "y": 0,
               "w": 3,
-              "h": 2,
+              "h": 3,
               "moved": false,
               "static": false
             },
@@ -83,7 +83,7 @@
               "x": 3,
               "y": 0,
               "w": 3,
-              "h": 2,
+              "h": 3,
               "moved": false,
               "static": false
             },
@@ -92,7 +92,7 @@
               "x": 6,
               "y": 0,
               "w": 3,
-              "h": 2,
+              "h": 3,
               "moved": false,
               "static": false
             },
@@ -108,7 +108,7 @@
             {
               "i": "accountDistribution",
               "x": 0,
-              "y": 2,
+              "y": 3,
               "w": 12,
               "h": 4,
               "minH": 4,

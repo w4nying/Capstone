@@ -58,14 +58,13 @@
   "users": [
     {
       "id": "1",
-      "email": "admin@mas.gov.sg",
       "username": "admin",
-      "fullName": "System Administrator",
+      "email": "admin@mas.gov.sg",
       "role": "admin",
+      "fullName": "System Administrator",
       "department": "IT & Systems",
-      "avatar": "https://i.pravatar.cc/150?img=1",
-      "status": "active",
-      "theme": "light"
+      "theme": "dark",
+      "dashboardLayouts": {}
     },
     {
       "id": "2",

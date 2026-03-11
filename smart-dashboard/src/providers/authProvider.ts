@@ -1,4 +1,5 @@
 import { AuthProvider } from 'react-admin';
+import type { DashboardBreakpointLayouts } from '../types/dashboard';
 
 export type UserRole = 'admin' | 'officer' | 'associate';
 export type ThemeMode = 'light' | 'dark';
@@ -12,6 +13,7 @@ export interface User {
   department?: string;
   avatar?: string;
   theme?: ThemeMode;
+  dashboardLayouts?: Record<string, DashboardBreakpointLayouts>;
 }
 
 type LoginInput = {
@@ -37,6 +39,7 @@ const fallbackUsers: Record<string, User> = {
     department: 'IT & Systems',
     avatar: 'https://i.pravatar.cc/150?img=1',
     theme: 'light',
+    dashboardLayouts: {},
   },
   'officer@mas.gov.sg': {
     id: 2,
@@ -47,6 +50,7 @@ const fallbackUsers: Record<string, User> = {
     department: 'Data & Technology',
     avatar: 'https://i.pravatar.cc/150?img=2',
     theme: 'light',
+    dashboardLayouts: {},
   },
   'associate@mas.gov.sg': {
     id: 3,
@@ -57,6 +61,7 @@ const fallbackUsers: Record<string, User> = {
     department: 'Data & Technology',
     avatar: 'https://i.pravatar.cc/150?img=3',
     theme: 'light',
+    dashboardLayouts: {},
   },
 };
 
@@ -67,14 +72,13 @@ const emitThemeChanged = () => {
   window.dispatchEvent(new Event('themeChanged'));
 };
 
-const fetchUserFromServer = async (
-  email: string
-): Promise<Partial<User> | null> => {
-  try {
-    const response = await fetch(
-      `${API_URL}/users?email=${encodeURIComponent(email)}`
-    );
+const emitDashboardLayoutChanged = () => {
+  window.dispatchEvent(new Event('dashboardLayoutChanged'));
+};
 
+const fetchUserFromServer = async (email: string): Promise<Partial<User> | null> => {
+  try {
+    const response = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
     if (!response.ok) return null;
 
     const users = await response.json();
@@ -89,7 +93,6 @@ const fetchUserFromServer = async (
 export const authProvider: AuthProvider = {
   login: async ({ username, password }: LoginInput) => {
     const credential = credentials[username];
-
     if (!credential || credential.password !== password) {
       throw new Error('Invalid credentials');
     }
@@ -102,14 +105,14 @@ export const authProvider: AuthProvider = {
       ...serverUser,
       email: username,
       theme: normalizeTheme(serverUser?.theme ?? fallbackUser.theme),
+      dashboardLayouts: serverUser?.dashboardLayouts ?? fallbackUser.dashboardLayouts ?? {},
     };
 
     localStorage.setItem('auth', JSON.stringify(loggedInUser));
     localStorage.setItem('role', loggedInUser.role);
-
     emitThemeChanged();
 
-    return Promise.resolve('/');
+    return '/';
   },
 
   logout: async () => {
@@ -132,7 +135,6 @@ export const authProvider: AuthProvider = {
       localStorage.removeItem('auth');
       localStorage.removeItem('role');
       emitThemeChanged();
-
       const error: any = new Error();
       error.message = false;
       throw error;
@@ -150,7 +152,6 @@ export const authProvider: AuthProvider = {
     if (!auth) throw new Error();
 
     const user: User = JSON.parse(auth);
-
     return {
       id: user.id,
       fullName: user.fullName,
@@ -163,7 +164,6 @@ export const getCurrentUser = (): User | null => {
   try {
     const auth = localStorage.getItem('auth');
     if (!auth) return null;
-
     return JSON.parse(auth) as User;
   } catch {
     return null;
@@ -184,8 +184,13 @@ export const updateCurrentUserInStorage = (updatedFields: Partial<User>) => {
     ...currentUser,
     ...updatedFields,
     theme: normalizeTheme(updatedFields.theme ?? currentUser.theme),
+    dashboardLayouts: {
+      ...(currentUser.dashboardLayouts ?? {}),
+      ...(updatedFields.dashboardLayouts ?? {}),
+    },
   };
 
   localStorage.setItem('auth', JSON.stringify(updatedUser));
   emitThemeChanged();
+  emitDashboardLayoutChanged();
 };

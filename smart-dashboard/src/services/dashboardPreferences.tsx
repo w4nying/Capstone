@@ -11,34 +11,30 @@ export const getSavedDashboardLayouts = (
 };
 
 export const saveDashboardLayouts = async (
-  dashboardKey: string,
-  layouts: DashboardBreakpointLayouts
-): Promise<void> => {
-  const user = getCurrentUser();
-  if (!user) return;
+    dashboardKey: string,
+    layouts: DashboardBreakpointLayouts
+    ): Promise<void> => {
+    const user = getCurrentUser();
+    if (!user) return;
 
-  const nextDashboardLayouts: Record<string, DashboardBreakpointLayouts> = {
+    const nextDashboardLayouts: Record<string, DashboardBreakpointLayouts> = {
     ...(user.dashboardLayouts ?? {}),
     [dashboardKey]: layouts,
-  };
+    };
 
-  updateCurrentUserInStorage({
+    updateCurrentUserInStorage({
     dashboardLayouts: nextDashboardLayouts,
-  });
-
-  try {
-    await fetch(`${API_URL}/users/${user.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        dashboardLayouts: nextDashboardLayouts,
-      }),
     });
-  } catch (error) {
-    console.error('Failed to persist dashboard layout:', error);
-  }
+
+    await fetch(`${API_URL}/users/${user.id}`, {
+    method: 'PATCH',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        dashboardLayouts: nextDashboardLayouts,
+    }),
+    });
 };
 
 export const resetDashboardLayouts = async (dashboardKey: string): Promise<void> => {

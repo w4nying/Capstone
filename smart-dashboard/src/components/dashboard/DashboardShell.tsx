@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Responsive, WidthProvider, type Layout } from 'react-grid-layout/legacy';
@@ -32,6 +32,14 @@ const asArray = (value: any) => {
   return Array.isArray(value) ? value : [value];
 };
 
+const normalizeLayouts = (value: any): DashboardBreakpointLayouts => ({
+  lg: asArray(value?.lg),
+  md: asArray(value?.md),
+  sm: asArray(value?.sm),
+  xs: asArray(value?.xs),
+  xxs: asArray(value?.xxs),
+});
+
 const createLayoutsFromWidgets = (
   widgets: DashboardWidget[]
 ): DashboardBreakpointLayouts => {
@@ -58,40 +66,59 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
   const defaultLayouts = useMemo(() => createLayoutsFromWidgets(widgets), [widgets]);
   const [layouts, setLayouts] = useState<DashboardBreakpointLayouts>(defaultLayouts);
   const [saving, setSaving] = useState(false);
+  const saveTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const saved = getSavedDashboardLayouts(dashboardKey);
 
     if (saved && Object.keys(saved).length > 0) {
-      setLayouts(saved);
+      setLayouts(normalizeLayouts(saved));
     } else {
       setLayouts(defaultLayouts);
     }
   }, [dashboardKey, defaultLayouts]);
 
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        window.clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const persistLayouts = async (nextLayouts: DashboardBreakpointLayouts) => {
+    const normalized = normalizeLayouts(nextLayouts);
     setSaving(true);
-    setLayouts(nextLayouts);
-    await saveDashboardLayouts(dashboardKey, nextLayouts);
-    setSaving(false);
+    setLayouts(normalized);
+
+    try {
+      await saveDashboardLayouts(dashboardKey, normalized);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleLayoutChange = (
     _layout: Layout,
     allLayouts: Partial<Record<string, Layout>>
   ) => {
-    setLayouts(allLayouts as unknown as DashboardBreakpointLayouts);
-  };
+    const normalized = normalizeLayouts(allLayouts);
+    setLayouts(normalized);
 
-  const handleDragStop = async () => {
-    await persistLayouts(layouts);
-  };
+    if (saveTimeoutRef.current) {
+      window.clearTimeout(saveTimeoutRef.current);
+    }
 
-  const handleResizeStop = async () => {
-    await persistLayouts(layouts);
+    saveTimeoutRef.current = window.setTimeout(() => {
+      void persistLayouts(normalized);
+    }, 250);
   };
 
   const handleReset = async () => {
+    if (saveTimeoutRef.current) {
+      window.clearTimeout(saveTimeoutRef.current);
+    }
+
     await resetDashboardLayouts(dashboardKey);
     setLayouts(defaultLayouts);
   };
@@ -127,8 +154,6 @@ export const DashboardShell = ({ dashboardKey, widgets }: DashboardShellProps) =
         compactType="vertical"
         preventCollision={false}
         onLayoutChange={handleLayoutChange}
-        onDragStop={handleDragStop}
-        onResizeStop={handleResizeStop}
       >
         {widgets.map((widget) => (
           <Box key={widget.id}>

@@ -27,6 +27,10 @@ const credentials: Record<string, { password: string }> = {
   'admin@mas.gov.sg': { password: 'admin123' },
   'officer@mas.gov.sg': { password: 'officer123' },
   'associate@mas.gov.sg': { password: 'associate123' },
+
+  'admin2@mas.gov.sg': { password: 'admin2123' },
+  'officer2@mas.gov.sg': { password: 'officer2123' },
+  'associate2@mas.gov.sg': { password: 'associate2123' },
 };
 
 const fallbackUsers: Record<string, User> = {
@@ -63,6 +67,37 @@ const fallbackUsers: Record<string, User> = {
     theme: 'light',
     dashboardLayouts: {},
   },
+  'admin2@mas.gov.sg': {
+    id: 4,
+    username: 'admin2',
+    email: 'admin2@mas.gov.sg',
+    role: 'admin',
+    fullName: 'Platform Administrator',
+    department: 'IT & Systems',
+    avatar: 'https://i.pravatar.cc/150?img=6',
+    theme: 'light',
+  },
+
+  'officer2@mas.gov.sg': {
+    id: 5,
+    username: 'officer2',
+    email: 'officer2@mas.gov.sg',
+    role: 'officer',
+    fullName: 'Operations Officer',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=4',
+    theme: 'light',
+  },
+  'associate2@mas.gov.sg': {
+    id: 6,
+    username: 'associate2',
+    email: 'associate2@mas.gov.sg',
+    role: 'associate',
+    fullName: 'Junior Associate',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    theme: 'dark',
+  }
 };
 
 const normalizeTheme = (value: unknown): ThemeMode =>

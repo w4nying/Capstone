@@ -86,7 +86,7 @@ const fallbackUsers: Record<string, User> = {
     fullName: 'Operations Officer',
     department: 'Data & Technology',
     avatar: 'https://i.pravatar.cc/150?img=4',
-    theme: 'light',
+    theme: 'dark',
   },
   'associate2@mas.gov.sg': {
     id: 6,

@@ -117,6 +117,17 @@ const saveWidgetVisibility = (
   }
 };
 
+const rebuildLayoutsForVisibleWidgets = (
+  widgets: DashboardWidget[],
+  visibility: Record<string, boolean>
+): DashboardBreakpointLayouts => {
+  const visibleWidgets = widgets.filter(
+    (widget) => visibility[widget.id] !== false
+  );
+
+  return normalizeLayouts(createLayoutsFromWidgets(visibleWidgets));
+};
+
 export const DashboardShell = ({
   dashboardKey,
   widgets,
@@ -161,14 +172,17 @@ export const DashboardShell = ({
 
   useEffect(() => {
     const handleOpenWidgetSettings = () => {
-      setDraftWidgetVisibility((prev) => ({ ...prev, ...widgetVisibility }));
+      setDraftWidgetVisibility(widgetVisibility);
       setSettingsDialogOpen(true);
     };
 
     window.addEventListener(OPEN_WIDGET_SETTINGS_EVENT, handleOpenWidgetSettings);
 
     return () => {
-      window.removeEventListener(OPEN_WIDGET_SETTINGS_EVENT, handleOpenWidgetSettings);
+      window.removeEventListener(
+        OPEN_WIDGET_SETTINGS_EVENT,
+        handleOpenWidgetSettings
+      );
     };
   }, [widgetVisibility]);
 
@@ -263,10 +277,32 @@ export const DashboardShell = ({
     }));
   };
 
-  const saveSettingsDialog = () => {
-    setWidgetVisibility(draftWidgetVisibility);
-    saveWidgetVisibility(dashboardKey, draftWidgetVisibility);
+  const saveSettingsDialog = async () => {
+    const nextVisibility = { ...draftWidgetVisibility };
+    const rebuiltLayouts = rebuildLayoutsForVisibleWidgets(widgets, nextVisibility);
+
+    setWidgetVisibility(nextVisibility);
+    saveWidgetVisibility(dashboardKey, nextVisibility);
+
+    setLayouts(rebuiltLayouts);
     setSettingsDialogOpen(false);
+    setShowSaved(false);
+    setSaving(true);
+
+    try {
+      await saveDashboardLayouts(dashboardKey, rebuiltLayouts);
+      setShowSaved(true);
+
+      if (savedTimeoutRef.current) {
+        window.clearTimeout(savedTimeoutRef.current);
+      }
+
+      savedTimeoutRef.current = window.setTimeout(() => {
+        setShowSaved(false);
+      }, 2000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

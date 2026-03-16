@@ -24,6 +24,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from '@mui/icons-material/Logout';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
+import ViewQuiltIcon from '@mui/icons-material/ViewQuilt';
 import {
   getCurrentTheme,
   getCurrentUser,
@@ -138,6 +139,11 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
   ) => {
     event.stopPropagation();
     await toggleTheme();
+  };
+
+  const handleOpenManageWidgets = () => {
+    handleMenuClose();
+    window.dispatchEvent(new Event('open-dashboard-widget-settings'));
   };
 
   const handleLogout = () => {
@@ -412,6 +418,32 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
               onChange={handleThemeSwitch}
               disabled={isSaving}
             />
+          </MenuItem>
+
+          <Divider />
+
+          <MenuItem
+            onClick={handleOpenManageWidgets}
+            sx={(theme) => ({
+              py: 1.4,
+              px: 2.2,
+              '&:hover': {
+                backgroundColor:
+                  theme.palette.mode === 'dark' ? '#172033' : '#f8fafc',
+              },
+            })}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 34,
+                color: 'inherit',
+              }}
+            >
+              <ViewQuiltIcon fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>
+              Manage Widgets
+            </Typography>
           </MenuItem>
 
           <Divider />

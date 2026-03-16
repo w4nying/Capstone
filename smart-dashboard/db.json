@@ -73,24 +73,24 @@
               "i": "totalAccounts",
               "x": 0,
               "y": 0,
-              "w": 2,
+              "w": 3,
               "h": 2,
               "moved": false,
               "static": false
             },
             {
               "i": "activeSessions",
-              "x": 0,
-              "y": 2,
-              "w": 2,
+              "x": 3,
+              "y": 0,
+              "w": 3,
               "h": 2,
               "moved": false,
               "static": false
             },
             {
               "i": "securityAlerts",
-              "x": 4,
-              "y": 2,
+              "x": 6,
+              "y": 0,
               "w": 3,
               "h": 2,
               "moved": false,
@@ -98,7 +98,7 @@
             },
             {
               "i": "pendingApprovals",
-              "x": 3,
+              "x": 9,
               "y": 0,
               "w": 3,
               "h": 2,
@@ -108,7 +108,7 @@
             {
               "i": "accountDistribution",
               "x": 0,
-              "y": 4,
+              "y": 2,
               "w": 12,
               "h": 4,
               "minH": 4,

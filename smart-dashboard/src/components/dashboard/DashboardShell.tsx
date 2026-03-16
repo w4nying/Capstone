@@ -34,6 +34,7 @@ import type { DashboardBreakpointLayouts } from '../../types/dashboard';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const WIDGET_VISIBILITY_STORAGE_KEY = 'dashboard-widget-visibility';
+const OPEN_WIDGET_SETTINGS_EVENT = 'open-dashboard-widget-settings';
 
 export type DashboardWidget = {
   id: string;
@@ -157,6 +158,19 @@ export const DashboardShell = ({
     setWidgetVisibility(mergedVisibility);
     setDraftWidgetVisibility(mergedVisibility);
   }, [dashboardKey, defaultVisibility]);
+
+  useEffect(() => {
+    const handleOpenWidgetSettings = () => {
+      setDraftWidgetVisibility((prev) => ({ ...prev, ...widgetVisibility }));
+      setSettingsDialogOpen(true);
+    };
+
+    window.addEventListener(OPEN_WIDGET_SETTINGS_EVENT, handleOpenWidgetSettings);
+
+    return () => {
+      window.removeEventListener(OPEN_WIDGET_SETTINGS_EVENT, handleOpenWidgetSettings);
+    };
+  }, [widgetVisibility]);
 
   useEffect(() => {
     return () => {
@@ -301,7 +315,7 @@ export const DashboardShell = ({
               borderRadius: 2,
             }}
           >
-            Manage Dashboard Widgets
+            Manage Widgets
           </Button>
 
           <Button
@@ -391,7 +405,7 @@ export const DashboardShell = ({
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle>Widget Settings</DialogTitle>
+        <DialogTitle>Manage Widgets</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 1.5 }}>
             Choose which widgets you want to display on this dashboard.

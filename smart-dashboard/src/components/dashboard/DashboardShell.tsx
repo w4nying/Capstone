@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -9,11 +10,14 @@ import {
   DialogContentText,
   DialogTitle,
   Fade,
+  FormControlLabel,
   Stack,
   Typography,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Responsive, WidthProvider, type Layout } from 'react-grid-layout/legacy';
 
 import 'react-grid-layout/css/styles.css';
@@ -29,11 +33,14 @@ import type { DashboardBreakpointLayouts } from '../../types/dashboard';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+const WIDGET_VISIBILITY_STORAGE_KEY = 'dashboard-widget-visibility';
+
 export type DashboardWidget = {
   id: string;
   title?: string;
   content: ReactNode;
   defaultLayout: DashboardBreakpointLayouts;
+  defaultVisible?: boolean;
 };
 
 type DashboardShellProps = {
@@ -76,16 +83,56 @@ const createLayoutsFromWidgets = (
   return layouts;
 };
 
+const createDefaultVisibility = (widgets: DashboardWidget[]) => {
+  return widgets.reduce<Record<string, boolean>>((acc, widget) => {
+    acc[widget.id] = widget.defaultVisible ?? true;
+    return acc;
+  }, {});
+};
+
+const getSavedWidgetVisibility = (dashboardKey: string) => {
+  try {
+    const raw = localStorage.getItem(WIDGET_VISIBILITY_STORAGE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    return parsed?.[dashboardKey] ?? null;
+  } catch {
+    return null;
+  }
+};
+
+const saveWidgetVisibility = (
+  dashboardKey: string,
+  visibility: Record<string, boolean>
+) => {
+  try {
+    const raw = localStorage.getItem(WIDGET_VISIBILITY_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    parsed[dashboardKey] = visibility;
+    localStorage.setItem(WIDGET_VISIBILITY_STORAGE_KEY, JSON.stringify(parsed));
+  } catch {
+    // ignore storage errors
+  }
+};
+
 export const DashboardShell = ({
   dashboardKey,
   widgets,
 }: DashboardShellProps) => {
   const defaultLayouts = useMemo(() => createLayoutsFromWidgets(widgets), [widgets]);
+  const defaultVisibility = useMemo(() => createDefaultVisibility(widgets), [widgets]);
 
   const [layouts, setLayouts] = useState<DashboardBreakpointLayouts>(defaultLayouts);
   const [saving, setSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
+  const [widgetVisibility, setWidgetVisibility] =
+    useState<Record<string, boolean>>(defaultVisibility);
+  const [draftWidgetVisibility, setDraftWidgetVisibility] =
+    useState<Record<string, boolean>>(defaultVisibility);
 
   const saveTimeoutRef = useRef<number | null>(null);
   const savedTimeoutRef = useRef<number | null>(null);
@@ -101,6 +148,17 @@ export const DashboardShell = ({
   }, [dashboardKey, defaultLayouts]);
 
   useEffect(() => {
+    const savedVisibility = getSavedWidgetVisibility(dashboardKey);
+    const mergedVisibility = {
+      ...defaultVisibility,
+      ...(savedVisibility ?? {}),
+    };
+
+    setWidgetVisibility(mergedVisibility);
+    setDraftWidgetVisibility(mergedVisibility);
+  }, [dashboardKey, defaultVisibility]);
+
+  useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
         window.clearTimeout(saveTimeoutRef.current);
@@ -111,6 +169,10 @@ export const DashboardShell = ({
       }
     };
   }, []);
+
+  const visibleWidgets = useMemo(() => {
+    return widgets.filter((widget) => widgetVisibility[widget.id] !== false);
+  }, [widgets, widgetVisibility]);
 
   const persistLayouts = async (nextLayouts: DashboardBreakpointLayouts) => {
     const normalized = normalizeLayouts(nextLayouts);
@@ -170,6 +232,29 @@ export const DashboardShell = ({
     setShowSaved(false);
   };
 
+  const openSettingsDialog = () => {
+    setDraftWidgetVisibility(widgetVisibility);
+    setSettingsDialogOpen(true);
+  };
+
+  const closeSettingsDialog = () => {
+    setDraftWidgetVisibility(widgetVisibility);
+    setSettingsDialogOpen(false);
+  };
+
+  const handleDraftVisibilityChange = (widgetId: string, checked: boolean) => {
+    setDraftWidgetVisibility((prev) => ({
+      ...prev,
+      [widgetId]: checked,
+    }));
+  };
+
+  const saveSettingsDialog = () => {
+    setWidgetVisibility(draftWidgetVisibility);
+    saveWidgetVisibility(dashboardKey, draftWidgetVisibility);
+    setSettingsDialogOpen(false);
+  };
+
   return (
     <Box>
       <Stack
@@ -204,24 +289,40 @@ export const DashboardShell = ({
           )}
         </Box>
 
-        <Button
-          variant="contained"
-          color="warning"
-          size="small"
-          startIcon={<RefreshIcon />}
-          onClick={openResetDialog}
-          sx={{
-            fontWeight: 700,
-            px: 2,
-            borderRadius: 2,
-            boxShadow: 'none',
-            '&:hover': {
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<SettingsIcon />}
+            onClick={openSettingsDialog}
+            sx={{
+              fontWeight: 700,
+              px: 2,
+              borderRadius: 2,
+            }}
+          >
+            Manage Dashboard Widgets
+          </Button>
+
+          <Button
+            variant="contained"
+            color="warning"
+            size="small"
+            startIcon={<RefreshIcon />}
+            onClick={openResetDialog}
+            sx={{
+              fontWeight: 700,
+              px: 2,
+              borderRadius: 2,
               boxShadow: 'none',
-            },
-          }}
-        >
-          Reset Widget Layout
-        </Button>
+              '&:hover': {
+                boxShadow: 'none',
+              },
+            }}
+          >
+            Reset Widget Layout
+          </Button>
+        </Stack>
       </Stack>
 
       <ResponsiveGridLayout
@@ -237,20 +338,98 @@ export const DashboardShell = ({
         compactType="vertical"
         preventCollision={false}
         onLayoutChange={handleLayoutChange}
+        draggableHandle=".dashboard-widget-drag-handle"
       >
-        {widgets.map((widget) => (
+        {visibleWidgets.map((widget) => (
           <Box
             key={widget.id}
             sx={{
               height: '100%',
               minHeight: 0,
               overflow: 'hidden',
+              position: 'relative',
+              '&:hover .dashboard-widget-drag-handle': {
+                opacity: 1,
+              },
             }}
           >
+            <Box
+              className="dashboard-widget-drag-handle"
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                zIndex: 10,
+                width: 28,
+                height: 28,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 1.5,
+                bgcolor: 'rgba(0, 0, 0, 0.55)',
+                color: '#fff',
+                cursor: 'grab',
+                opacity: 0,
+                transition: 'opacity 0.2s ease',
+                '&:active': {
+                  cursor: 'grabbing',
+                },
+              }}
+              title="Move widget"
+            >
+              <DragIndicatorIcon fontSize="small" />
+            </Box>
+
             {widget.content}
           </Box>
         ))}
       </ResponsiveGridLayout>
+
+      <Dialog
+        open={settingsDialogOpen}
+        onClose={closeSettingsDialog}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Widget Settings</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 1.5 }}>
+            Choose which widgets you want to display on this dashboard.
+          </DialogContentText>
+
+          <Stack spacing={0.5}>
+            {widgets.map((widget) => (
+              <FormControlLabel
+                key={widget.id}
+                control={
+                  <Checkbox
+                    checked={draftWidgetVisibility[widget.id] !== false}
+                    onChange={(e) =>
+                      handleDraftVisibilityChange(widget.id, e.target.checked)
+                    }
+                  />
+                }
+                label={widget.title ?? widget.id}
+              />
+            ))}
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={closeSettingsDialog} variant="text">
+            Cancel
+          </Button>
+          <Button
+            onClick={saveSettingsDialog}
+            variant="contained"
+            sx={{
+              fontWeight: 700,
+              borderRadius: 2,
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={resetDialogOpen}
@@ -268,7 +447,10 @@ export const DashboardShell = ({
           <Button onClick={closeResetDialog} variant="text">
             Cancel
           </Button>
-          <Button onClick={confirmReset} variant="contained" color="error" 
+          <Button
+            onClick={confirmReset}
+            variant="contained"
+            color="error"
             sx={{
               fontWeight: 700,
               borderRadius: 2,

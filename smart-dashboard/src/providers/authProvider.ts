@@ -25,12 +25,18 @@ const API_URL = 'http://localhost:3000';
 
 const credentials: Record<string, { password: string }> = {
   'admin@mas.gov.sg': { password: 'admin123' },
-  'officer@mas.gov.sg': { password: 'officer123' },
-  'associate@mas.gov.sg': { password: 'associate123' },
+  'admin2@mas.gov.sg': { password: 'admin1232' },
 
-  'admin2@mas.gov.sg': { password: 'admin2123' },
-  'officer2@mas.gov.sg': { password: 'officer2123' },
-  'associate2@mas.gov.sg': { password: 'associate2123' },
+  'officer@mas.gov.sg': { password: 'officer123' },
+  'officer2@mas.gov.sg': { password: 'officer1232' },
+  'officer3@mas.gov.sg': { password: 'officer1233' },
+
+  'associate@mas.gov.sg': { password: 'associate123' },
+  'associate2@mas.gov.sg': { password: 'associate1232' },
+  'associate3@mas.gov.sg': { password: 'associate1233' },
+  'associate4@mas.gov.sg': { password: 'associate1234' },
+  'associate5@mas.gov.sg': { password: 'associate1235' },
+  'associate6@mas.gov.sg': { password: 'associate1236' },
 };
 
 const fallbackUsers: Record<string, User> = {
@@ -77,7 +83,6 @@ const fallbackUsers: Record<string, User> = {
     avatar: 'https://i.pravatar.cc/150?img=6',
     theme: 'light',
   },
-
   'officer2@mas.gov.sg': {
     id: 5,
     username: 'officer2',
@@ -92,6 +97,56 @@ const fallbackUsers: Record<string, User> = {
     id: 6,
     username: 'associate2',
     email: 'associate2@mas.gov.sg',
+    role: 'associate',
+    fullName: 'Junior Associate',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    theme: 'dark',
+  },
+  'officer3@mas.gov.sg': {
+    id: 7,
+    username: 'officer3',
+    email: 'officer3@mas.gov.sg',
+    role: 'officer',
+    fullName: 'Operations Officer',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=4',
+    theme: 'dark',
+  },
+  'associate3@mas.gov.sg': {
+    id: 8,
+    username: 'associate3',
+    email: 'associate3@mas.gov.sg',
+    role: 'associate',
+    fullName: 'Junior Associate',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    theme: 'dark',
+  },
+  'associate4@mas.gov.sg': {
+    id: 9,
+    username: 'associate4',
+    email: 'associate4@mas.gov.sg',
+    role: 'associate',
+    fullName: 'Junior Associate',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    theme: 'dark',
+  },
+  'associate5@mas.gov.sg': {
+    id: 10,
+    username: 'associate5',
+    email: 'associate5@mas.gov.sg',
+    role: 'associate',
+    fullName: 'Junior Associate',
+    department: 'Data & Technology',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    theme: 'dark',
+  },
+  'associate6@mas.gov.sg': {
+    id: 11,
+    username: 'associate6',
+    email: 'associate6@mas.gov.sg',
     role: 'associate',
     fullName: 'Junior Associate',
     department: 'Data & Technology',

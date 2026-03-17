@@ -7,6 +7,20 @@ const httpClient = axios.create({
   baseURL: apiUrl,
 });
 
+const normalizeRecord = (record: any) => {
+  if (!record || typeof record !== 'object') return record;
+
+  return {
+    ...record,
+    id:
+      record.id !== undefined &&
+      record.id !== null &&
+      record.id !== ''
+        ? Number(record.id)
+        : record.id,
+  };
+};
+
 export const dataProvider: DataProvider = {
   getList: async (resource, params) => {
     try {
@@ -18,10 +32,12 @@ export const dataProvider: DataProvider = {
       const { field, order } = params.sort || { field: 'id', order: 'ASC' };
 
       let sortedData = [...allItems];
+
       if (field) {
         sortedData.sort((a, b) => {
-          const aVal = a[field];
-          const bVal = b[field];
+          const aVal = field === 'id' ? Number(a[field]) : a[field];
+          const bVal = field === 'id' ? Number(b[field]) : b[field];
+
           if (aVal < bVal) return order === 'ASC' ? -1 : 1;
           if (aVal > bVal) return order === 'ASC' ? 1 : -1;
           return 0;
@@ -32,7 +48,7 @@ export const dataProvider: DataProvider = {
       const end = start + perPage;
       const paginatedData = sortedData.slice(start, end);
 
-      return { data: paginatedData, total: total };
+      return { data: paginatedData, total };
     } catch (error: any) {
       if (error.response?.status === 404) {
         return { data: [], total: 0 };
@@ -40,41 +56,51 @@ export const dataProvider: DataProvider = {
       throw error;
     }
   },
+
   getOne: async (resource, params) => {
     const { data } = await httpClient.get(`/${resource}/${params.id}`);
     return { data };
   },
+
   getMany: async (resource, params) => {
     const responses = await Promise.all(
       params.ids.map((id) => httpClient.get(`/${resource}/${id}`))
     );
     return { data: responses.map((response) => response.data) };
   },
+
   getManyReference: async (resource, params) => {
     const { data } = await httpClient.get(`/${resource}`);
-    const filtered = data.filter(
-      (item: any) => item[params.target] === params.id
-    );
+    const filtered = data.filter((item: any) => item[params.target] === params.id);
     return { data: filtered, total: filtered.length };
   },
+
   create: async (resource, params) => {
-    const { data } = await httpClient.post(`/${resource}`, params.data);
+    const payload = normalizeRecord(params.data);
+    const { data } = await httpClient.post(`/${resource}`, payload);
     return { data };
   },
+
   update: async (resource, params) => {
-    const { data } = await httpClient.put(`/${resource}/${params.id}`, params.data);
+    const payload = normalizeRecord(params.data);
+    const { data } = await httpClient.put(`/${resource}/${params.id}`, payload);
     return { data };
   },
+
   updateMany: async (resource, params) => {
+    const payload = normalizeRecord(params.data);
+
     await Promise.all(
-      params.ids.map((id) => httpClient.put(`/${resource}/${id}`, params.data))
+      params.ids.map((id) => httpClient.put(`/${resource}/${id}`, payload))
     );
     return { data: params.ids };
   },
+
   delete: async (resource, params) => {
     await httpClient.delete(`/${resource}/${params.id}`);
     return { data: params.previousData as any };
   },
+
   deleteMany: async (resource, params) => {
     await Promise.all(
       params.ids.map((id) => httpClient.delete(`/${resource}/${id}`))

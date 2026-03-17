@@ -198,7 +198,7 @@ export const UserManagementList = () => {
             }}
         />
         <FunctionField
-            label="Toggle"
+            label=""
             render={(record: any) => (
                 <Stack direction="row" spacing={1}>
                 <StatusToggle record={record} />

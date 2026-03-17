@@ -1,45 +1,147 @@
-import { Box, Chip, LinearProgress } from '@mui/material';
+import { Box, Chip, Divider, LinearProgress, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 import { Title, useGetList } from 'react-admin';
 import {
-  People,
-  Security,
-  Lock,
-  HowToReg,
   AdminPanelSettings,
+  Assessment,
+  Description,
+  Lock,
+  Memory,
+  People,
+  Router,
+  Security,
+  Storage,
 } from '@mui/icons-material';
+
 import { DashboardCard } from './DashboardCard';
 import { BarChartWidget } from '../charts/BarChartWidget';
 import { DashboardShell, type DashboardWidget } from './DashboardShell';
 
-export const AdminDashboard = () => {
-  const { data: users, isLoading } = useGetList('users');
+const Panel = ({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) => (
+  <Box
+    sx={{
+      height: '100%',
+      p: 2.5,
+      borderRadius: 3,
+      border: '1px solid',
+      borderColor: 'divider',
+      bgcolor: 'background.paper',
+      boxShadow: '0 6px 18px rgba(15, 23, 42, 0.06)',
+      overflow: 'hidden',
+    }}
+  >
+    <Typography variant="h6" fontWeight={800} sx={{ mb: 0.5 }}>
+      {title}
+    </Typography>
+    {subtitle && (
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        {subtitle}
+      </Typography>
+    )}
+    {children}
+  </Box>
+);
 
-  if (isLoading) {
+export const AdminDashboard = () => {
+  const { data: users, isLoading: usersLoading } = useGetList('users');
+  const { data: servers, isLoading: serversLoading } = useGetList('servers');
+  const { data: reports, isLoading: reportsLoading } = useGetList('reports', {
+    pagination: { page: 1, perPage: 6 },
+    sort: { field: 'date', order: 'DESC' },
+  });
+  const { data: analytics, isLoading: analyticsLoading } = useGetList('analytics');
+
+  if (usersLoading || serversLoading || reportsLoading || analyticsLoading) {
     return <LinearProgress />;
   }
 
-  const totalUsers = users ? users.length : 0;
-  const activeUsers = users ? users.filter((u: any) => u.status === 'active').length : 0;
-  const lockedUsers = users ? users.filter((u: any) => u.status === 'locked').length : 0;
-  const pendingUsers = users ? users.filter((u: any) => u.status === 'pending').length : 0;
+  const userList = users ?? [];
+  const serverList = servers ?? [];
+  const reportList = reports ?? [];
+  const analyticsList = analytics ?? [];
 
-  const roleDistribution = users
-    ? users.reduce((acc: Record<string, number>, curr: any) => {
-        acc[curr.role] = (acc[curr.role] || 0) + 1;
-        return acc;
-      }, {})
-    : {};
+  const totalUsers = userList.length;
+  const activeUsers = userList.filter((u: any) => u.status === 'active').length;
+  const lockedUsers = userList.filter((u: any) => u.status === 'locked').length;
+  const pendingUsers = userList.filter((u: any) => u.status === 'pending').length;
 
-  const chartData = {
-    labels: Object.keys(roleDistribution).map((r) => r.toUpperCase()),
+  const roleDistribution = userList.reduce((acc: Record<string, number>, curr: any) => {
+    acc[curr.role] = (acc[curr.role] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalServers = serverList.length;
+  const onlineServers = serverList.filter((s: any) => s.status === 'online').length;
+  const offlineServers = totalServers - onlineServers;
+  const highCpuServers = serverList.filter((s: any) => (s.cpu ?? 0) > 80).length;
+
+  const avgCpu =
+    totalServers > 0
+      ? Math.round(serverList.reduce((sum: number, s: any) => sum + (s.cpu ?? 0), 0) / totalServers)
+      : 0;
+
+  const avgMemory =
+    totalServers > 0
+      ? Math.round(serverList.reduce((sum: number, s: any) => sum + (s.memory ?? 0), 0) / totalServers)
+      : 0;
+
+  const publishedReports = reportList.filter((r: any) => r.status === 'published').length || reportList.length;
+
+  const activeAnalytics = analyticsList.filter((a: any) => a.status === 'active').length;
+  const warningAnalytics = analyticsList.filter((a: any) => a.status === 'warning').length;
+  const inactiveAnalytics = analyticsList.filter((a: any) => a.status === 'inactive').length;
+
+  const uptimeMetric =
+    analyticsList.find((a: any) => String(a.name).toLowerCase().includes('uptime'))?.value ?? 'N/A';
+
+  const userRoleChart = {
+    labels: Object.keys(roleDistribution).map((role) => role.toUpperCase()),
     datasets: [
       {
-        label: 'User Distribution by Role',
+        label: 'Users by Role',
         data: Object.values(roleDistribution),
         backgroundColor: [
           'rgba(25, 118, 210, 0.8)',
           'rgba(237, 108, 2, 0.8)',
           'rgba(46, 125, 50, 0.8)',
+          'rgba(123, 31, 162, 0.8)',
+        ],
+      },
+    ],
+  };
+
+  const serverStatusChart = {
+    labels: ['Online', 'Offline', 'High CPU'],
+    datasets: [
+      {
+        label: 'Infrastructure',
+        data: [onlineServers, offlineServers, highCpuServers],
+        backgroundColor: [
+          'rgba(46, 125, 50, 0.8)',
+          'rgba(211, 47, 47, 0.8)',
+          'rgba(237, 108, 2, 0.8)',
+        ],
+      },
+    ],
+  };
+
+  const analyticsStatusChart = {
+    labels: ['Active', 'Warning', 'Inactive'],
+    datasets: [
+      {
+        label: 'Analytics Status',
+        data: [activeAnalytics, warningAnalytics, inactiveAnalytics],
+        backgroundColor: [
+          'rgba(2, 136, 209, 0.8)',
+          'rgba(237, 108, 2, 0.8)',
+          'rgba(117, 117, 117, 0.8)',
         ],
       },
     ],
@@ -47,94 +149,203 @@ export const AdminDashboard = () => {
 
   const widgets: DashboardWidget[] = [
     {
-      id: 'totalAccounts',
-      title: 'Total Accounts',
+      id: 'adminUsers',
+      title: 'Users',
       content: (
         <DashboardCard
-          title="Total Accounts"
+          title="Users"
           value={totalUsers}
           icon={<People />}
           color="#1976d2"
-          trend="Registered"
+          trend="All accounts"
           trendDirection="up"
+          details={[
+            { label: 'Active', value: activeUsers, color: '#2e7d32' },
+            { label: 'Pending', value: pendingUsers, color: '#ed6c02' },
+            { label: 'Locked', value: lockedUsers, color: '#d32f2f' },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'totalAccounts', x: 0, y: 0, w: 3, h: 2 }],
-        md: [{ i: 'totalAccounts', x: 0, y: 0, w: 5, h: 2 }],
-        sm: [{ i: 'totalAccounts', x: 0, y: 0, w: 6, h: 2 }],
-        xs: [{ i: 'totalAccounts', x: 0, y: 0, w: 4, h: 2 }],
+        lg: [{ i: 'adminUsers', x: 0, y: 0, w: 3, h: 2 }],
+        md: [{ i: 'adminUsers', x: 0, y: 0, w: 5, h: 2 }],
+        sm: [{ i: 'adminUsers', x: 0, y: 0, w: 6, h: 2 }],
+        xs: [{ i: 'adminUsers', x: 0, y: 0, w: 4, h: 2 }],
       },
     },
     {
-      id: 'activeSessions',
-      title: 'Active Sessions',
+      id: 'adminServers',
+      title: 'Servers',
       content: (
         <DashboardCard
-          title="Active Sessions"
-          value={activeUsers}
-          icon={<HowToReg />}
-          color="#2e7d32"
-          trend="Online Now"
+          title="Servers"
+          value={totalServers}
+          icon={<Storage />}
+          color="#1e3c72"
+          trend="Infrastructure monitored"
           trendDirection="up"
+          details={[
+            { label: 'Online', value: onlineServers, color: '#2e7d32' },
+            { label: 'Offline', value: offlineServers, color: '#d32f2f' },
+            { label: 'High CPU', value: highCpuServers, color: '#ed6c02' },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'activeSessions', x: 3, y: 0, w: 3, h: 2 }],
-        md: [{ i: 'activeSessions', x: 5, y: 0, w: 5, h: 2 }],
-        sm: [{ i: 'activeSessions', x: 0, y: 2, w: 6, h: 2 }],
-        xs: [{ i: 'activeSessions', x: 0, y: 2, w: 4, h: 2 }],
+        lg: [{ i: 'adminServers', x: 3, y: 0, w: 3, h: 2 }],
+        md: [{ i: 'adminServers', x: 5, y: 0, w: 5, h: 2 }],
+        sm: [{ i: 'adminServers', x: 0, y: 2, w: 6, h: 2 }],
+        xs: [{ i: 'adminServers', x: 0, y: 2, w: 4, h: 2 }],
       },
     },
     {
-      id: 'securityAlerts',
-      title: 'Security Alerts',
+      id: 'adminReports',
+      title: 'Reports',
       content: (
         <DashboardCard
-          title="Security Alerts"
-          value={lockedUsers}
-          icon={<Lock />}
-          color={lockedUsers > 0 ? '#d32f2f' : '#bdbdbd'}
-          trend={lockedUsers > 0 ? 'Locked Accounts' : 'No Issues'}
-          trendDirection={lockedUsers > 0 ? 'down' : 'up'}
+          title="Reports"
+          value={reportList.length}
+          icon={<Description />}
+          color="#7b1fa2"
+          trend="Documentation"
+          trendDirection="up"
+          details={[
+            { label: 'Published', value: publishedReports, color: '#2e7d32' },
+            { label: 'Recent Loaded', value: reportList.length },
+            { label: 'Latest Uptime', value: String(uptimeMetric) },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'securityAlerts', x: 6, y: 0, w: 3, h: 2 }],
-        md: [{ i: 'securityAlerts', x: 0, y: 2, w: 5, h: 2 }],
-        sm: [{ i: 'securityAlerts', x: 0, y: 4, w: 6, h: 2 }],
-        xs: [{ i: 'securityAlerts', x: 0, y: 4, w: 4, h: 2 }],
+        lg: [{ i: 'adminReports', x: 6, y: 0, w: 3, h: 2 }],
+        md: [{ i: 'adminReports', x: 0, y: 2, w: 5, h: 2 }],
+        sm: [{ i: 'adminReports', x: 0, y: 4, w: 6, h: 2 }],
+        xs: [{ i: 'adminReports', x: 0, y: 4, w: 4, h: 2 }],
       },
     },
     {
-      id: 'pendingApprovals',
-      title: 'Pending Approvals',
+      id: 'adminAnalytics',
+      title: 'Analytics',
       content: (
         <DashboardCard
-          title="Pending Approvals"
-          value={pendingUsers}
-          icon={<Security />}
-          color="#ed6c02"
-          trend="New Requests"
+          title="Analytics"
+          value={analyticsList.length}
+          icon={<Assessment />}
+          color="#0288d1"
+          trend="System signals"
           trendDirection="up"
+          details={[
+            { label: 'Active', value: activeAnalytics, color: '#2e7d32' },
+            { label: 'Warning', value: warningAnalytics, color: '#ed6c02' },
+            { label: 'Inactive', value: inactiveAnalytics, color: '#757575' },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'pendingApprovals', x: 9, y: 0, w: 3, h: 2 }],
-        md: [{ i: 'pendingApprovals', x: 5, y: 2, w: 5, h: 2 }],
-        sm: [{ i: 'pendingApprovals', x: 0, y: 6, w: 6, h: 2 }],
-        xs: [{ i: 'pendingApprovals', x: 0, y: 6, w: 4, h: 2 }],
+        lg: [{ i: 'adminAnalytics', x: 9, y: 0, w: 3, h: 2 }],
+        md: [{ i: 'adminAnalytics', x: 5, y: 2, w: 5, h: 2 }],
+        sm: [{ i: 'adminAnalytics', x: 0, y: 6, w: 6, h: 2 }],
+        xs: [{ i: 'adminAnalytics', x: 0, y: 6, w: 4, h: 2 }],
       },
     },
     {
-      id: 'accountDistribution',
-      title: 'Account Distribution',
-      content: <BarChartWidget data={chartData} height={320} />,
+      id: 'userRoleChart',
+      title: 'User Role Distribution',
+      content: (
+        <Panel title="User Role Distribution" subtitle="Account mix across the platform">
+          <BarChartWidget data={userRoleChart} height={260} />
+        </Panel>
+      ),
       defaultLayout: {
-        lg: [{ i: 'accountDistribution', x: 0, y: 2, w: 12, h: 4, minH: 4 }],
-        md: [{ i: 'accountDistribution', x: 0, y: 4, w: 10, h: 4, minH: 4 }],
-        sm: [{ i: 'accountDistribution', x: 0, y: 8, w: 6, h: 4, minH: 4 }],
-        xs: [{ i: 'accountDistribution', x: 0, y: 8, w: 4, h: 4, minH: 4 }],
+        lg: [{ i: 'userRoleChart', x: 0, y: 2, w: 6, h: 4 }],
+        md: [{ i: 'userRoleChart', x: 0, y: 4, w: 10, h: 4 }],
+        sm: [{ i: 'userRoleChart', x: 0, y: 8, w: 6, h: 4 }],
+        xs: [{ i: 'userRoleChart', x: 0, y: 8, w: 4, h: 4 }],
+      },
+    },
+    {
+      id: 'serverStatusChart',
+      title: 'Server Health Chart',
+      content: (
+        <Panel title="Infrastructure Health" subtitle="Operational server distribution">
+          <BarChartWidget data={serverStatusChart} height={260} />
+        </Panel>
+      ),
+      defaultLayout: {
+        lg: [{ i: 'serverStatusChart', x: 6, y: 2, w: 6, h: 4 }],
+        md: [{ i: 'serverStatusChart', x: 0, y: 8, w: 10, h: 4 }],
+        sm: [{ i: 'serverStatusChart', x: 0, y: 12, w: 6, h: 4 }],
+        xs: [{ i: 'serverStatusChart', x: 0, y: 12, w: 4, h: 4 }],
+      },
+    },
+    {
+      id: 'analyticsStatusChart',
+      title: 'Analytics Status Chart',
+      content: (
+        <Panel title="Analytics Overview" subtitle="Current signal health from analytics data">
+          <BarChartWidget data={analyticsStatusChart} height={260} />
+        </Panel>
+      ),
+      defaultLayout: {
+        lg: [{ i: 'analyticsStatusChart', x: 0, y: 6, w: 6, h: 4 }],
+        md: [{ i: 'analyticsStatusChart', x: 0, y: 12, w: 10, h: 4 }],
+        sm: [{ i: 'analyticsStatusChart', x: 0, y: 16, w: 6, h: 4 }],
+        xs: [{ i: 'analyticsStatusChart', x: 0, y: 16, w: 4, h: 4 }],
+      },
+    },
+    {
+      id: 'recentReportsAdmin',
+      title: 'Recent Reports',
+      content: (
+        <Panel title="Recent Reports" subtitle="Latest documentation from the reports dataset">
+          <List dense sx={{ p: 0 }}>
+            {reportList.slice(0, 5).map((report: any, index: number) => (
+              <Box key={report.id ?? index}>
+                <ListItem sx={{ px: 0 }}>
+                  <ListItemText
+                    primary={
+                      <Typography variant="body2" fontWeight={700}>
+                        {report.title}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography variant="caption" color="text.secondary">
+                        {report.date ? new Date(report.date).toLocaleDateString() : 'No date'}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+                {index < Math.min(reportList.length, 5) - 1 && <Divider />}
+              </Box>
+            ))}
+          </List>
+        </Panel>
+      ),
+      defaultLayout: {
+        lg: [{ i: 'recentReportsAdmin', x: 6, y: 6, w: 6, h: 4 }],
+        md: [{ i: 'recentReportsAdmin', x: 0, y: 16, w: 10, h: 4 }],
+        sm: [{ i: 'recentReportsAdmin', x: 0, y: 20, w: 6, h: 4 }],
+        xs: [{ i: 'recentReportsAdmin', x: 0, y: 20, w: 4, h: 4 }],
+      },
+    },
+    {
+      id: 'opsSnapshot',
+      title: 'Ops Snapshot',
+      content: (
+        <Panel title="Operations Snapshot" subtitle="Cross-domain summary for admin oversight">
+          <Stack spacing={1.25}>
+            <Chip icon={<Security />} label={`Pending approvals: ${pendingUsers}`} color="warning" variant="outlined" />
+            <Chip icon={<Lock />} label={`Locked accounts: ${lockedUsers}`} color="error" variant="outlined" />
+            <Chip icon={<Memory />} label={`Average CPU: ${avgCpu}%`} color="primary" variant="outlined" />
+            <Chip icon={<Router />} label={`Average memory: ${avgMemory}%`} color="info" variant="outlined" />
+          </Stack>
+        </Panel>
+      ),
+      defaultLayout: {
+        lg: [{ i: 'opsSnapshot', x: 0, y: 10, w: 12, h: 3 }],
+        md: [{ i: 'opsSnapshot', x: 0, y: 20, w: 10, h: 3 }],
+        sm: [{ i: 'opsSnapshot', x: 0, y: 24, w: 6, h: 3 }],
+        xs: [{ i: 'opsSnapshot', x: 0, y: 24, w: 4, h: 3 }],
       },
     },
   ];
@@ -144,7 +355,7 @@ export const AdminDashboard = () => {
       <Title title="Admin Dashboard" />
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Chip label="Security & Accounts" color="primary" icon={<AdminPanelSettings />} />
+        <Chip label="Full Platform Overview" color="primary" icon={<AdminPanelSettings />} />
       </Box>
 
       <DashboardShell dashboardKey="admin-dashboard" widgets={widgets} />

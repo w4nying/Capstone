@@ -1,6 +1,12 @@
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Card, CardContent, Typography, Box, Stack } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+
+type DashboardCardDetail = {
+  label: string;
+  value: string | number;
+  color?: string;
+};
 
 type DashboardCardProps = {
   title: string;
@@ -9,6 +15,7 @@ type DashboardCardProps = {
   color?: string;
   trend?: string;
   trendDirection?: 'up' | 'down';
+  details?: DashboardCardDetail[];
 };
 
 export const DashboardCard = ({
@@ -18,46 +25,30 @@ export const DashboardCard = ({
   color = '#1976d2',
   trend,
   trendDirection = 'up',
+  details = [],
 }: DashboardCardProps) => {
   return (
     <Card
       sx={{
         height: '100%',
         borderRadius: 3,
+        boxShadow: '0 6px 18px rgba(15, 23, 42, 0.06)',
         border: '1px solid',
         borderColor: 'divider',
-        transition: 'all 0.2s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: 4,
-        },
+        backgroundColor: 'background.paper',
       }}
     >
       <CardContent
         sx={{
-          px: 3,      // wider horizontal padding
-          py: 2.5,
           height: '100%',
+          p: 3,
+          '&:last-child': { pb: 3 },
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 1.5,
-          }}
-        >
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 600,
-              color: 'text.secondary',
-            }}
-          >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.secondary', fontSize: '1rem' }}>
             {title}
           </Typography>
 
@@ -66,6 +57,10 @@ export const DashboardCard = ({
               color,
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
+              '& svg': {
+                fontSize: 24,
+              },
             }}
           >
             {icon}
@@ -73,40 +68,52 @@ export const DashboardCard = ({
         </Box>
 
         <Typography
-          variant="h4"
+          variant="h3"
           sx={{
             fontWeight: 800,
-            letterSpacing: '-0.5px',
-            mb: 1,
+            color: 'text.primary',
+            lineHeight: 1.1,
+            mb: trend ? 2 : details.length > 0 ? 2 : 0,
           }}
         >
           {value}
         </Typography>
 
         {trend && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-            }}
-          >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: details.length > 0 ? 2 : 0 }}>
             {trendDirection === 'up' ? (
-              <TrendingUpIcon fontSize="small" color="success" />
+              <TrendingUpIcon sx={{ color: 'text.primary', fontSize: 18 }} />
             ) : (
-              <TrendingDownIcon fontSize="small" color="error" />
+              <TrendingDownIcon sx={{ color: 'text.primary', fontSize: 18 }} />
             )}
-
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: 600,
-                color: 'text.secondary',
-              }}
-            >
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
               {trend}
             </Typography>
           </Box>
+        )}
+
+        {details.length > 0 && (
+          <Stack spacing={1} sx={{ mt: 'auto' }}>
+            {details.map((detail) => (
+              <Box
+                key={detail.label}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}
+              >
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {detail.label}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 800,
+                    color: detail.color ?? 'text.primary',
+                  }}
+                >
+                  {detail.value}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
         )}
       </CardContent>
     </Card>

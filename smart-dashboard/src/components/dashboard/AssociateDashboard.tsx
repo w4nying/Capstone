@@ -1,218 +1,218 @@
-import {
-  Box,
-  Chip,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Divider,
-} from '@mui/material';
+import { Box, Chip, Divider, LinearProgress, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { Title, useGetList } from 'react-admin';
 import {
-  Visibility,
-  Description,
+  Assessment,
   CheckCircle,
-  Warning,
-  Article,
+  Description,
+  Visibility,
 } from '@mui/icons-material';
+
 import { DashboardCard } from './DashboardCard';
+import { BarChartWidget } from '../charts/BarChartWidget';
 import { DashboardShell, type DashboardWidget } from './DashboardShell';
 
+const Panel = ({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) => (
+  <Box
+    sx={{
+      height: '100%',
+      p: 2.5,
+      borderRadius: 3,
+      border: '1px solid',
+      borderColor: 'divider',
+      bgcolor: 'background.paper',
+      boxShadow: '0 6px 18px rgba(15, 23, 42, 0.06)',
+      overflow: 'hidden',
+    }}
+  >
+    <Typography variant="h6" fontWeight={800} sx={{ mb: 0.5 }}>
+      {title}
+    </Typography>
+    {subtitle && (
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        {subtitle}
+      </Typography>
+    )}
+    {children}
+  </Box>
+);
+
 export const AssociateDashboard = () => {
-  const { data: reports, isLoading: loadingReports } = useGetList('reports', {
-    pagination: { page: 1, perPage: 5 },
+  const { data: reports, isLoading: reportsLoading } = useGetList('reports', {
+    pagination: { page: 1, perPage: 6 },
     sort: { field: 'date', order: 'DESC' },
     filter: { status: 'published' },
   });
+  const { data: analytics, isLoading: analyticsLoading } = useGetList('analytics');
 
-  const { data: analytics, isLoading: loadingAnalytics } = useGetList('analytics');
+  if (reportsLoading || analyticsLoading) {
+    return <LinearProgress />;
+  }
 
-  if (loadingReports || loadingAnalytics) return <LinearProgress />;
+  const reportList = reports ?? [];
+  const analyticsList = analytics ?? [];
 
-  const publishedReportsCount = reports ? reports.length : 0;
-  const systemStatus = analytics
-    ? (analytics.find((a: any) => a.name === 'System Uptime')?.value ?? 0)
-    : 0;
-  const activeMetrics = analytics
-    ? analytics.filter((a: any) => a.status === 'active').length
-    : 0;
+  const publishedReportsCount = reportList.length;
+  const activeAnalytics = analyticsList.filter((a: any) => a.status === 'active').length;
+  const warningAnalytics = analyticsList.filter((a: any) => a.status === 'warning').length;
+  const inactiveAnalytics = analyticsList.filter((a: any) => a.status === 'inactive').length;
 
-  const reportsContent = (
-    <Box sx={{ height: '100%' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Article color="primary" />
-        <Typography variant="h6">Recent Technical Reports</Typography>
-      </Box>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Latest published documentation available for review
-      </Typography>
-      <Divider sx={{ mb: 1 }} />
-      <List>
-        {reports?.map((report: any, index: number) => (
-          <Box key={report.id}>
-            <ListItem alignItems="flex-start" disableGutters>
-              <ListItemIcon>
-                <Description color="action" />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <Typography variant="subtitle1" fontWeight="medium">
-                    {report.title}
-                  </Typography>
-                }
-                secondary={
-                  <>
-                    <Typography component="span" variant="body2" color="text.primary">
-                      {new Date(report.date).toLocaleDateString()}
-                    </Typography>
-                    {' — ' + report.summary}
-                  </>
-                }
-              />
-              <Chip label={report.type} size="small" variant="outlined" />
-            </ListItem>
-            {index < reports.length - 1 && <Divider variant="inset" />}
-          </Box>
-        ))}
-      </List>
-    </Box>
-  );
+  const uptimeMetric =
+    analyticsList.find((a: any) => String(a.name).toLowerCase().includes('uptime'))?.value ?? 'N/A';
 
-  const accessContent = (
-    <Box
-      sx={{
-        height: '100%',
-        p: 1,
-        borderRadius: 2,
-        bgcolor: '#fff3e0',
-        border: '1px solid #ffb74d',
-      }}
-    >
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Access Limitations
-      </Typography>
-      <Typography variant="body2" paragraph>
-        As a Technical Associate, you have access to:
-      </Typography>
-      <List dense>
-        <ListItem disableGutters>
-          <ListItemIcon>
-            <CheckCircle fontSize="small" color="success" />
-          </ListItemIcon>
-          <ListItemText primary="View System Analytics" />
-        </ListItem>
-        <ListItem disableGutters>
-          <ListItemIcon>
-            <CheckCircle fontSize="small" color="success" />
-          </ListItemIcon>
-          <ListItemText primary="Read Published Reports" />
-        </ListItem>
-        <ListItem disableGutters>
-          <ListItemIcon>
-            <Warning fontSize="small" color="warning" />
-          </ListItemIcon>
-          <ListItemText primary="No Edit/Delete Permissions" />
-        </ListItem>
-        <ListItem disableGutters>
-          <ListItemIcon>
-            <Warning fontSize="small" color="warning" />
-          </ListItemIcon>
-          <ListItemText primary="No System Configuration" />
-        </ListItem>
-      </List>
-    </Box>
-  );
+  const analyticsStatusChart = {
+    labels: ['Active', 'Warning', 'Inactive'],
+    datasets: [
+      {
+        label: 'Analytics Status',
+        data: [activeAnalytics, warningAnalytics, inactiveAnalytics],
+        backgroundColor: [
+          'rgba(46, 125, 50, 0.8)',
+          'rgba(237, 108, 2, 0.8)',
+          'rgba(117, 117, 117, 0.8)',
+        ],
+      },
+    ],
+  };
 
   const widgets: DashboardWidget[] = [
     {
-      id: 'availableReports',
+      id: 'associateReports',
       title: 'Available Reports',
       content: (
         <DashboardCard
           title="Available Reports"
-          value={publishedReportsCount.toString()}
+          value={publishedReportsCount}
           icon={<Description />}
           color="#7b1fa2"
-          trend="Latest"
+          trend="Read-only access"
           trendDirection="up"
+          details={[
+            { label: 'Published', value: publishedReportsCount, color: '#2e7d32' },
+            { label: 'Latest Loaded', value: reportList.length },
+            { label: 'System Uptime', value: String(uptimeMetric) },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'availableReports', x: 0, y: 0, w: 4, h: 2 }],
-        md: [{ i: 'availableReports', x: 0, y: 0, w: 5, h: 2 }],
-        sm: [{ i: 'availableReports', x: 0, y: 0, w: 6, h: 2 }],
-        xs: [{ i: 'availableReports', x: 0, y: 0, w: 4, h: 2 }],
+        lg: [{ i: 'associateReports', x: 0, y: 0, w: 4, h: 2 }],
+        md: [{ i: 'associateReports', x: 0, y: 0, w: 5, h: 2 }],
+        sm: [{ i: 'associateReports', x: 0, y: 0, w: 6, h: 2 }],
+        xs: [{ i: 'associateReports', x: 0, y: 0, w: 4, h: 2 }],
       },
     },
     {
-      id: 'systemStatus',
+      id: 'associateSystemStatus',
       title: 'System Status',
       content: (
         <DashboardCard
           title="System Status"
-          value={`${systemStatus}%`}
-          icon={systemStatus > 98 ? <CheckCircle /> : <Warning />}
-          color={systemStatus > 98 ? '#2e7d32' : '#ed6c02'}
+          value={String(uptimeMetric)}
+          icon={<CheckCircle />}
+          color="#2e7d32"
           trend="Uptime"
           trendDirection="up"
+          details={[
+            { label: 'Active Metrics', value: activeAnalytics, color: '#2e7d32' },
+            { label: 'Warnings', value: warningAnalytics, color: '#ed6c02' },
+            { label: 'Inactive', value: inactiveAnalytics, color: '#757575' },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'systemStatus', x: 4, y: 0, w: 4, h: 2 }],
-        md: [{ i: 'systemStatus', x: 5, y: 0, w: 5, h: 2 }],
-        sm: [{ i: 'systemStatus', x: 0, y: 2, w: 6, h: 2 }],
-        xs: [{ i: 'systemStatus', x: 0, y: 2, w: 4, h: 2 }],
+        lg: [{ i: 'associateSystemStatus', x: 4, y: 0, w: 4, h: 2 }],
+        md: [{ i: 'associateSystemStatus', x: 5, y: 0, w: 5, h: 2 }],
+        sm: [{ i: 'associateSystemStatus', x: 0, y: 2, w: 6, h: 2 }],
+        xs: [{ i: 'associateSystemStatus', x: 0, y: 2, w: 4, h: 2 }],
       },
     },
     {
-      id: 'activeMetrics',
-      title: 'Active Metrics',
+      id: 'associateAnalyticsCount',
+      title: 'Analytics',
       content: (
         <DashboardCard
-          title="Active Metrics"
-          value={activeMetrics.toString()}
-          icon={<Visibility />}
+          title="Analytics"
+          value={analyticsList.length}
+          icon={<Assessment />}
           color="#0288d1"
-          trend="Monitoring"
+          trend="View signals"
           trendDirection="up"
+          details={[
+            { label: 'Active', value: activeAnalytics, color: '#2e7d32' },
+            { label: 'Warning', value: warningAnalytics, color: '#ed6c02' },
+            { label: 'Inactive', value: inactiveAnalytics, color: '#757575' },
+          ]}
         />
       ),
       defaultLayout: {
-        lg: [{ i: 'activeMetrics', x: 8, y: 0, w: 4, h: 2 }],
-        md: [{ i: 'activeMetrics', x: 0, y: 2, w: 10, h: 2 }],
-        sm: [{ i: 'activeMetrics', x: 0, y: 4, w: 6, h: 2 }],
-        xs: [{ i: 'activeMetrics', x: 0, y: 4, w: 4, h: 2 }],
+        lg: [{ i: 'associateAnalyticsCount', x: 8, y: 0, w: 4, h: 2 }],
+        md: [{ i: 'associateAnalyticsCount', x: 0, y: 2, w: 10, h: 2 }],
+        sm: [{ i: 'associateAnalyticsCount', x: 0, y: 4, w: 6, h: 2 }],
+        xs: [{ i: 'associateAnalyticsCount', x: 0, y: 4, w: 4, h: 2 }],
       },
     },
     {
-      id: 'recentReports',
-      title: 'Recent Technical Reports',
-      content: reportsContent,
+      id: 'associateAnalyticsChart',
+      title: 'Analytics Overview',
+      content: (
+        <Panel title="Analytics Overview" subtitle="Read-only health summary">
+          <BarChartWidget data={analyticsStatusChart} height={260} />
+        </Panel>
+      ),
       defaultLayout: {
-        lg: [{ i: 'recentReports', x: 0, y: 2, w: 8, h: 5, minH: 4 }],
-        md: [{ i: 'recentReports', x: 0, y: 4, w: 10, h: 5, minH: 4 }],
-        sm: [{ i: 'recentReports', x: 0, y: 6, w: 6, h: 5, minH: 4 }],
-        xs: [{ i: 'recentReports', x: 0, y: 6, w: 4, h: 5, minH: 4 }],
+        lg: [{ i: 'associateAnalyticsChart', x: 0, y: 2, w: 6, h: 4 }],
+        md: [{ i: 'associateAnalyticsChart', x: 0, y: 4, w: 10, h: 4 }],
+        sm: [{ i: 'associateAnalyticsChart', x: 0, y: 6, w: 6, h: 4 }],
+        xs: [{ i: 'associateAnalyticsChart', x: 0, y: 6, w: 4, h: 4 }],
       },
     },
     {
-      id: 'accessLimitations',
-      title: 'Access Limitations',
-      content: accessContent,
+      id: 'associateReportFeed',
+      title: 'Recent Reports',
+      content: (
+        <Panel title="Recent Reports" subtitle="Latest published items you can view">
+          <List dense sx={{ p: 0 }}>
+            {reportList.slice(0, 5).map((report: any, index: number) => (
+              <Box key={report.id ?? index}>
+                <ListItem sx={{ px: 0 }}>
+                  <ListItemText
+                    primary={
+                      <Typography variant="body2" fontWeight={700}>
+                        {report.title}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography variant="caption" color="text.secondary">
+                        {report.date ? new Date(report.date).toLocaleDateString() : 'No date'}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+                {index < Math.min(reportList.length, 5) - 1 && <Divider />}
+              </Box>
+            ))}
+          </List>
+        </Panel>
+      ),
       defaultLayout: {
-        lg: [{ i: 'accessLimitations', x: 8, y: 2, w: 4, h: 5, minH: 4 }],
-        md: [{ i: 'accessLimitations', x: 0, y: 9, w: 10, h: 4, minH: 4 }],
-        sm: [{ i: 'accessLimitations', x: 0, y: 11, w: 6, h: 4, minH: 4 }],
-        xs: [{ i: 'accessLimitations', x: 0, y: 11, w: 4, h: 4, minH: 4 }],
+        lg: [{ i: 'associateReportFeed', x: 6, y: 2, w: 6, h: 4 }],
+        md: [{ i: 'associateReportFeed', x: 0, y: 8, w: 10, h: 4 }],
+        sm: [{ i: 'associateReportFeed', x: 0, y: 10, w: 6, h: 4 }],
+        xs: [{ i: 'associateReportFeed', x: 0, y: 10, w: 4, h: 4 }],
       },
     },
   ];
 
   return (
     <Box>
-      <Title title="Technical Associate Dashboard" />
+      <Title title="Associate Dashboard" />
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Chip label="View Access Only" variant="outlined" icon={<Visibility />} />

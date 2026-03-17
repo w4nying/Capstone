@@ -26,27 +26,63 @@ export const dataProvider: DataProvider = {
     try {
       const allResponse = await httpClient.get(`/${resource}`);
       const allItems = allResponse.data;
-      const total = allItems.length;
+
+      let filteredData = [...allItems];
+      const filter = params.filter || {};
+
+      if (filter.q) {
+        const q = String(filter.q).toLowerCase();
+
+        filteredData = filteredData.filter((item: any) =>
+          [
+            item.id,
+            item.username,
+            item.fullName,
+            item.email,
+            item.department,
+            item.role,
+            item.status,
+          ]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(q))
+        );
+      }
+
+      if (filter.role) {
+        filteredData = filteredData.filter(
+          (item: any) => String(item.role) === String(filter.role)
+        );
+      }
+
+      if (filter.status) {
+        filteredData = filteredData.filter(
+          (item: any) => String(item.status) === String(filter.status)
+        );
+      }
+
+      if (filter.department) {
+        filteredData = filteredData.filter(
+          (item: any) => String(item.department) === String(filter.department)
+        );
+      }
+
+      const total = filteredData.length;
 
       const { page, perPage } = params.pagination || { page: 1, perPage: 10 };
       const { field, order } = params.sort || { field: 'id', order: 'ASC' };
 
-      let sortedData = [...allItems];
+      filteredData.sort((a, b) => {
+        const aVal = field === 'id' ? Number(a[field]) : a[field];
+        const bVal = field === 'id' ? Number(b[field]) : b[field];
 
-      if (field) {
-        sortedData.sort((a, b) => {
-          const aVal = field === 'id' ? Number(a[field]) : a[field];
-          const bVal = field === 'id' ? Number(b[field]) : b[field];
-
-          if (aVal < bVal) return order === 'ASC' ? -1 : 1;
-          if (aVal > bVal) return order === 'ASC' ? 1 : -1;
-          return 0;
-        });
-      }
+        if (aVal < bVal) return order === 'ASC' ? -1 : 1;
+        if (aVal > bVal) return order === 'ASC' ? 1 : -1;
+        return 0;
+      });
 
       const start = (page - 1) * perPage;
       const end = start + perPage;
-      const paginatedData = sortedData.slice(start, end);
+      const paginatedData = filteredData.slice(start, end);
 
       return { data: paginatedData, total };
     } catch (error: any) {

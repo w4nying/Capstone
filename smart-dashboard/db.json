@@ -57,7 +57,7 @@
   ],
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "admin",
       "email": "admin@mas.gov.sg",
       "role": "admin",
@@ -139,7 +139,7 @@
               "i": "securityAlerts",
               "x": 0,
               "y": 2,
-              "w": 5,
+              "w": 3,
               "h": 2,
               "moved": false,
               "static": false
@@ -265,7 +265,7 @@
       }
     },
     {
-      "id": 2,
+      "id": "2",
       "email": "officer@mas.gov.sg",
       "username": "officer",
       "fullName": "Technical Officer",
@@ -330,28 +330,36 @@
               "x": 0,
               "y": 0,
               "w": 5,
-              "h": 2
+              "h": 2,
+              "moved": false,
+              "static": false
             },
             {
               "i": "infrastructureHealth",
               "x": 5,
               "y": 0,
               "w": 5,
-              "h": 2
+              "h": 2,
+              "moved": false,
+              "static": false
             },
             {
               "i": "highLoadAlerts",
               "x": 0,
               "y": 2,
               "w": 5,
-              "h": 2
+              "h": 2,
+              "moved": false,
+              "static": false
             },
             {
               "i": "networkStatus",
               "x": 5,
               "y": 2,
               "w": 5,
-              "h": 2
+              "h": 2,
+              "moved": false,
+              "static": false
             },
             {
               "i": "serverStatusWidget",
@@ -359,7 +367,9 @@
               "y": 4,
               "w": 10,
               "h": 5,
-              "minH": 4
+              "minH": 4,
+              "moved": false,
+              "static": false
             }
           ],
           "sm": [
@@ -443,14 +453,14 @@
       }
     },
     {
-      "id": 3,
+      "id": "3",
       "email": "associate@mas.gov.sg",
       "username": "associate",
       "fullName": "Technical Associate",
       "role": "associate",
       "department": "Data & Technology",
       "avatar": "https://i.pravatar.cc/150?img=3",
-      "status": "active",
+      "status": "inactive",
       "theme": "light",
       "dashboardLayouts": {
         "associate-dashboard": {
@@ -622,10 +632,11 @@
           ],
           "xxs": []
         }
-      }
+      },
+      "isLoggedIn": false
     },
     {
-      "id": 4,
+      "id": "4",
       "username": "admin2",
       "email": "admin2@mas.gov.sg",
       "role": "admin",
@@ -879,7 +890,7 @@
       }
     },
     {
-      "id": 5,
+      "id": "5",
       "email": "officer2@mas.gov.sg",
       "username": "officer2",
       "fullName": "Technical Officer 2",
@@ -1057,7 +1068,7 @@
       }
     },
     {
-      "id": 6,
+      "id": "6",
       "email": "associate2@mas.gov.sg",
       "username": "associate2",
       "fullName": "Technical Associate 2",
@@ -1239,7 +1250,7 @@
       }
     },
     {
-      "id": 7,
+      "id": "7",
       "email": "officer3@mas.gov.sg",
       "username": "officer3",
       "fullName": "Technical Officer 3",
@@ -1417,14 +1428,14 @@
       }
     },
     {
-      "id": 8,
+      "id": "8",
       "email": "associate3@mas.gov.sg",
       "username": "associate3",
       "fullName": "Technical Associate 3",
       "role": "associate",
       "department": "Data & Technology",
       "avatar": "https://i.pravatar.cc/150?img=3",
-      "status": "active",
+      "status": "inactive",
       "theme": "light",
       "dashboardLayouts": {
         "associate-dashboard": {
@@ -1596,10 +1607,11 @@
           ],
           "xxs": []
         }
-      }
+      },
+      "isLoggedIn": false
     },
     {
-      "id": 9,
+      "id": "9",
       "email": "associate4@mas.gov.sg",
       "username": "associate4",
       "fullName": "Technical Associate 4",
@@ -1781,7 +1793,7 @@
       }
     },
     {
-      "id": 10,
+      "id": "10",
       "email": "associate5@mas.gov.sg",
       "username": "associate5",
       "fullName": "Technical Associate 5",
@@ -1963,7 +1975,7 @@
       }
     },
     {
-      "id": 11,
+      "id": "11",
       "email": "associate6@mas.gov.sg",
       "username": "associate6",
       "fullName": "Technical Associate 6",

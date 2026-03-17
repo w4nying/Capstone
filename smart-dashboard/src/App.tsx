@@ -19,11 +19,13 @@ import { AdminDashboard } from './components/dashboard/AdminDashboard';
 import { OfficerDashboard } from './components/dashboard/OfficerDashboard';
 import { AssociateDashboard } from './components/dashboard/AssociateDashboard';
 import { AppLayout } from './components/layout/AppLayout';
+import { UserManagementList } from './components/users/UserManagementList';
 import { lightTheme, darkTheme } from './theme';
 import { AnalyticsList } from './resources/analytics/AnalyticsList';
 import { AnalyticsShow } from './resources/analytics/AnalyticsShow';
 import { ReportsList } from './resources/reports/ReportsList';
 import { ReportsShow } from './resources/reports/ReportsShow';
+
 
 const RoleDashboard = () => {
   const role = localStorage.getItem('role') as UserRole;
@@ -90,10 +92,17 @@ function App() {
           />
 
           {(permissions === 'admin' || permissions === 'officer') && (
+            // <Resource
+            //   name="users"
+            //   list={UserManagementList}
+            //   // edit={permissions === 'admin' ? EditGuesser : undefined}
+            //   edit={EditGuesser}
+            //   icon={PeopleIcon}
+            //   options={{ label: 'User Management' }}
+            // />
             <Resource
               name="users"
-              list={ListGuesser}
-              edit={permissions === 'admin' ? EditGuesser : undefined}
+              list={UserManagementList}
               icon={PeopleIcon}
               options={{ label: 'User Management' }}
             />

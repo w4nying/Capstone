@@ -137,7 +137,7 @@
               "x": 6,
               "y": 6,
               "w": 6,
-              "h": 3,
+              "h": 4,
               "moved": false,
               "static": false
             },
@@ -147,6 +147,15 @@
               "y": 10,
               "w": 12,
               "h": 3,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "cpuTrendLine",
+              "x": 0,
+              "y": 13,
+              "w": 12,
+              "h": 4,
               "moved": false,
               "static": false
             }
@@ -232,6 +241,15 @@
               "h": 3,
               "moved": false,
               "static": false
+            },
+            {
+              "i": "cpuTrendLine",
+              "x": 0,
+              "y": 23,
+              "w": 10,
+              "h": 4,
+              "moved": false,
+              "static": false
             }
           ],
           "sm": [
@@ -240,81 +258,70 @@
               "x": 0,
               "y": 0,
               "w": 6,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminServers",
               "x": 0,
               "y": 2,
               "w": 6,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminReports",
               "x": 0,
               "y": 4,
               "w": 6,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminAnalytics",
               "x": 0,
               "y": 6,
               "w": 6,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "userRoleChart",
               "x": 0,
               "y": 8,
               "w": 6,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "serverStatusChart",
               "x": 0,
               "y": 12,
               "w": 6,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "analyticsStatusChart",
               "x": 0,
               "y": 16,
               "w": 6,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "recentReportsAdmin",
               "x": 0,
               "y": 20,
               "w": 6,
-              "h": 5,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "opsSnapshot",
               "x": 0,
-              "y": 25,
+              "y": 24,
               "w": 6,
-              "h": 3,
-              "moved": false,
-              "static": false
+              "h": 3
+            },
+            {
+              "i": "cpuTrendLine",
+              "x": 0,
+              "y": 24,
+              "w": 6,
+              "h": 4
             }
           ],
           "xs": [
@@ -380,9 +387,107 @@
               "y": 24,
               "w": 4,
               "h": 3
+            },
+            {
+              "i": "cpuTrendLine",
+              "x": 0,
+              "y": 24,
+              "w": 4,
+              "h": 4
             }
           ],
-          "xxs": []
+          "xxs": [
+            {
+              "i": "adminUsers",
+              "x": 0,
+              "y": 0,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "adminServers",
+              "x": 0,
+              "y": 1,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "adminReports",
+              "x": 0,
+              "y": 2,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "adminAnalytics",
+              "x": 0,
+              "y": 3,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "userRoleChart",
+              "x": 0,
+              "y": 4,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "serverStatusChart",
+              "x": 0,
+              "y": 5,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "analyticsStatusChart",
+              "x": 0,
+              "y": 6,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "recentReportsAdmin",
+              "x": 0,
+              "y": 7,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "opsSnapshot",
+              "x": 0,
+              "y": 8,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "cpuTrendLine",
+              "x": 0,
+              "y": 9,
+              "w": 1,
+              "h": 1,
+              "moved": false,
+              "static": false
+            }
+          ]
         }
       }
     },

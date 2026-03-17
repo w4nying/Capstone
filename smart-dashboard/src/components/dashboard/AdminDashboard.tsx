@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Box, Chip, Divider, LinearProgress, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 import { Title, useGetList } from 'react-admin';
 import {
@@ -15,6 +16,7 @@ import {
 import { DashboardCard } from './DashboardCard';
 import { PieChartWidget } from '../charts/PieChartWidget';
 import { BarChartWidget } from '../charts/BarChartWidget';
+import { LineChartWidget } from '../charts/LineChartWidget';
 import { DashboardShell, type DashboardWidget } from './DashboardShell';
 
 const Panel = ({
@@ -36,6 +38,8 @@ const Panel = ({
       bgcolor: 'background.paper',
       boxShadow: '0 6px 18px rgba(15, 23, 42, 0.06)',
       overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
     }}
   >
     <Typography variant="h6" fontWeight={800} sx={{ mb: 0.5 }}>
@@ -46,7 +50,9 @@ const Panel = ({
         {subtitle}
       </Typography>
     )}
-    {children}
+    <Box sx={{ flex: 1, minHeight: 0 }}>
+      {children}
+    </Box>
   </Box>
 );
 
@@ -59,9 +65,11 @@ export const AdminDashboard = () => {
   });
   const { data: analytics, isLoading: analyticsLoading } = useGetList('analytics');
 
-  if (usersLoading || serversLoading || reportsLoading || analyticsLoading) {
-    return <LinearProgress />;
-  }
+  const MAX_CPU_POINTS = 12;
+
+  const [cpuHistory, setCpuHistory] = useState<number[]>([]);
+  const [memoryHistory, setMemoryHistory] = useState<number[]>([]);
+  const [cpuLabels, setCpuLabels] = useState<string[]>([]);
 
   const userList = users ?? [];
   const serverList = servers ?? [];
@@ -93,7 +101,8 @@ export const AdminDashboard = () => {
       ? Math.round(serverList.reduce((sum: number, s: any) => sum + (s.memory ?? 0), 0) / totalServers)
       : 0;
 
-  const publishedReports = reportList.filter((r: any) => r.status === 'published').length || reportList.length;
+  const publishedReports =
+    reportList.filter((r: any) => r.status === 'published').length || reportList.length;
 
   const activeAnalytics = analyticsList.filter((a: any) => a.status === 'active').length;
   const warningAnalytics = analyticsList.filter((a: any) => a.status === 'warning').length;
@@ -102,15 +111,88 @@ export const AdminDashboard = () => {
   const uptimeMetric =
     analyticsList.find((a: any) => String(a.name).toLowerCase().includes('uptime'))?.value ?? 'N/A';
 
+  useEffect(() => {
+    const getTimeLabel = () =>
+      new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+
+    const pushPoint = () => {
+      const liveAverageCpu =
+        serverList.length > 0
+          ? Math.round(
+              serverList.reduce((sum: number, server: any) => sum + (server.cpu ?? 0), 0) /
+                serverList.length
+            )
+          : 0;
+
+      const liveAverageMemory =
+        serverList.length > 0
+          ? Math.round(
+              serverList.reduce((sum: number, server: any) => sum + (server.memory ?? 0), 0) /
+                serverList.length
+            )
+          : 0;
+
+      const nextCpu = Math.max(
+        0,
+        Math.min(100, liveAverageCpu + Math.round((Math.random() - 0.5) * 10))
+      );
+
+      const nextMemory = Math.max(
+        0,
+        Math.min(100, liveAverageMemory + Math.round((Math.random() - 0.5) * 8))
+      );
+
+      setCpuHistory((prev) => [...prev, nextCpu].slice(-MAX_CPU_POINTS));
+      setMemoryHistory((prev) => [...prev, nextMemory].slice(-MAX_CPU_POINTS));
+      setCpuLabels((prev) => [...prev, getTimeLabel()].slice(-MAX_CPU_POINTS));
+    };
+
+    pushPoint();
+    const interval = window.setInterval(pushPoint, 4000);
+
+    return () => window.clearInterval(interval);
+  }, [serverList]);
+
+  const cpuTrendData = useMemo(
+    () => ({
+      labels: cpuLabels,
+      datasets: [
+        {
+          label: 'Average CPU Usage',
+          data: cpuHistory,
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.10)',
+          fill: true,
+        },
+        {
+          label: 'Average Memory Usage',
+          data: memoryHistory,
+          borderColor: '#ed6c02',
+          backgroundColor: 'rgba(237, 108, 2, 0.08)',
+          fill: false,
+        },
+      ],
+    }),
+    [cpuLabels, cpuHistory, memoryHistory]
+  );
+
+  if (usersLoading || serversLoading || reportsLoading || analyticsLoading) {
+    return <LinearProgress />;
+  }
+
   const userRolePieChart = {
     labels: Object.keys(roleDistribution).map((role) => role.toUpperCase()),
     datasets: [
       {
         data: Object.values(roleDistribution),
         backgroundColor: [
-          '#1976d2', // admin
-          '#ed6c02', // officer
-          '#2e7d32', // associate
+          '#1976d2',
+          '#ed6c02',
+          '#2e7d32',
         ],
         borderWidth: 0,
       },
@@ -252,14 +334,14 @@ export const AdminDashboard = () => {
       id: 'userRoleChart',
       title: 'User Role Distribution',
       content: (
-      <Panel title="User Role Distribution" subtitle="User composition overview">
-        <PieChartWidget
-          data={userRolePieChart}
-          height={260}
-          centerText={String(totalUsers)}   // 🔥 BIG NUMBER
-          subText="Total Users"             // 🔥 label
-        />
-      </Panel>
+        <Panel title="User Role Distribution" subtitle="User composition overview">
+          <PieChartWidget
+            data={userRolePieChart}
+            height={260}
+            centerText={String(totalUsers)}
+            subText="Total Users"
+          />
+        </Panel>
       ),
       defaultLayout: {
         lg: [{ i: 'userRoleChart', x: 0, y: 2, w: 6, h: 4 }],
@@ -307,8 +389,14 @@ export const AdminDashboard = () => {
             sx={{
               height: '100%',
               overflowY: 'auto',
-              mr: -1,
-              pr: 1,
+              pr: 0.5,
+              '&::-webkit-scrollbar': {
+                width: 6,
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#cbd5e1',
+                borderRadius: 3,
+              },
             }}
           >
             <List dense sx={{ p: 0 }}>
@@ -360,6 +448,21 @@ export const AdminDashboard = () => {
         md: [{ i: 'opsSnapshot', x: 0, y: 20, w: 10, h: 3 }],
         sm: [{ i: 'opsSnapshot', x: 0, y: 24, w: 6, h: 3 }],
         xs: [{ i: 'opsSnapshot', x: 0, y: 24, w: 4, h: 3 }],
+      },
+    },
+    {
+      id: 'cpuTrendLine',
+      title: 'Live CPU Trend',
+      content: (
+        <Panel title="Live CPU Trend" subtitle="Average CPU and memory usage across monitored servers">
+          <LineChartWidget data={cpuTrendData} height={260} />
+        </Panel>
+      ),
+      defaultLayout: {
+        lg: [{ i: 'cpuTrendLine', x: 0, y: 10, w: 12, h: 4 }],
+        md: [{ i: 'cpuTrendLine', x: 0, y: 20, w: 10, h: 4 }],
+        sm: [{ i: 'cpuTrendLine', x: 0, y: 24, w: 6, h: 4 }],
+        xs: [{ i: 'cpuTrendLine', x: 0, y: 24, w: 4, h: 4 }],
       },
     },
   ];

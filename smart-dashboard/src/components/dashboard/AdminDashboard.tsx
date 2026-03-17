@@ -13,6 +13,7 @@ import {
 } from '@mui/icons-material';
 
 import { DashboardCard } from './DashboardCard';
+import { PieChartWidget } from '../charts/PieChartWidget';
 import { BarChartWidget } from '../charts/BarChartWidget';
 import { DashboardShell, type DashboardWidget } from './DashboardShell';
 
@@ -101,18 +102,17 @@ export const AdminDashboard = () => {
   const uptimeMetric =
     analyticsList.find((a: any) => String(a.name).toLowerCase().includes('uptime'))?.value ?? 'N/A';
 
-  const userRoleChart = {
+  const userRolePieChart = {
     labels: Object.keys(roleDistribution).map((role) => role.toUpperCase()),
     datasets: [
       {
-        label: 'Users by Role',
         data: Object.values(roleDistribution),
         backgroundColor: [
-          'rgba(25, 118, 210, 0.8)',
-          'rgba(237, 108, 2, 0.8)',
-          'rgba(46, 125, 50, 0.8)',
-          'rgba(123, 31, 162, 0.8)',
+          '#1976d2', // admin
+          '#ed6c02', // officer
+          '#2e7d32', // associate
         ],
+        borderWidth: 0,
       },
     ],
   };
@@ -252,9 +252,14 @@ export const AdminDashboard = () => {
       id: 'userRoleChart',
       title: 'User Role Distribution',
       content: (
-        <Panel title="User Role Distribution" subtitle="Account mix across the platform">
-          <BarChartWidget data={userRoleChart} height={260} />
-        </Panel>
+      <Panel title="User Role Distribution" subtitle="User composition overview">
+        <PieChartWidget
+          data={userRolePieChart}
+          height={260}
+          centerText={String(totalUsers)}   // 🔥 BIG NUMBER
+          subText="Total Users"             // 🔥 label
+        />
+      </Panel>
       ),
       defaultLayout: {
         lg: [{ i: 'userRoleChart', x: 0, y: 2, w: 6, h: 4 }],
@@ -298,27 +303,36 @@ export const AdminDashboard = () => {
       title: 'Recent Reports',
       content: (
         <Panel title="Recent Reports" subtitle="Latest documentation from the reports dataset">
-          <List dense sx={{ p: 0 }}>
-            {reportList.slice(0, 5).map((report: any, index: number) => (
-              <Box key={report.id ?? index}>
-                <ListItem sx={{ px: 0 }}>
-                  <ListItemText
-                    primary={
-                      <Typography variant="body2" fontWeight={700}>
-                        {report.title}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography variant="caption" color="text.secondary">
-                        {report.date ? new Date(report.date).toLocaleDateString() : 'No date'}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-                {index < Math.min(reportList.length, 5) - 1 && <Divider />}
-              </Box>
-            ))}
-          </List>
+          <Box
+            sx={{
+              height: '100%',
+              overflowY: 'auto',
+              mr: -1,
+              pr: 1,
+            }}
+          >
+            <List dense sx={{ p: 0 }}>
+              {reportList.map((report: any, index: number) => (
+                <Box key={report.id ?? index}>
+                  <ListItem sx={{ px: 0 }}>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body2" fontWeight={700}>
+                          {report.title}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="caption" color="text.secondary">
+                          {report.date ? new Date(report.date).toLocaleDateString() : 'No date'}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                  {index < reportList.length - 1 && <Divider />}
+                </Box>
+              ))}
+            </List>
+          </Box>
         </Panel>
       ),
       defaultLayout: {

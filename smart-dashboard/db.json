@@ -53,6 +53,42 @@
       "cpu": 5,
       "memory": 10,
       "uptime": "0h"
+    },
+    {
+      "id": "7",
+      "name": "DTA-API-01",
+      "type": "API Gateway",
+      "status": "online",
+      "cpu": 52,
+      "memory": 68,
+      "uptime": "10d 6h"
+    },
+    {
+      "id": "8",
+      "name": "DTA-API-02",
+      "type": "API Gateway",
+      "status": "online",
+      "cpu": 60,
+      "memory": 72,
+      "uptime": "9d 18h"
+    },
+    {
+      "id": "9",
+      "name": "DTA-CACHE-01",
+      "type": "Cache Server",
+      "status": "online",
+      "cpu": 28,
+      "memory": 35,
+      "uptime": "20d 3h"
+    },
+    {
+      "id": "10",
+      "name": "DTA-ML-01",
+      "type": "Analytics Engine",
+      "status": "degraded",
+      "cpu": 88,
+      "memory": 90,
+      "uptime": "5d 11h"
     }
   ],
   "users": [
@@ -166,90 +202,70 @@
               "x": 0,
               "y": 0,
               "w": 5,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminServers",
               "x": 5,
               "y": 0,
               "w": 5,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminReports",
               "x": 0,
               "y": 2,
               "w": 5,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminAnalytics",
               "x": 5,
               "y": 2,
               "w": 5,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "userRoleChart",
               "x": 0,
               "y": 4,
               "w": 10,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "serverStatusChart",
               "x": 0,
               "y": 8,
               "w": 10,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "analyticsStatusChart",
               "x": 0,
               "y": 12,
               "w": 10,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "recentReportsAdmin",
               "x": 0,
               "y": 16,
               "w": 10,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             },
             {
               "i": "opsSnapshot",
               "x": 0,
               "y": 20,
               "w": 10,
-              "h": 3,
-              "moved": false,
-              "static": false
+              "h": 3
             },
             {
               "i": "cpuTrendLine",
               "x": 0,
-              "y": 23,
+              "y": 20,
               "w": 10,
-              "h": 4,
-              "moved": false,
-              "static": false
+              "h": 4
             }
           ],
           "sm": [

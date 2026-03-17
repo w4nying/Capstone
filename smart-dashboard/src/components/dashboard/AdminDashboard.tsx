@@ -200,11 +200,11 @@ export const AdminDashboard = () => {
   };
 
   const serverStatusChart = {
-    labels: ['Online', 'Offline', 'High CPU'],
+    labels: ['Online', 'Offline'],
     datasets: [
       {
         label: 'Infrastructure',
-        data: [onlineServers, offlineServers, highCpuServers],
+        data: [onlineServers, offlineServers],
         backgroundColor: [
           'rgba(46, 125, 50, 0.8)',
           'rgba(211, 47, 47, 0.8)',

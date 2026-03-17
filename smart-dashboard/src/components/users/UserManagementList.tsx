@@ -14,6 +14,8 @@ import {
   useUpdate,
 } from 'react-admin';
 import { Chip, Stack, Switch, Tooltip } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import BlockIcon from '@mui/icons-material/Block';
 
 const roleChoices = [
   { id: 'admin', name: 'Admin' },
@@ -186,12 +188,13 @@ export const UserManagementList = () => {
 
                 return (
                 <Chip
+                    icon={isActive ? <CheckCircleIcon /> : <BlockIcon />}
                     label={isActive ? 'Active' : 'Inactive'}
                     color={isActive ? 'success' : 'error'}
                     size="small"
                     variant={isActive ? 'filled' : 'outlined'}
                     sx={{
-                    fontWeight: 500,
+                        fontWeight: 500,
                     }}
                 />
                 );

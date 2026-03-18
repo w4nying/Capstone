@@ -1,4 +1,10 @@
-import { List, useListContext, useNotify, useRefresh, useUpdate } from 'react-admin';
+import {
+  List,
+  useListContext,
+  useNotify,
+  useRefresh,
+  useUpdate,
+} from 'react-admin';
 import {
   Box,
   Button,
@@ -21,11 +27,12 @@ import {
   BuildOutlined,
   SecurityOutlined,
   SpeedOutlined,
-  PaletteOutlined,
   PsychologyOutlined,
   TuneOutlined,
 } from '@mui/icons-material';
 import { useEffect, useMemo, useState } from 'react';
+import { useSystemSettings } from '../../contexts/SystemSettingsContext';
+import { getCurrentUser } from '../../providers/authProvider';
 
 type SettingRecord = {
   id: string | number;
@@ -52,18 +59,21 @@ const truncateText = (value?: string, maxLength = 110) => {
   return `${value.slice(0, maxLength)}...`;
 };
 
+const shouldDisplaySetting = (record: SettingRecord) => {
+  const name = String(record.name || '').toLowerCase();
+  return name !== 'default theme' && name !== 'default chart library';
+};
+
 const getCategoryColor = (
   category?: string
-): 'primary' | 'success' | 'warning' | 'secondary' | 'info' | 'default' => {
+): 'primary' | 'success' | 'warning' | 'info' | 'default' => {
   switch ((category || '').toLowerCase()) {
     case 'system':
       return 'primary';
     case 'performance':
       return 'warning';
     case 'security':
-      return 'error' as 'default';
-    case 'display':
-      return 'secondary';
+      return 'default';
     case 'user experience':
       return 'success';
     case 'visualization':
@@ -81,8 +91,6 @@ const getCategoryIcon = (category?: string) => {
       return <SpeedOutlined fontSize="small" />;
     case 'security':
       return <SecurityOutlined fontSize="small" />;
-    case 'display':
-      return <PaletteOutlined fontSize="small" />;
     case 'user experience':
       return <PsychologyOutlined fontSize="small" />;
     case 'visualization':
@@ -102,27 +110,19 @@ const isBooleanSetting = (record: SettingRecord) => {
   );
 };
 
-const isSelectSetting = (record: SettingRecord) => {
+const isSessionTimeoutSetting = (record: SettingRecord) => {
   const name = String(record.name || '').toLowerCase();
-  return (
-    name.includes('default theme') ||
-    name.includes('default chart library')
-  );
+  return name.includes('session timeout');
 };
 
-const getSelectOptions = (record: SettingRecord) => {
-  const name = String(record.name || '').toLowerCase();
-
-  if (name.includes('default theme')) {
-    return ['Professional Light', 'Professional Dark', 'System Default'];
-  }
-
-  if (name.includes('default chart library')) {
-    return ['Chart.js', 'Recharts', 'ECharts'];
-  }
-
-  return [];
-};
+const getSessionTimeoutOptions = () => [
+  '5 minutes',
+  '10 minutes',
+  '15 minutes',
+  '30 minutes',
+  '45 minutes',
+  '60 minutes',
+];
 
 const FilterBar = () => {
   const { filterValues, setFilters, sort, setSort } = useListContext<SettingRecord>();
@@ -130,7 +130,6 @@ const FilterBar = () => {
   const currentFilters = useMemo(
     () => ({
       q: String(filterValues?.q ?? ''),
-      category: String(filterValues?.category ?? ''),
     }),
     [filterValues]
   );
@@ -154,36 +153,8 @@ const FilterBar = () => {
             })
           }
           size="small"
-          sx={{
-            minWidth: 300,
-            flex: 1.8,
-          }}
+          sx={{ minWidth: 320, flex: 2.2 }}
         />
-
-        <TextField
-          select
-          label="Category"
-          value={currentFilters.category}
-          onChange={(e) =>
-            setFilters({
-              ...filterValues,
-              category: e.target.value,
-            })
-          }
-          size="small"
-          sx={{
-            minWidth: 180,
-            flex: 1,
-          }}
-        >
-          <MenuItem value="">All categories</MenuItem>
-          <MenuItem value="System">System</MenuItem>
-          <MenuItem value="Performance">Performance</MenuItem>
-          <MenuItem value="User Experience">User Experience</MenuItem>
-          <MenuItem value="Visualization">Visualization</MenuItem>
-          <MenuItem value="Security">Security</MenuItem>
-          <MenuItem value="Display">Display</MenuItem>
-        </TextField>
 
         <TextField
           select
@@ -194,17 +165,12 @@ const FilterBar = () => {
             setSort({ field, order: order as 'ASC' | 'DESC' });
           }}
           size="small"
-          sx={{
-            minWidth: 180,
-            flex: 1,
-          }}
+          sx={{ minWidth: 190, flex: 1 }}
         >
           <MenuItem value="lastModified|DESC">Last Modified (Newest)</MenuItem>
           <MenuItem value="lastModified|ASC">Last Modified (Oldest)</MenuItem>
           <MenuItem value="name|ASC">Name (A-Z)</MenuItem>
           <MenuItem value="name|DESC">Name (Z-A)</MenuItem>
-          <MenuItem value="category|ASC">Category (A-Z)</MenuItem>
-          <MenuItem value="category|DESC">Category (Z-A)</MenuItem>
         </TextField>
 
         <Button
@@ -229,7 +195,11 @@ const FilterBar = () => {
 const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
   const notify = useNotify();
   const refresh = useRefresh();
+  const { refreshSettings } = useSystemSettings();
   const [update, { isPending }] = useUpdate();
+
+  const user = getCurrentUser();
+  const modifiedBy = user?.fullName || user?.username || 'System Administrator';
 
   const [value, setValue] = useState(record.value ?? '');
 
@@ -248,13 +218,14 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
           ...record,
           value,
           lastModified: new Date().toISOString(),
-          modifiedBy: 'System Administrator',
+          modifiedBy,
         },
         previousData: record,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           notify('Setting updated');
+          await refreshSettings();
           refresh();
         },
         onError: () => {
@@ -268,12 +239,12 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
     const checked = String(value).toLowerCase() === 'true';
 
     return (
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
         <Switch
           checked={checked}
           onChange={(e) => setValue(String(e.target.checked))}
         />
-        <Typography variant="body2" sx={{ minWidth: 48 }}>
+        <Typography variant="body2" sx={{ minWidth: 40 }}>
           {checked ? 'On' : 'Off'}
         </Typography>
         <Button
@@ -289,24 +260,23 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
     );
   }
 
-  if (isSelectSetting(record)) {
-    const options = getSelectOptions(record);
-
+  if (isSessionTimeoutSetting(record)) {
     return (
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
         <TextField
           select
           size="small"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          sx={{ minWidth: 180 }}
+          sx={{ minWidth: 240 }}
         >
-          {options.map((option) => (
+          {getSessionTimeoutOptions().map((option) => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
           ))}
         </TextField>
+
         <Button
           variant="contained"
           size="small"
@@ -321,12 +291,12 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
   }
 
   return (
-    <Stack direction="row" spacing={1} alignItems="center">
+    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
       <TextField
         size="small"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        sx={{ minWidth: 180 }}
+        sx={{ minWidth: 260 }}
       />
       <Button
         variant="contained"
@@ -344,75 +314,64 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
 const SettingsTable = () => {
   const { data, isPending } = useListContext<SettingRecord>();
 
+  const visibleData = (data ?? []).filter(shouldDisplaySetting);
+
   if (isPending) {
     return (
       <Stack spacing={1}>
         {Array.from({ length: 8 }).map((_, index) => (
-          <Skeleton
-            key={index}
-            variant="rounded"
-            height={56}
-            sx={{ borderRadius: 2 }}
-          />
+          <Skeleton key={index} variant="rounded" height={56} sx={{ borderRadius: 2 }} />
         ))}
       </Stack>
     );
   }
 
-  if (!data || data.length === 0) {
+  if (!visibleData.length) {
     return (
-      <Paper
-        variant="outlined"
-        sx={{
-          borderRadius: 3,
-          p: 6,
-          textAlign: 'center',
-        }}
-      >
+      <Paper variant="outlined" sx={{ borderRadius: 3, p: 6, textAlign: 'center' }}>
         <Typography variant="h6" sx={{ fontWeight: 700 }}>
           No settings found
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Try adjusting your filters or search terms.
+          Try adjusting your search.
         </Typography>
       </Paper>
     );
   }
 
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        width: '100%',
-        borderRadius: 3,
-        overflow: 'hidden',
-      }}
-    >
+    <Paper variant="outlined" sx={{ width: '100%', borderRadius: 3, overflow: 'hidden' }}>
       <TableContainer sx={{ width: '100%', overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 1320 }}>
+        <Table
+            sx={{
+                width: '100%',
+                minWidth: 1100,
+                tableLayout: 'fixed',
+            }}
+        >
           <TableHead>
             <TableRow
-              sx={{
+                sx={{
                 bgcolor: 'action.hover',
                 '& .MuiTableCell-root': {
-                  fontWeight: 700,
-                  whiteSpace: 'nowrap',
-                  borderBottom: '1px solid',
-                  borderColor: 'divider',
+                    fontWeight: 700,
+                    whiteSpace: 'nowrap',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
                 },
-              }}
+                }}
             >
-              <TableCell sx={{ width: '14%' }}>Category</TableCell>
-              <TableCell sx={{ width: '18%' }}>Setting Name</TableCell>
-              <TableCell sx={{ width: '22%' }}>Value / Control</TableCell>
-              <TableCell sx={{ width: '22%' }}>Description</TableCell>
-              <TableCell sx={{ width: '12%' }}>Modified By</TableCell>
-              <TableCell sx={{ width: '12%' }}>Last Modified</TableCell>
+                <TableCell sx={{ width: '12%' }}>Category</TableCell>
+                <TableCell sx={{ width: '16%' }}>Setting Name</TableCell>
+                <TableCell sx={{ width: '26%' }}>Value / Control</TableCell>
+                <TableCell sx={{ width: '20%' }}>Description</TableCell>
+                <TableCell sx={{ width: '11%' }}>Modified By</TableCell>
+                <TableCell sx={{ width: '15%' }}>Last Modified</TableCell>
             </TableRow>
-          </TableHead>
+            </TableHead>
 
           <TableBody>
-            {data.map((record) => {
+            {visibleData.map((record) => {
               const categoryColor = getCategoryColor(record.category);
 
               return (
@@ -434,10 +393,7 @@ const SettingsTable = () => {
                       size="small"
                       color={categoryColor}
                       variant={categoryColor === 'default' ? 'outlined' : 'filled'}
-                      sx={{
-                        fontWeight: 600,
-                        maxWidth: '100%',
-                      }}
+                      sx={{ fontWeight: 600, maxWidth: '100%' }}
                     />
                   </TableCell>
 
@@ -452,11 +408,7 @@ const SettingsTable = () => {
                   </TableCell>
 
                   <TableCell>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ lineHeight: 1.45 }}
-                    >
+                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.45 }}>
                       {truncateText(record.description, 120)}
                     </Typography>
                   </TableCell>
@@ -512,3 +464,5 @@ export const SettingsList = () => (
     <SettingsListContent />
   </List>
 );
+
+export default SettingsList;

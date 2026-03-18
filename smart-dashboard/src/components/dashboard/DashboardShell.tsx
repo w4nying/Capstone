@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
 import 'react-grid-layout/css/styles.css';
@@ -28,6 +29,7 @@ import {
   saveDashboardLayouts,
 } from '../../services/dashboardPreferences';
 import type { DashboardBreakpointLayouts } from '../../types/dashboard';
+import { useSystemSettings } from '../../contexts/SystemSettingsContext';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -201,6 +203,17 @@ export const DashboardShell = ({
   dashboardKey,
   widgets,
 }: DashboardShellProps) => {
+  const { getBooleanSetting } = useSystemSettings();
+
+  const personalizationEnabled = getBooleanSetting(
+    'Personalization Enabled',
+    true
+  );
+  const autoSaveDashboardLayout = getBooleanSetting(
+    'Auto-save Dashboard Layout',
+    true
+  );
+
   const defaultVisibility = useMemo(() => createDefaultVisibility(widgets), [widgets]);
 
   const [layouts, setLayouts] = useState<DashboardBreakpointLayouts>(() =>
@@ -208,6 +221,7 @@ export const DashboardShell = ({
   );
   const [saving, setSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const [widgetVisibility, setWidgetVisibility] = useState<WidgetVisibility>(defaultVisibility);
@@ -230,6 +244,7 @@ export const DashboardShell = ({
     setLayouts(mergedLayouts);
     setWidgetVisibility(mergedVisibility);
     setDraftWidgetVisibility(mergedVisibility);
+    setHasUnsavedChanges(false);
   }, [dashboardKey, widgets, defaultVisibility]);
 
   useEffect(() => {
@@ -237,6 +252,8 @@ export const DashboardShell = ({
   }, [widgets]);
 
   useEffect(() => {
+    if (!personalizationEnabled) return;
+
     const handleOpenWidgetSettings = () => {
       setDraftWidgetVisibility(widgetVisibility);
       setSettingsDialogOpen(true);
@@ -246,7 +263,7 @@ export const DashboardShell = ({
     return () => {
       window.removeEventListener(OPEN_WIDGET_SETTINGS_EVENT, handleOpenWidgetSettings);
     };
-  }, [widgetVisibility]);
+  }, [widgetVisibility, personalizationEnabled]);
 
   useEffect(() => {
     return () => {
@@ -277,7 +294,9 @@ export const DashboardShell = ({
 
     try {
       await saveDashboardLayouts(dashboardKey, normalized);
+      window.dispatchEvent(new Event('dashboardLayoutChanged'));
       setShowSaved(true);
+      setHasUnsavedChanges(false);
 
       if (savedTimeoutRef.current) {
         window.clearTimeout(savedTimeoutRef.current);
@@ -291,25 +310,37 @@ export const DashboardShell = ({
     }
   };
 
+  const handleManualSave = async () => {
+    await persistLayouts(layouts);
+  };
+
   const handleLayoutChange = (_layout: any, allLayouts: any) => {
+    if (!personalizationEnabled) return;
+
     const normalizedIncoming = normalizeLayouts(allLayouts);
 
     setLayouts((current) => {
       const merged = mergeIntoCurrentLayouts(current, normalizedIncoming);
 
-      if (saveTimeoutRef.current) {
-        window.clearTimeout(saveTimeoutRef.current);
-      }
+      if (autoSaveDashboardLayout) {
+        if (saveTimeoutRef.current) {
+          window.clearTimeout(saveTimeoutRef.current);
+        }
 
-      saveTimeoutRef.current = window.setTimeout(() => {
-        void persistLayouts(merged);
-      }, 250);
+        saveTimeoutRef.current = window.setTimeout(() => {
+          void persistLayouts(merged);
+        }, 250);
+      } else {
+        setShowSaved(false);
+        setHasUnsavedChanges(true);
+      }
 
       return merged;
     });
   };
 
   const openResetDialog = () => {
+    if (!personalizationEnabled) return;
     setResetDialogOpen(true);
   };
 
@@ -328,9 +359,13 @@ export const DashboardShell = ({
     setLayouts(resetLayouts);
     setResetDialogOpen(false);
     setShowSaved(false);
+    setHasUnsavedChanges(false);
+    window.dispatchEvent(new Event('dashboardLayoutChanged'));
   };
 
   const openSettingsDialog = () => {
+    if (!personalizationEnabled) return;
+
     setDraftWidgetVisibility(widgetVisibility);
     setSettingsDialogOpen(true);
   };
@@ -354,23 +389,32 @@ export const DashboardShell = ({
     saveWidgetVisibility(dashboardKey, nextVisibility);
     setSettingsDialogOpen(false);
     setShowSaved(false);
-    setSaving(true);
 
-    try {
-      await saveDashboardLayouts(dashboardKey, layouts);
-      setShowSaved(true);
+    if (autoSaveDashboardLayout) {
+      setSaving(true);
 
-      if (savedTimeoutRef.current) {
-        window.clearTimeout(savedTimeoutRef.current);
+      try {
+        await saveDashboardLayouts(dashboardKey, layouts);
+        window.dispatchEvent(new Event('dashboardLayoutChanged'));
+        setShowSaved(true);
+        setHasUnsavedChanges(false);
+
+        if (savedTimeoutRef.current) {
+          window.clearTimeout(savedTimeoutRef.current);
+        }
+
+        savedTimeoutRef.current = window.setTimeout(() => {
+          setShowSaved(false);
+        }, 2000);
+      } finally {
+        setSaving(false);
       }
-
-      savedTimeoutRef.current = window.setTimeout(() => {
-        setShowSaved(false);
-      }, 2000);
-    } finally {
-      setSaving(false);
+    } else {
+      setHasUnsavedChanges(true);
     }
   };
+
+  const showSavingUi = personalizationEnabled && autoSaveDashboardLayout;
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -382,63 +426,103 @@ export const DashboardShell = ({
         sx={{ mb: 2 }}
       >
         <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
-          <Fade in={saving} unmountOnExit>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <CircularProgress size={16} />
-              <Typography variant="body2" color="text.secondary">
-                Saving layout...
-              </Typography>
-            </Stack>
-          </Fade>
+          {showSavingUi && (
+            <>
+              <Fade in={saving} unmountOnExit>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <CircularProgress size={16} />
+                  <Typography variant="body2" color="text.secondary">
+                    Saving layout...
+                  </Typography>
+                </Stack>
+              </Fade>
 
-          <Fade in={showSaved && !saving} unmountOnExit>
-            <Stack direction="row" spacing={0.75} alignItems="center">
-              <CheckCircleIcon fontSize="small" color="success" />
-              <Typography variant="body2" color="success.main" fontWeight={600}>
-                Layout saved
-              </Typography>
-            </Stack>
-          </Fade>
+              <Fade in={showSaved && !saving} unmountOnExit>
+                <Stack direction="row" spacing={0.75} alignItems="center">
+                  <CheckCircleIcon fontSize="small" color="success" />
+                  <Typography variant="body2" color="success.main" fontWeight={600}>
+                    Layout saved
+                  </Typography>
+                </Stack>
+              </Fade>
 
-          {!saving && !showSaved && (
+              {!saving && !showSaved && (
+                <Typography variant="body2" color="text.secondary">
+                  Layout is saved per user
+                </Typography>
+              )}
+            </>
+          )}
+
+          {!personalizationEnabled && (
             <Typography variant="body2" color="text.secondary">
-              Layout is saved per user
+              Dashboard personalization is disabled by system settings
+            </Typography>
+          )}
+
+          {personalizationEnabled && !autoSaveDashboardLayout && !hasUnsavedChanges && (
+            <Typography variant="body2" color="text.secondary">
+              Auto-save layout is disabled by system settings
+            </Typography>
+          )}
+
+          {personalizationEnabled && !autoSaveDashboardLayout && hasUnsavedChanges && (
+            <Typography variant="body2" color="warning.main" fontWeight={600}>
+              You have unsaved layout changes
             </Typography>
           )}
         </Stack>
 
-        <Stack direction="row" spacing={1.25} flexWrap="wrap">
-          <Button
-            variant="outlined"
-            startIcon={<SettingsIcon />}
-            onClick={openSettingsDialog}
-            sx={{
-              fontWeight: 700,
-              px: 2,
-              borderRadius: 2,
-            }}
-          >
-            Manage Widgets
-          </Button>
+        {personalizationEnabled && (
+          <Stack direction="row" spacing={1.25} flexWrap="wrap">
+            {!autoSaveDashboardLayout && (
+              <Button
+                variant="contained"
+                startIcon={<SaveIcon />}
+                onClick={handleManualSave}
+                disabled={!hasUnsavedChanges || saving}
+                sx={{
+                  fontWeight: 700,
+                  px: 2,
+                  borderRadius: 2,
+                }}
+              >
+                Save Layout
+              </Button>
+            )}
 
-          <Button
-            variant="contained"
-            color="warning"
-            startIcon={<RefreshIcon />}
-            onClick={openResetDialog}
-            sx={{
-              fontWeight: 700,
-              px: 2,
-              borderRadius: 2,
-              boxShadow: 'none',
-              '&:hover': {
+            <Button
+              variant="outlined"
+              startIcon={<SettingsIcon />}
+              onClick={openSettingsDialog}
+              sx={{
+                fontWeight: 700,
+                px: 2,
+                borderRadius: 2,
+              }}
+            >
+              Manage Widgets
+            </Button>
+
+            <Button
+              variant="contained"
+              color="warning"
+              startIcon={<RefreshIcon />}
+              onClick={openResetDialog}
+              sx={{
+                fontWeight: 700,
+                px: 2,
+                borderRadius: 2,
                 boxShadow: 'none',
-              },
-            }}
-          >
-            Reset Widget Layout
-          </Button>
-        </Stack>
+                '&:hover': {
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              Reset Widget Layout
+            </Button>
+          </Stack>
+        )}
       </Stack>
 
       <ResponsiveGridLayout
@@ -452,15 +536,17 @@ export const DashboardShell = ({
         onLayoutChange={handleLayoutChange}
         compactType="vertical"
         preventCollision={false}
+        isDraggable={personalizationEnabled}
+        isResizable={personalizationEnabled}
       >
         {visibleWidgets.map((widget) => (
-          <Box 
-            key={widget.id} 
+          <Box
+            key={widget.id}
             sx={{
               height: '100%',
-              cursor: 'grab',
+              cursor: personalizationEnabled ? 'grab' : 'default',
               '&:active': {
-                cursor: 'grabbing',
+                cursor: personalizationEnabled ? 'grabbing' : 'default',
               },
             }}
           >

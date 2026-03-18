@@ -78,7 +78,8 @@ const applyAnalyticsFilters = (items: any[], filter: Record<string, any>) => {
         item.trend,
         item.value,
         item.target,
-        item.updatedAt,
+        item.date,
+        item.description,
       ]
         .filter((value) => value !== undefined && value !== null)
         .some((value) => toSearchableString(value).includes(q))
@@ -144,6 +145,36 @@ const applyReportsFilters = (items: any[], filter: Record<string, any>) => {
   return filtered;
 };
 
+const applySettingsFilters = (items: any[], filter: Record<string, any>) => {
+  let filtered = [...items];
+
+  if (filter.q) {
+    const q = toSearchableString(filter.q);
+    filtered = filtered.filter((item) =>
+      [
+        item.id,
+        item.category,
+        item.name,
+        item.value,
+        item.description,
+        item.modifiedBy,
+        item.lastModified,
+      ]
+        .filter((value) => value !== undefined && value !== null)
+        .some((value) => toSearchableString(value).includes(q))
+    );
+  }
+
+  if (filter.category) {
+    filtered = filtered.filter(
+      (item) =>
+        toSearchableString(item.category) === toSearchableString(filter.category)
+    );
+  }
+
+  return filtered;
+};
+
 const applyGenericFilters = (items: any[], filter: Record<string, any>) => {
   let filtered = [...items];
 
@@ -186,37 +217,6 @@ const applyResourceFilters = (
       return applyGenericFilters(items, filter);
   }
 };
-
-const applySettingsFilters = (items: any[], filter: Record<string, any>) => {
-  let filtered = [...items];
-
-  if (filter.q) {
-    const q = toSearchableString(filter.q);
-    filtered = filtered.filter((item) =>
-      [
-        item.id,
-        item.category,
-        item.name,
-        item.value,
-        item.description,
-        item.modifiedBy,
-        item.lastModified,
-      ]
-        .filter((value) => value !== undefined && value !== null)
-        .some((value) => toSearchableString(value).includes(q))
-    );
-  }
-
-  if (filter.category) {
-    filtered = filtered.filter(
-      (item) =>
-        toSearchableString(item.category) === toSearchableString(filter.category)
-    );
-  }
-
-  return filtered;
-};
-
 
 const compareValues = (aVal: any, bVal: any, order: 'ASC' | 'DESC') => {
   if (aVal == null && bVal == null) return 0;
@@ -261,18 +261,16 @@ export const dataProvider: DataProvider = {
       const { page, perPage } = params.pagination || { page: 1, perPage: 10 };
       const { field, order } = params.sort || { field: 'id', order: 'ASC' };
 
-      let filteredData = applyResourceFilters(resource, [...allItems], filter);
-
+      const filteredData = applyResourceFilters(resource, [...allItems], filter);
       const total = filteredData.length;
 
       filteredData.sort((a, b) => compareValues(a[field], b[field], order));
 
       const start = (page - 1) * perPage;
       const end = start + perPage;
-      const paginatedData = filteredData.slice(start, end);
 
       return {
-        data: paginatedData,
+        data: filteredData.slice(start, end),
         total,
       };
     } catch (error: any) {

@@ -1,4 +1,4 @@
-import { Admin, EditGuesser, ListGuesser, Resource } from 'react-admin';
+import { Admin, Resource } from 'react-admin';
 import { useEffect, useState } from 'react';
 import {
   Assessment as AssessmentIcon,
@@ -19,15 +19,14 @@ import { AdminDashboard } from './components/dashboard/AdminDashboard';
 import { OfficerDashboard } from './components/dashboard/OfficerDashboard';
 import { AssociateDashboard } from './components/dashboard/AssociateDashboard';
 import { AppLayout } from './components/layout/AppLayout';
-import { UserManagementList } from './components/users/UserManagementList';
-import { SystemSettingsProvider } from './contexts/SystemSettingsContext';
 import { lightTheme, darkTheme } from './theme';
 import { AnalyticsList } from './resources/analytics/AnalyticsList';
 import { AnalyticsShow } from './resources/analytics/AnalyticsShow';
 import { ReportsList } from './resources/reports/ReportsList';
 import { ReportsShow } from './resources/reports/ReportsShow';
 import { SettingsList } from './resources/settings/SettingsList';
-
+import { SystemSettingsProvider } from './contexts/SystemSettingsContext';
+import { UserManagementList } from './components/users/UserManagementList';
 
 const RoleDashboard = () => {
   const role = localStorage.getItem('role') as UserRole;
@@ -38,6 +37,7 @@ const RoleDashboard = () => {
     case 'officer':
       return <OfficerDashboard />;
     case 'associate':
+      return <AssociateDashboard />;
     default:
       return <AssociateDashboard />;
   }
@@ -47,81 +47,50 @@ function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getCurrentTheme());
 
   useEffect(() => {
-    const syncTheme = () => {
-      setThemeMode(getCurrentTheme());
-    };
-
-    window.addEventListener('themeChanged', syncTheme);
-
-    return () => {
-      window.removeEventListener('themeChanged', syncTheme);
-    };
+    setThemeMode(getCurrentTheme());
   }, []);
 
   return (
-    <Admin
-      dataProvider={dataProvider}
-      authProvider={authProvider}
-      dashboard={RoleDashboard}
-      layout={AppLayout}
-      loginPage={LoginPage}
-      title="MAS Dashboard System"
-      requireAuth
-      theme={lightTheme}
-      darkTheme={darkTheme}
-      defaultTheme={themeMode}
-    >
-      {(permissions) => (
-        <>
-          <Resource
-            name="analytics"
-            list={AnalyticsList}
-            show={AnalyticsShow}
-            edit={permissions === 'associate' ? undefined : EditGuesser}
-            create={permissions === 'associate' ? undefined : EditGuesser}
-            icon={AssessmentIcon}
-            options={{ label: 'Analytics' }}
+    <SystemSettingsProvider>
+      <Admin
+        loginPage={LoginPage}
+        dataProvider={dataProvider}
+        authProvider={authProvider}
+        dashboard={RoleDashboard}
+        layout={(props) => (
+          <AppLayout
+            {...props}
+            onThemeChange={(mode) => setThemeMode(mode)}
           />
-
-          <Resource
-            name="reports"
-            list={ReportsList}
-            show={ReportsShow}
-            edit={permissions === 'associate' ? undefined : EditGuesser}
-            create={permissions === 'associate' ? undefined : EditGuesser}
-            icon={DescriptionIcon}
-            options={{ label: 'Reports' }}
-          />
-
-          {(permissions === 'admin' || permissions === 'officer') && (
-            // <Resource
-            //   name="users"
-            //   list={UserManagementList}
-            //   // edit={permissions === 'admin' ? EditGuesser : undefined}
-            //   edit={EditGuesser}
-            //   icon={PeopleIcon}
-            //   options={{ label: 'User Management' }}
-            // />
-            <Resource
-              name="users"
-              list={UserManagementList}
-              icon={PeopleIcon}
-              options={{ label: 'User Management' }}
-            />
-          )}
-
-          {permissions === 'admin' && (
-            <Resource
-              name="settings"
-              list={SettingsList}
-              edit={EditGuesser}
-              icon={SettingsIcon}
-              options={{ label: 'System Settings' }}
-            />
-          )}
-        </>
-      )}
-    </Admin>
+        )}
+        theme={lightTheme}
+        darkTheme={darkTheme}
+        defaultTheme={themeMode}
+      >
+        <Resource
+          name="analytics"
+          list={AnalyticsList}
+          show={AnalyticsShow}
+          icon={AssessmentIcon}
+        />
+        <Resource
+          name="reports"
+          list={ReportsList}
+          show={ReportsShow}
+          icon={DescriptionIcon}
+        />
+        <Resource
+          name="users"
+          list={UserManagementList}
+          icon={PeopleIcon}
+        />
+        <Resource
+          name="settings"
+          list={SettingsList}
+          icon={SettingsIcon}
+        />
+      </Admin>
+    </SystemSettingsProvider>
   );
 }
 

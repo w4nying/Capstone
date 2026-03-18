@@ -430,6 +430,55 @@
         "officer-dashboard": {
           "lg": [
             {
+              "i": "officerServers",
+              "x": 0,
+              "y": 0,
+              "w": 4,
+              "h": 2
+            },
+            {
+              "i": "officerAnalytics",
+              "x": 4,
+              "y": 0,
+              "w": 4,
+              "h": 2
+            },
+            {
+              "i": "officerReports",
+              "x": 8,
+              "y": 0,
+              "w": 4,
+              "h": 2
+            },
+            {
+              "i": "officerServerChart",
+              "x": 0,
+              "y": 2,
+              "w": 6,
+              "h": 4
+            },
+            {
+              "i": "officerAnalyticsChart",
+              "x": 6,
+              "y": 2,
+              "w": 6,
+              "h": 4
+            },
+            {
+              "i": "officerIncidentPanel",
+              "x": 0,
+              "y": 6,
+              "w": 4,
+              "h": 3
+            },
+            {
+              "i": "officerRecentReports",
+              "x": 4,
+              "y": 6,
+              "w": 8,
+              "h": 3
+            },
+            {
               "i": "activeServers",
               "x": 4,
               "y": 0,
@@ -477,6 +526,69 @@
             }
           ],
           "md": [
+            {
+              "i": "officerServers",
+              "x": 0,
+              "y": 0,
+              "w": 5,
+              "h": 2,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "officerAnalytics",
+              "x": 5,
+              "y": 0,
+              "w": 5,
+              "h": 2,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "officerReports",
+              "x": 0,
+              "y": 2,
+              "w": 10,
+              "h": 2,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "officerServerChart",
+              "x": 0,
+              "y": 4,
+              "w": 10,
+              "h": 4,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "officerAnalyticsChart",
+              "x": 0,
+              "y": 8,
+              "w": 10,
+              "h": 4,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "officerIncidentPanel",
+              "x": 0,
+              "y": 12,
+              "w": 10,
+              "h": 3,
+              "moved": false,
+              "static": false
+            },
+            {
+              "i": "officerRecentReports",
+              "x": 0,
+              "y": 15,
+              "w": 10,
+              "h": 3,
+              "moved": false,
+              "static": false
+            },
             {
               "i": "activeServers",
               "x": 0,
@@ -526,6 +638,55 @@
           ],
           "sm": [
             {
+              "i": "officerServers",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 2
+            },
+            {
+              "i": "officerAnalytics",
+              "x": 0,
+              "y": 2,
+              "w": 6,
+              "h": 2
+            },
+            {
+              "i": "officerReports",
+              "x": 0,
+              "y": 4,
+              "w": 6,
+              "h": 2
+            },
+            {
+              "i": "officerServerChart",
+              "x": 0,
+              "y": 6,
+              "w": 6,
+              "h": 4
+            },
+            {
+              "i": "officerAnalyticsChart",
+              "x": 0,
+              "y": 10,
+              "w": 6,
+              "h": 4
+            },
+            {
+              "i": "officerIncidentPanel",
+              "x": 0,
+              "y": 14,
+              "w": 6,
+              "h": 3
+            },
+            {
+              "i": "officerRecentReports",
+              "x": 0,
+              "y": 17,
+              "w": 6,
+              "h": 3
+            },
+            {
               "i": "activeServers",
               "x": 0,
               "y": 0,
@@ -563,6 +724,55 @@
             }
           ],
           "xs": [
+            {
+              "i": "officerServers",
+              "x": 0,
+              "y": 0,
+              "w": 4,
+              "h": 2
+            },
+            {
+              "i": "officerAnalytics",
+              "x": 0,
+              "y": 2,
+              "w": 4,
+              "h": 2
+            },
+            {
+              "i": "officerReports",
+              "x": 0,
+              "y": 4,
+              "w": 4,
+              "h": 2
+            },
+            {
+              "i": "officerServerChart",
+              "x": 0,
+              "y": 6,
+              "w": 4,
+              "h": 4
+            },
+            {
+              "i": "officerAnalyticsChart",
+              "x": 0,
+              "y": 10,
+              "w": 4,
+              "h": 4
+            },
+            {
+              "i": "officerIncidentPanel",
+              "x": 0,
+              "y": 14,
+              "w": 4,
+              "h": 3
+            },
+            {
+              "i": "officerRecentReports",
+              "x": 0,
+              "y": 17,
+              "w": 4,
+              "h": 3
+            },
             {
               "i": "activeServers",
               "x": 0,
@@ -2851,10 +3061,10 @@
       "id": "1",
       "category": "System",
       "name": "Application Name",
-      "value": "MAS LEAP UI Interactive Dashboard",
+      "value": "Smart Interactive Dashboard",
       "description": "Official name of the capstone project dashboard system",
-      "modifiedBy": "Huang Wan Ying",
-      "lastModified": "2025-01-10T14:00:00Z"
+      "modifiedBy": "System Administrator",
+      "lastModified": "2026-03-18T08:14:07.039Z"
     },
     {
       "id": "2",
@@ -2878,19 +3088,19 @@
       "id": "4",
       "category": "User Experience",
       "name": "Personalization Enabled",
-      "value": "false",
+      "value": "true",
       "description": "Enable role-based dashboard personalization features",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T03:49:11.173Z"
+      "lastModified": "2026-03-18T08:13:30.301Z"
     },
     {
       "id": "5",
       "category": "User Experience",
       "name": "Auto-save Dashboard Layout",
-      "value": "false",
+      "value": "true",
       "description": "Automatically save user dashboard customizations",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T03:49:53.880Z"
+      "lastModified": "2026-03-18T08:13:02.760Z"
     },
     {
       "id": "6",
@@ -2898,17 +3108,17 @@
       "name": "Default Chart Library",
       "value": "Chart.js",
       "description": "Primary charting library for dashboard visualizations",
-      "modifiedBy": "Huang Wan Ying",
-      "lastModified": "2025-01-05T16:20:00Z"
+      "modifiedBy": "System Administrator",
+      "lastModified": "2026-03-18T07:42:07.764Z"
     },
     {
       "id": "7",
       "category": "Security",
       "name": "Session Timeout",
-      "value": "30 minutes",
+      "value": "5 minutes",
       "description": "Automatic session timeout for inactive users",
-      "modifiedBy": "Information Security Office",
-      "lastModified": "2024-12-15T09:30:00Z"
+      "modifiedBy": "System Administrator",
+      "lastModified": "2026-03-18T08:13:45.910Z"
     },
     {
       "id": "8",
@@ -2917,7 +3127,7 @@
       "value": "Professional Dark",
       "description": "Default color theme for dashboard interface",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T03:50:26.727Z"
+      "lastModified": "2026-03-18T07:41:04.764Z"
     }
   ]
 }

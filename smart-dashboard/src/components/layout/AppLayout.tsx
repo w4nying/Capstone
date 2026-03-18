@@ -32,6 +32,8 @@ import {
   updateCurrentUserInStorage,
 } from '../../providers/authProvider';
 import { ProfileAvatarDialog } from './ProfileAvatarDialog';
+import { useSystemSettings } from '../../contexts/SystemSettingsContext';
+import { useSessionTimeout } from '../../hooks/useSessionTimeout';
 
 type CustomAppBarProps = {
   onThemeChange?: (mode: ThemeMode) => void;
@@ -50,6 +52,8 @@ const getInitials = (name?: string, username?: string) => {
 
 const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
   const logout = useLogout();
+  const { getSetting, getBooleanSetting } = useSystemSettings();
+
   const [mode, setMode] = useState<ThemeMode>('light');
   const [isSaving, setIsSaving] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,10 +62,29 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
 
   const menuOpen = Boolean(anchorEl);
 
+  const applicationName = getSetting(
+    'Application Name',
+    'MAS LEAP UI Interactive Dashboard'
+  );
+  const personalizationEnabled = getBooleanSetting(
+    'Personalization Enabled',
+    true
+  );
+  const sessionTimeoutRaw = getSetting('Session Timeout', '30 minutes');
+  const sessionTimeoutMinutes = Number.parseInt(sessionTimeoutRaw, 10) || 30;
+
+  useSessionTimeout(true, sessionTimeoutMinutes, () => {
+    logout();
+  });
+
   useEffect(() => {
     setMode(getCurrentTheme());
     setUser(getCurrentUser());
   }, []);
+
+  useEffect(() => {
+    document.title = applicationName;
+  }, [applicationName]);
 
   useEffect(() => {
     const syncUser = () => {
@@ -103,6 +126,8 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
       if (!response.ok) {
         throw new Error('Failed to save theme');
       }
+
+      window.dispatchEvent(new Event('themeChanged'));
     } catch (error) {
       setMode(previousMode);
       onThemeChange?.(previousMode);
@@ -124,10 +149,6 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
 
   const handleOpenAvatarDialog = () => {
     setAvatarDialogOpen(true);
-  };
-
-  const handleCloseAvatarDialog = () => {
-    setAvatarDialogOpen(false);
   };
 
   const handleAvatarSaved = () => {
@@ -168,7 +189,29 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
         }}
       >
         <TitlePortal />
-        <Box sx={{ flex: 1 }} />
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            minWidth: 0,
+            flex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          <Typography
+            variant="h6"
+            noWrap
+            sx={(theme) => ({
+              fontWeight: 800,
+              letterSpacing: '-0.01em',
+              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
+              display: { xs: 'none', sm: 'block' },
+            })}
+          >
+            {applicationName}
+          </Typography>
+        </Box>
 
         <Tooltip title="Account">
           <IconButton
@@ -420,31 +463,34 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
             />
           </MenuItem>
 
-          <Divider />
-
-          <MenuItem
-            onClick={handleOpenManageWidgets}
-            sx={(theme) => ({
-              py: 1.4,
-              px: 2.2,
-              '&:hover': {
-                backgroundColor:
-                  theme.palette.mode === 'dark' ? '#172033' : '#f8fafc',
-              },
-            })}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 34,
-                color: 'inherit',
-              }}
-            >
-              <ViewQuiltIcon fontSize="small" />
-            </ListItemIcon>
-            <Typography variant="body2" sx={{ fontWeight: 700 }}>
-              Manage Widgets
-            </Typography>
-          </MenuItem>
+          {personalizationEnabled && (
+            <>
+              <Divider />
+              <MenuItem
+                onClick={handleOpenManageWidgets}
+                sx={(theme) => ({
+                  py: 1.4,
+                  px: 2.2,
+                  '&:hover': {
+                    backgroundColor:
+                      theme.palette.mode === 'dark' ? '#172033' : '#f8fafc',
+                  },
+                })}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 34,
+                    color: 'inherit',
+                  }}
+                >
+                  <ViewQuiltIcon fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                  Manage Widgets
+                </Typography>
+              </MenuItem>
+            </>
+          )}
 
           <Divider />
 

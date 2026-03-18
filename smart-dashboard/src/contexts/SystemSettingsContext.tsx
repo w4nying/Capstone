@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type ReactNode,
 } from 'react';
 import { httpClient } from '../providers/dataProvider';
 
@@ -38,7 +39,7 @@ const normalizeName = (name: string) => name.trim().toLowerCase();
 export const SystemSettingsProvider = ({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const [settings, setSettings] = useState<SettingRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +58,7 @@ export const SystemSettingsProvider = ({
   }, []);
 
   useEffect(() => {
-    refreshSettings();
+    void refreshSettings();
   }, [refreshSettings]);
 
   const settingsMap = useMemo(() => {

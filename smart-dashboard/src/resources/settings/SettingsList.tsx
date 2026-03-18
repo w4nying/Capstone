@@ -32,6 +32,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useSystemSettings } from '../../contexts/SystemSettingsContext';
 import { getCurrentUser } from '../../providers/authProvider';
+import { useAutoRefresh } from '../../hooks/useAutoRefresh';
 
 type SettingRecord = {
   id: string | number;
@@ -498,6 +499,11 @@ const SettingsTable = () => {
 };
 
 const SettingsListContent = () => {
+  const { getSetting } = useSystemSettings();
+  const refreshInterval = getSetting('Refresh Interval', '60 seconds');
+
+  useAutoRefresh(true, refreshInterval);
+
   return (
     <Box
       sx={{

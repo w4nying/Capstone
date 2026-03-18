@@ -71,7 +71,10 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     true
   );
   const sessionTimeoutRaw = getSetting('Session Timeout', '30 minutes');
-  const sessionTimeoutMinutes = Number.parseInt(sessionTimeoutRaw, 10) || 30;
+  const sessionTimeoutMatch = sessionTimeoutRaw.match(/\d+/);
+  const sessionTimeoutMinutes = sessionTimeoutMatch
+    ? Number(sessionTimeoutMatch[0])
+    : 30;
 
   useSessionTimeout(true, sessionTimeoutMinutes, () => {
     logout();

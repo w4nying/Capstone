@@ -22,6 +22,8 @@ import {
   Schedule,
 } from '@mui/icons-material';
 import { useMemo } from 'react';
+import { useSystemSettings } from '../../contexts/SystemSettingsContext';
+import { useAutoRefresh } from '../../hooks/useAutoRefresh';
 
 type ReportRecord = {
   id: string | number;
@@ -431,6 +433,9 @@ const ReportsTable = () => {
 };
 
 const ReportsListContent = () => {
+    const { getSetting } = useSystemSettings();
+    const refreshInterval = getSetting('Refresh Interval', '60 seconds');
+    useAutoRefresh(true, refreshInterval);
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ mb: 2 }}>

@@ -20,6 +20,7 @@ import { OfficerDashboard } from './components/dashboard/OfficerDashboard';
 import { AssociateDashboard } from './components/dashboard/AssociateDashboard';
 import { AppLayout } from './components/layout/AppLayout';
 import { UserManagementList } from './components/users/UserManagementList';
+import { SystemSettingsProvider } from './contexts/SystemSettingsContext';
 import { lightTheme, darkTheme } from './theme';
 import { AnalyticsList } from './resources/analytics/AnalyticsList';
 import { AnalyticsShow } from './resources/analytics/AnalyticsShow';

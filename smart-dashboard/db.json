@@ -3062,16 +3062,16 @@
       "category": "System",
       "name": "Application Name",
       "value": "Smart Interactive Dashboard",
-      "description": "Official name of the capstone project dashboard system",
+      "description": "Official name shown in the application header and browser tab",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T08:14:07.039Z"
+      "lastModified": "2026-03-18T08:35:04.004Z"
     },
     {
       "id": "2",
       "category": "Performance",
       "name": "Data Point Limit",
       "value": "10000",
-      "description": "Maximum number of data points for visualization performance target",
+      "description": "Maximum number of data points supported for dashboard data rendering",
       "modifiedBy": "Huang Wan Ying",
       "lastModified": "2025-01-08T09:30:00Z"
     },
@@ -3089,45 +3089,45 @@
       "category": "User Experience",
       "name": "Personalization Enabled",
       "value": "true",
-      "description": "Enable role-based dashboard personalization features",
+      "description": "Allow users to customise dashboard widgets, layout, and arrangement",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T08:13:30.301Z"
+      "lastModified": "2026-03-18T08:47:14.292Z"
     },
     {
       "id": "5",
       "category": "User Experience",
       "name": "Auto-save Dashboard Layout",
       "value": "true",
-      "description": "Automatically save user dashboard customizations",
+      "description": "Automatically save widget layout changes without requiring manual save",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T08:13:02.760Z"
+      "lastModified": "2026-03-18T08:47:00.838Z"
     },
     {
       "id": "6",
-      "category": "Visualization",
-      "name": "Default Chart Library",
-      "value": "Chart.js",
-      "description": "Primary charting library for dashboard visualizations",
+      "category": "Security",
+      "name": "Session Timeout",
+      "value": "10 minutes",
+      "description": "Automatically log out inactive users after the selected duration",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T07:42:07.764Z"
+      "lastModified": "2026-03-18T08:43:21.676Z"
     },
     {
       "id": "7",
-      "category": "Security",
-      "name": "Session Timeout",
-      "value": "5 minutes",
-      "description": "Automatic session timeout for inactive users",
+      "category": "Performance",
+      "name": "Refresh Interval",
+      "value": "15 seconds",
+      "description": "Default interval for refreshing dashboard data and analytics content",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T08:13:45.910Z"
+      "lastModified": "2026-03-18T08:47:19.838Z"
     },
     {
       "id": "8",
-      "category": "Display",
-      "name": "Default Theme",
-      "value": "Professional Dark",
-      "description": "Default color theme for dashboard interface",
+      "category": "System",
+      "name": "Support Contact Email",
+      "value": "support@test.com",
+      "description": "Support contact used for dashboard administration and issue reporting",
       "modifiedBy": "System Administrator",
-      "lastModified": "2026-03-18T07:41:04.764Z"
+      "lastModified": "2026-03-18T08:43:16.830Z"
     }
   ]
 }

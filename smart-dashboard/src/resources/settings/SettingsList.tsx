@@ -2,7 +2,6 @@ import {
   List,
   useListContext,
   useNotify,
-  useRefresh,
   useUpdate,
 } from 'react-admin';
 import {
@@ -115,6 +114,11 @@ const isSessionTimeoutSetting = (record: SettingRecord) => {
   return name.includes('session timeout');
 };
 
+const isRefreshIntervalSetting = (record: SettingRecord) => {
+  const name = String(record.name || '').toLowerCase();
+  return name.includes('refresh interval');
+};
+
 const getSessionTimeoutOptions = () => [
   '5 minutes',
   '10 minutes',
@@ -122,6 +126,14 @@ const getSessionTimeoutOptions = () => [
   '30 minutes',
   '45 minutes',
   '60 minutes',
+];
+
+const getRefreshIntervalOptions = () => [
+  '15 seconds',
+  '30 seconds',
+  '60 seconds',
+  '120 seconds',
+  '300 seconds',
 ];
 
 const FilterBar = () => {
@@ -136,8 +148,8 @@ const FilterBar = () => {
 
   const handleClear = () => {
     setFilters({});
-    setSort({ field: 'lastModified', order: 'DESC' });
-  };
+    setSort({ field: 'name', order: 'ASC' });
+    };
 
   return (
     <Box sx={{ mb: 2.5 }}>
@@ -167,10 +179,10 @@ const FilterBar = () => {
           size="small"
           sx={{ minWidth: 190, flex: 1 }}
         >
-          <MenuItem value="lastModified|DESC">Last Modified (Newest)</MenuItem>
-          <MenuItem value="lastModified|ASC">Last Modified (Oldest)</MenuItem>
           <MenuItem value="name|ASC">Name (A-Z)</MenuItem>
           <MenuItem value="name|DESC">Name (Z-A)</MenuItem>
+          <MenuItem value="lastModified|DESC">Last Modified (Newest)</MenuItem>
+          <MenuItem value="lastModified|ASC">Last Modified (Oldest)</MenuItem>
         </TextField>
 
         <Button
@@ -194,7 +206,6 @@ const FilterBar = () => {
 
 const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
   const notify = useNotify();
-  const refresh = useRefresh();
   const { refreshSettings } = useSystemSettings();
   const [update, { isPending }] = useUpdate();
 
@@ -226,7 +237,7 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
         onSuccess: async () => {
           notify('Setting updated');
           await refreshSettings();
-          refresh();
+        //   refresh();
         },
         onError: () => {
           notify('Failed to update setting', { type: 'error' });
@@ -290,6 +301,36 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
     );
   }
 
+  if (isRefreshIntervalSetting(record)) {
+    return (
+      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+        <TextField
+          select
+          size="small"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          sx={{ minWidth: 240 }}
+        >
+          {getRefreshIntervalOptions().map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <Button
+          variant="contained"
+          size="small"
+          disabled={!changed || isPending}
+          onClick={handleSave}
+          sx={{ textTransform: 'none', borderRadius: 2 }}
+        >
+          Save
+        </Button>
+      </Stack>
+    );
+  }
+
   return (
     <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
       <TextField
@@ -314,7 +355,9 @@ const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
 const SettingsTable = () => {
   const { data, isPending } = useListContext<SettingRecord>();
 
-  const visibleData = (data ?? []).filter(shouldDisplaySetting);
+  const visibleData = [...(data ?? [])]
+    .filter(shouldDisplaySetting)
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
   if (isPending) {
     return (
@@ -341,34 +384,40 @@ const SettingsTable = () => {
 
   return (
     <Paper variant="outlined" sx={{ width: '100%', borderRadius: 3, overflow: 'hidden' }}>
-      <TableContainer sx={{ width: '100%', overflowX: 'auto' }}>
+      <TableContainer
+        sx={{
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'auto',
+        }}
+      >
         <Table
-            sx={{
-                width: '100%',
-                minWidth: 1100,
-                tableLayout: 'fixed',
-            }}
+          sx={{
+            width: '100%',
+            minWidth: 1100,
+            tableLayout: 'fixed',
+          }}
         >
           <TableHead>
             <TableRow
-                sx={{
+              sx={{
                 bgcolor: 'action.hover',
                 '& .MuiTableCell-root': {
-                    fontWeight: 700,
-                    whiteSpace: 'nowrap',
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
+                  fontWeight: 700,
+                  whiteSpace: 'nowrap',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
                 },
-                }}
+              }}
             >
-                <TableCell sx={{ width: '12%' }}>Category</TableCell>
-                <TableCell sx={{ width: '16%' }}>Setting Name</TableCell>
-                <TableCell sx={{ width: '26%' }}>Value / Control</TableCell>
-                <TableCell sx={{ width: '20%' }}>Description</TableCell>
-                <TableCell sx={{ width: '11%' }}>Modified By</TableCell>
-                <TableCell sx={{ width: '15%' }}>Last Modified</TableCell>
+              <TableCell sx={{ width: '12%' }}>Category</TableCell>
+              <TableCell sx={{ width: '16%' }}>Setting Name</TableCell>
+              <TableCell sx={{ width: '26%' }}>Value / Control</TableCell>
+              <TableCell sx={{ width: '20%' }}>Description</TableCell>
+              <TableCell sx={{ width: '11%' }}>Modified By</TableCell>
+              <TableCell sx={{ width: '15%' }}>Last Modified</TableCell>
             </TableRow>
-            </TableHead>
+          </TableHead>
 
           <TableBody>
             {visibleData.map((record) => {
@@ -408,13 +457,29 @@ const SettingsTable = () => {
                   </TableCell>
 
                   <TableCell>
-                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.45 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        lineHeight: 1.45,
+                        wordBreak: 'break-word',
+                        whiteSpace: 'normal',
+                      }}
+                    >
                       {truncateText(record.description, 120)}
                     </Typography>
                   </TableCell>
 
                   <TableCell>
-                    <Typography variant="body2">{record.modifiedBy || '-'}</Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        wordBreak: 'break-word',
+                        whiteSpace: 'normal',
+                      }}
+                    >
+                      {record.modifiedBy || '-'}
+                    </Typography>
                   </TableCell>
 
                   <TableCell>
@@ -434,7 +499,13 @@ const SettingsTable = () => {
 
 const SettingsListContent = () => {
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box
+      sx={{
+        width: '100%',
+        minWidth: 0,
+        maxWidth: '100%',
+      }}
+    >
       <Box sx={{ mb: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
           System Settings
@@ -453,7 +524,7 @@ const SettingsListContent = () => {
 export const SettingsList = () => (
   <List
     perPage={10}
-    sort={{ field: 'lastModified', order: 'DESC' }}
+    sort={{ field: 'name', order: 'ASC' }}
     sx={{
       width: '100%',
       '& .RaList-content': {

@@ -13,78 +13,190 @@ const normalizeRecord = (record: any) => {
   return {
     ...record,
     id:
-      record.id !== undefined &&
-      record.id !== null &&
-      record.id !== ''
+      record.id !== undefined && record.id !== null && record.id !== ''
         ? Number(record.id)
         : record.id,
   };
+};
+
+const toSearchableString = (value: unknown) =>
+  String(value ?? '').toLowerCase().trim();
+
+const applyUserFilters = (items: any[], filter: Record<string, any>) => {
+  let filtered = [...items];
+
+  if (filter.q) {
+    const q = toSearchableString(filter.q);
+    filtered = filtered.filter((item) =>
+      [
+        item.id,
+        item.username,
+        item.fullName,
+        item.email,
+        item.department,
+        item.role,
+        item.status,
+      ]
+        .filter(Boolean)
+        .some((value) => toSearchableString(value).includes(q))
+    );
+  }
+
+  if (filter.role) {
+    filtered = filtered.filter(
+      (item) => toSearchableString(item.role) === toSearchableString(filter.role)
+    );
+  }
+
+  if (filter.status) {
+    filtered = filtered.filter(
+      (item) => toSearchableString(item.status) === toSearchableString(filter.status)
+    );
+  }
+
+  if (filter.department) {
+    filtered = filtered.filter(
+      (item) =>
+        toSearchableString(item.department) === toSearchableString(filter.department)
+    );
+  }
+
+  return filtered;
+};
+
+const applyAnalyticsFilters = (items: any[], filter: Record<string, any>) => {
+  let filtered = [...items];
+
+  if (filter.q) {
+    const q = toSearchableString(filter.q);
+    filtered = filtered.filter((item) =>
+      [
+        item.id,
+        item.name,
+        item.category,
+        item.status,
+        item.trend,
+        item.value,
+        item.target,
+        item.updatedAt,
+      ]
+        .filter((value) => value !== undefined && value !== null)
+        .some((value) => toSearchableString(value).includes(q))
+    );
+  }
+
+  if (filter.category) {
+    filtered = filtered.filter(
+      (item) =>
+        toSearchableString(item.category) === toSearchableString(filter.category)
+    );
+  }
+
+  if (filter.status) {
+    filtered = filtered.filter(
+      (item) => toSearchableString(item.status) === toSearchableString(filter.status)
+    );
+  }
+
+  return filtered;
+};
+
+const applyGenericFilters = (items: any[], filter: Record<string, any>) => {
+  let filtered = [...items];
+
+  Object.entries(filter).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') return;
+
+    if (key === 'q') {
+      const q = toSearchableString(value);
+      filtered = filtered.filter((item) =>
+        Object.values(item).some((fieldValue) =>
+          toSearchableString(fieldValue).includes(q)
+        )
+      );
+      return;
+    }
+
+    filtered = filtered.filter(
+      (item) => toSearchableString(item[key]) === toSearchableString(value)
+    );
+  });
+
+  return filtered;
+};
+
+const applyResourceFilters = (
+  resource: string,
+  items: any[],
+  filter: Record<string, any>
+) => {
+  switch (resource) {
+    case 'users':
+      return applyUserFilters(items, filter);
+    case 'analytics':
+      return applyAnalyticsFilters(items, filter);
+    default:
+      return applyGenericFilters(items, filter);
+  }
+};
+
+const compareValues = (aVal: any, bVal: any, order: 'ASC' | 'DESC') => {
+  if (aVal == null && bVal == null) return 0;
+  if (aVal == null) return order === 'ASC' ? -1 : 1;
+  if (bVal == null) return order === 'ASC' ? 1 : -1;
+
+  const aDate = Date.parse(String(aVal));
+  const bDate = Date.parse(String(bVal));
+  const aLooksLikeDate = !Number.isNaN(aDate);
+  const bLooksLikeDate = !Number.isNaN(bDate);
+
+  if (aLooksLikeDate && bLooksLikeDate) {
+    return order === 'ASC' ? aDate - bDate : bDate - aDate;
+  }
+
+  const aNum = Number(aVal);
+  const bNum = Number(bVal);
+  const aLooksLikeNumber =
+    aVal !== '' && aVal !== null && aVal !== undefined && !Number.isNaN(aNum);
+  const bLooksLikeNumber =
+    bVal !== '' && bVal !== null && bVal !== undefined && !Number.isNaN(bNum);
+
+  if (aLooksLikeNumber && bLooksLikeNumber) {
+    return order === 'ASC' ? aNum - bNum : bNum - aNum;
+  }
+
+  const aStr = toSearchableString(aVal);
+  const bStr = toSearchableString(bVal);
+
+  if (aStr < bStr) return order === 'ASC' ? -1 : 1;
+  if (aStr > bStr) return order === 'ASC' ? 1 : -1;
+  return 0;
 };
 
 export const dataProvider: DataProvider = {
   getList: async (resource, params) => {
     try {
       const allResponse = await httpClient.get(`/${resource}`);
-      const allItems = allResponse.data;
+      const allItems = allResponse.data ?? [];
 
-      let filteredData = [...allItems];
       const filter = params.filter || {};
-
-      if (filter.q) {
-        const q = String(filter.q).toLowerCase();
-
-        filteredData = filteredData.filter((item: any) =>
-          [
-            item.id,
-            item.username,
-            item.fullName,
-            item.email,
-            item.department,
-            item.role,
-            item.status,
-          ]
-            .filter(Boolean)
-            .some((value) => String(value).toLowerCase().includes(q))
-        );
-      }
-
-      if (filter.role) {
-        filteredData = filteredData.filter(
-          (item: any) => String(item.role) === String(filter.role)
-        );
-      }
-
-      if (filter.status) {
-        filteredData = filteredData.filter(
-          (item: any) => String(item.status) === String(filter.status)
-        );
-      }
-
-      if (filter.department) {
-        filteredData = filteredData.filter(
-          (item: any) => String(item.department) === String(filter.department)
-        );
-      }
-
-      const total = filteredData.length;
-
       const { page, perPage } = params.pagination || { page: 1, perPage: 10 };
       const { field, order } = params.sort || { field: 'id', order: 'ASC' };
 
-      filteredData.sort((a, b) => {
-        const aVal = field === 'id' ? Number(a[field]) : a[field];
-        const bVal = field === 'id' ? Number(b[field]) : b[field];
+      let filteredData = applyResourceFilters(resource, [...allItems], filter);
 
-        if (aVal < bVal) return order === 'ASC' ? -1 : 1;
-        if (aVal > bVal) return order === 'ASC' ? 1 : -1;
-        return 0;
-      });
+      const total = filteredData.length;
+
+      filteredData.sort((a, b) => compareValues(a[field], b[field], order));
 
       const start = (page - 1) * perPage;
       const end = start + perPage;
       const paginatedData = filteredData.slice(start, end);
 
-      return { data: paginatedData, total };
+      return {
+        data: paginatedData,
+        total,
+      };
     } catch (error: any) {
       if (error.response?.status === 404) {
         return { data: [], total: 0 };
@@ -125,7 +237,6 @@ export const dataProvider: DataProvider = {
 
   updateMany: async (resource, params) => {
     const payload = normalizeRecord(params.data);
-
     await Promise.all(
       params.ids.map((id) => httpClient.put(`/${resource}/${id}`, payload))
     );

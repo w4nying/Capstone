@@ -101,6 +101,49 @@ const applyAnalyticsFilters = (items: any[], filter: Record<string, any>) => {
   return filtered;
 };
 
+const applyReportsFilters = (items: any[], filter: Record<string, any>) => {
+  let filtered = [...items];
+
+  if (filter.q) {
+    const q = toSearchableString(filter.q);
+    filtered = filtered.filter((item) =>
+      [
+        item.id,
+        item.title,
+        item.type,
+        item.status,
+        item.author,
+        item.department,
+        item.date,
+        item.summary,
+      ]
+        .filter((value) => value !== undefined && value !== null)
+        .some((value) => toSearchableString(value).includes(q))
+    );
+  }
+
+  if (filter.type) {
+    filtered = filtered.filter(
+      (item) => toSearchableString(item.type) === toSearchableString(filter.type)
+    );
+  }
+
+  if (filter.status) {
+    filtered = filtered.filter(
+      (item) => toSearchableString(item.status) === toSearchableString(filter.status)
+    );
+  }
+
+  if (filter.department) {
+    filtered = filtered.filter(
+      (item) =>
+        toSearchableString(item.department) === toSearchableString(filter.department)
+    );
+  }
+
+  return filtered;
+};
+
 const applyGenericFilters = (items: any[], filter: Record<string, any>) => {
   let filtered = [...items];
 
@@ -135,6 +178,8 @@ const applyResourceFilters = (
       return applyUserFilters(items, filter);
     case 'analytics':
       return applyAnalyticsFilters(items, filter);
+    case 'reports':
+      return applyReportsFilters(items, filter);
     default:
       return applyGenericFilters(items, filter);
   }

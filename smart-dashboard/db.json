@@ -2539,7 +2539,150 @@
       "description": "Dashboard data refresh interval in seconds",
       "target": 5,
       "trend": "stable"
-    }
+    },
+    {
+    "id": "13",
+    "name": "CPU Utilization (Prod Servers)",
+    "value": 78,
+    "category": "Infrastructure",
+    "status": "warning",
+    "date": "2025-01-16T08:00:00Z",
+    "description": "Average CPU utilization across production servers",
+    "target": 70,
+    "trend": "degrading"
+  },
+  {
+    "id": "14",
+    "name": "Memory Usage (Cluster)",
+    "value": 64,
+    "category": "Infrastructure",
+    "status": "active",
+    "date": "2025-01-16T08:10:00Z",
+    "description": "Average memory usage across compute cluster",
+    "target": 75,
+    "trend": "stable"
+  },
+  {
+    "id": "15",
+    "name": "Error Rate (API)",
+    "value": 1.8,
+    "category": "Backend",
+    "status": "warning",
+    "date": "2025-01-16T08:20:00Z",
+    "description": "Percentage of failed API requests",
+    "target": 1,
+    "trend": "degrading"
+  },
+  {
+    "id": "16",
+    "name": "Failed Login Attempts",
+    "value": 23,
+    "category": "Security",
+    "status": "critical",
+    "date": "2025-01-16T08:30:00Z",
+    "description": "Number of failed login attempts detected in last hour",
+    "target": 5,
+    "trend": "degrading"
+  },
+  {
+    "id": "17",
+    "name": "Data Pipeline Latency",
+    "value": 3.2,
+    "category": "Data Engineering",
+    "status": "warning",
+    "date": "2025-01-16T08:40:00Z",
+    "description": "End-to-end latency of data processing pipelines (seconds)",
+    "target": 2,
+    "trend": "degrading"
+  },
+  {
+    "id": "18",
+    "name": "Database Query Performance",
+    "value": 120,
+    "category": "Backend",
+    "status": "active",
+    "date": "2025-01-16T08:50:00Z",
+    "description": "Average database query execution time in ms",
+    "target": 150,
+    "trend": "improving"
+  },
+  {
+    "id": "19",
+    "name": "Disk Usage (Primary Storage)",
+    "value": 82,
+    "category": "Infrastructure",
+    "status": "warning",
+    "date": "2025-01-16T09:00:00Z",
+    "description": "Percentage of disk usage on primary storage systems",
+    "target": 80,
+    "trend": "stable"
+  },
+  {
+    "id": "20",
+    "name": "Notification Delivery Rate",
+    "value": 96,
+    "category": "Operations",
+    "status": "active",
+    "date": "2025-01-16T09:10:00Z",
+    "description": "Percentage of notifications successfully delivered",
+    "target": 95,
+    "trend": "achieved"
+  },
+  {
+    "id": "21",
+    "name": "User Session Duration",
+    "value": 12,
+    "category": "User Experience",
+    "status": "active",
+    "date": "2025-01-16T09:20:00Z",
+    "description": "Average session duration in minutes",
+    "target": 10,
+    "trend": "improving"
+  },
+  {
+    "id": "22",
+    "name": "Concurrent Active Users",
+    "value": 132,
+    "category": "Adoption",
+    "status": "active",
+    "date": "2025-01-16T09:30:00Z",
+    "description": "Number of concurrent users accessing the dashboard",
+    "target": 150,
+    "trend": "improving"
+  },
+  {
+    "id": "23",
+    "name": "Alert Resolution Time",
+    "value": 18,
+    "category": "Operations",
+    "status": "warning",
+    "date": "2025-01-16T09:40:00Z",
+    "description": "Average time to resolve alerts in minutes",
+    "target": 15,
+    "trend": "degrading"
+  },
+  {
+    "id": "24",
+    "name": "Backup Success Rate",
+    "value": 100,
+    "category": "Reliability",
+    "status": "active",
+    "date": "2025-01-16T09:50:00Z",
+    "description": "Percentage of successful system backups",
+    "target": 100,
+    "trend": "achieved"
+  },
+  {
+    "id": "25",
+    "name": "Cache Hit Rate",
+    "value": 91,
+    "category": "Performance",
+    "status": "active",
+    "date": "2025-01-16T10:00:00Z",
+    "description": "Percentage of cache hits in system",
+    "target": 90,
+    "trend": "achieved"
+  }
   ],
   "reports": [
     {
@@ -2560,47 +2703,148 @@
       "author": "Huang Wan Ying",
       "department": "Data & Technology Architecture",
       "date": "2025-01-08T16:30:00Z",
-      "summary": "Detailed analysis of Chart.js performance with large datasets, including benchmark results for 10,000+ data points and optimization recommendations"
+      "summary": "Detailed analysis of Chart.js performance with large datasets and optimization recommendations"
     },
+
     {
-      "id": "3",
-      "title": "User Testing Feedback - Phase 1",
-      "type": "User Research",
-      "status": "draft",
-      "author": "Huang Wan Ying",
-      "department": "Data & Technology Architecture",
-      "date": "2025-01-14T11:00:00Z",
-      "summary": "Compilation of user feedback from initial testing with 10 representative users across different roles, including usability issues and enhancement requests"
-    },
-    {
-      "id": "4",
-      "title": "Dashboard Personalization Framework Design",
+      "id": "7",
+      "title": "System Monitoring Dashboard Enhancement Proposal",
       "type": "Technical Specification",
+      "status": "draft",
+      "author": "Sean Chua",
+      "department": "Data & Technology Architecture",
+      "date": "2025-02-02T10:15:00Z",
+      "summary": "Proposal to enhance system monitoring dashboards with real-time anomaly detection and alert prioritization"
+    },
+    {
+      "id": "8",
+      "title": "API Gateway Throughput Benchmark Report",
+      "type": "Technical Analysis",
+      "status": "published",
+      "author": "Teren Tan",
+      "department": "Data & Technology Architecture",
+      "date": "2025-02-05T13:40:00Z",
+      "summary": "Performance benchmarking of API gateway under simulated peak loads with recommendations for scaling improvements"
+    },
+    {
+      "id": "9",
+      "title": "User Access Audit - Q1 2025",
+      "type": "Compliance",
+      "status": "published",
+      "author": "Kirby Koh",
+      "department": "Security & Governance",
+      "date": "2025-03-01T09:00:00Z",
+      "summary": "Audit report on user access rights, role assignments, and compliance with internal security policies"
+    },
+    {
+      "id": "10",
+      "title": "Data Pipeline Failure Root Cause Analysis",
+      "type": "Incident Report",
       "status": "published",
       "author": "Huang Wan Ying",
-      "department": "Data & Technology Architecture",
-      "date": "2025-01-05T09:00:00Z",
-      "summary": "Technical design document for role-based personalization system including user profile structure and recommendation algorithm approach"
+      "department": "Data Engineering",
+      "date": "2025-02-20T18:25:00Z",
+      "summary": "Investigation into recent pipeline failures including root cause, impact assessment, and mitigation steps"
     },
     {
-      "id": "5",
-      "title": "Q4 2024 Infrastructure Performance Report",
-      "type": "Quarterly",
+      "id": "11",
+      "title": "Dashboard UI/UX Improvement Recommendations",
+      "type": "User Research",
+      "status": "draft",
+      "author": "UX Team",
+      "department": "Design & Experience",
+      "date": "2025-02-12T11:10:00Z",
+      "summary": "Findings from usability testing and recommended improvements to dashboard layout and interaction patterns"
+    },
+    {
+      "id": "12",
+      "title": "Infrastructure Cost Optimization Report",
+      "type": "Financial Analysis",
+      "status": "published",
+      "author": "Finance Ops",
+      "department": "Infrastructure",
+      "date": "2025-02-25T15:00:00Z",
+      "summary": "Analysis of infrastructure spending with recommendations for cost savings through resource optimization"
+    },
+    {
+      "id": "13",
+      "title": "Real-Time Alerting System Design",
+      "type": "Technical Specification",
       "status": "published",
       "author": "Farris Chua",
       "department": "Data & Technology Architecture",
-      "date": "2024-12-31T17:00:00Z",
-      "summary": "Comprehensive quarterly analysis of DTA infrastructure performance metrics and capacity planning recommendations"
+      "date": "2025-01-28T10:45:00Z",
+      "summary": "Design document for implementing a real-time alerting system integrated with monitoring dashboards"
     },
     {
-      "id": "6",
-      "title": "LEAP UI Component Library Evaluation",
-      "type": "Technical Review",
+      "id": "14",
+      "title": "Quarterly KPI Performance Review - Q1 2025",
+      "type": "Quarterly",
       "status": "published",
-      "author": "Technical Team - DTA",
+      "author": "Management Team",
+      "department": "Strategy & Planning",
+      "date": "2025-03-31T17:00:00Z",
+      "summary": "Comprehensive review of KPIs across departments with performance insights and strategic recommendations"
+    },
+    {
+      "id": "15",
+      "title": "Database Scaling Strategy Evaluation",
+      "type": "Technical Review",
+      "status": "draft",
+      "author": "Backend Team",
+      "department": "Data Engineering",
+      "date": "2025-02-18T14:20:00Z",
+      "summary": "Evaluation of horizontal vs vertical scaling strategies for database systems handling increasing load"
+    },
+    {
+      "id": "16",
+      "title": "Security Incident Response Drill Report",
+      "type": "Security",
+      "status": "published",
+      "author": "Security Team",
+      "department": "Security & Governance",
+      "date": "2025-02-10T16:00:00Z",
+      "summary": "Summary of incident response drill including response time, coordination effectiveness, and lessons learned"
+    },
+    {
+      "id": "17",
+      "title": "Log Monitoring and Alert Threshold Optimization",
+      "type": "Technical Analysis",
+      "status": "published",
+      "author": "DevOps Team",
+      "department": "Infrastructure",
+      "date": "2025-02-22T12:30:00Z",
+      "summary": "Analysis of log monitoring thresholds and recommendations to reduce false positives in alerts"
+    },
+    {
+      "id": "18",
+      "title": "Cloud Migration Phase 2 Progress Update",
+      "type": "Project Update",
+      "status": "draft",
+      "author": "Cloud Team",
+      "department": "Infrastructure",
+      "date": "2025-03-05T10:00:00Z",
+      "summary": "Update on migration progress, challenges encountered, and timeline adjustments for phase 2"
+    },
+    {
+      "id": "19",
+      "title": "Data Visualization Best Practices for Internal Dashboards",
+      "type": "Guideline",
+      "status": "published",
+      "author": "Analytics Team",
       "department": "Data & Technology Architecture",
-      "date": "2024-12-15T10:30:00Z",
-      "summary": "Evaluation of LEAP UI component library capabilities, limitations, and suitability for enterprise dashboard development"
+      "date": "2025-02-08T09:45:00Z",
+      "summary": "Best practices guide for building clear, effective, and user-friendly dashboards for internal stakeholders"
+    },
+    {
+      "id": "20",
+      "title": "System Downtime Incident Report - Feb 2025",
+      "type": "Incident Report",
+      "status": "published",
+      "author": "Operations Team",
+      "department": "Infrastructure",
+      "date": "2025-02-15T21:10:00Z",
+      "summary": "Detailed report on system downtime incident including impact, root cause, and recovery actions"
     }
   ],
   "settings": [

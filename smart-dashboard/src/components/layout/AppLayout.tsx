@@ -179,16 +179,15 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     <>
       <AppBar
         {...props}
-        toolbar={false}
-        userMenu={false}
+        color="default"
+        elevation={0}
         sx={{
-          '& .RaAppBar-toolbar': {
-            minHeight: { xs: 60, md: 72 },
-            px: { xs: 1.5, sm: 2, md: 3 },
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-          },
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          backgroundColor: 'background.paper',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          height: { xs: 60, md: 72 },
+          justifyContent: 'center',
         }}
       >
         <TitlePortal />
@@ -548,45 +547,51 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
     sx={{
       '& .RaLayout-appFrame': {
         backgroundColor: 'background.default',
-        width: '100%',
         minWidth: 0,
       },
-      '& .RaLayout-content': {
-        backgroundColor: 'background.default',
-        width: '100%',
-        minWidth: 0,
-        overflowX: 'hidden',
-      },
+
       '& .RaLayout-main': {
         backgroundColor: 'background.default',
-        width: '100%',
         minWidth: 0,
         overflowX: 'hidden',
       },
+
       '& .RaLayout-contentWithSidebar': {
-        paddingTop: { xs: '60px', md: '72px' },
-        width: '100%',
+        display: 'flex',
         minWidth: 0,
       },
+
+      '& .RaLayout-content': {
+        backgroundColor: 'background.default',
+        flex: 1,
+        minWidth: 0,
+        overflowX: 'hidden',
+      },
+
       '& .RaLayout-content > div': {
         padding: { xs: 1.25, sm: 2, md: 3 },
         width: '100%',
         maxWidth: '100%',
         minWidth: 0,
+        boxSizing: 'border-box',
       },
-      '& .RaSidebar-root': {
-        borderRight: '1px solid',
-        borderColor: 'divider',
-        flexShrink: 0,
-      },
-      '& .RaSidebar-fixed': {
-        backgroundColor: (theme) =>
-          theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
-      },
+
+      // '& .RaSidebar-root': {
+      //   borderRight: '1px solid',
+      //   borderColor: 'divider',
+      //   flexShrink: 0,
+      // },
+
+      // '& .RaSidebar-fixed': {
+      //   backgroundColor: (theme) =>
+      //     theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+      // },
+
       '& .RaMenu-root': {
         paddingTop: 0.5,
         paddingBottom: 0.5,
       },
+
       '& .RaMenuItemLink-root': {
         margin: { xs: '4px 8px', sm: '6px 10px' },
         padding: { xs: '10px 12px', sm: '10px 14px' },
@@ -600,41 +605,57 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
         minWidth: 0,
         transition: 'background-color 0.2s ease, color 0.2s ease',
       },
+
       '& .RaMenuItemLink-root .RaMenuItemLink-icon': {
         minWidth: 36,
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#94a3b8' : '#64748b',
         flexShrink: 0,
       },
+
       '& .RaMenuItemLink-root .RaMenuItemLink-text': {
         minWidth: 0,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
       },
+
       '& .RaMenuItemLink-root:hover': {
         backgroundColor: 'action.hover',
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
       },
+
       '& .RaMenuItemLink-root:hover .RaMenuItemLink-icon': {
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
       },
+
       '& .RaMenuItemLink-active': {
         backgroundColor: 'action.selected',
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
         fontWeight: 700,
       },
+
       '& .RaMenuItemLink-active .RaMenuItemLink-icon': {
         color: (theme) =>
           theme.palette.mode === 'dark' ? '#ffffff' : '#0f172a',
       },
+
+      '& .RaSidebar-root': {
+        borderRight: '1px solid',
+        borderColor: 'divider',
+        flexShrink: 0,
+        paddingTop: { xs: '60px', md: '72px' },
+      },
+      '& .RaSidebar-fixed': {
+        backgroundColor: (theme) =>
+          theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
+        paddingTop: { xs: '60px', md: '72px' },
+      },
+
       '@media (max-width:600px)': {
-        '& .RaLayout-contentWithSidebar': {
-          paddingTop: '60px',
-        },
         '& .RaMenuItemLink-root': {
           margin: '4px 8px',
           padding: '10px 12px',

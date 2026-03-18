@@ -1,4 +1,4 @@
-import { List, useListContext, ShowButton } from 'react-admin';
+import { List, useListContext, ShowButton, useGetList } from 'react-admin';
 import {
   Box,
   Button,
@@ -124,7 +124,11 @@ const getStatusColor = (
 };
 
 const SummaryStrip = () => {
-  const { data, isPending } = useListContext<AnalyticsRecord>();
+  const { data, isPending } = useGetList<AnalyticsRecord>('analytics', {
+    pagination: { page: 1, perPage: 1000 },
+    sort: { field: 'date', order: 'DESC' },
+    filter: {},
+  });
 
   if (isPending) {
     return (
@@ -154,7 +158,9 @@ const SummaryStrip = () => {
 
   const records = data ?? [];
   const total = records.length;
+
   const met = records.filter((record) => getProgressInfo(record).isTargetMet).length;
+
   const attention = records.filter((record) =>
     ['warning', 'critical'].includes(String(record.status || '').toLowerCase())
   ).length;

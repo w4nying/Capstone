@@ -25,6 +25,7 @@ import { AnalyticsList } from './resources/analytics/AnalyticsList';
 import { AnalyticsShow } from './resources/analytics/AnalyticsShow';
 import { ReportsList } from './resources/reports/ReportsList';
 import { ReportsShow } from './resources/reports/ReportsShow';
+import { SettingsList } from './resources/settings/SettingsList';
 
 
 const RoleDashboard = () => {
@@ -111,7 +112,7 @@ function App() {
           {permissions === 'admin' && (
             <Resource
               name="settings"
-              list={ListGuesser}
+              list={SettingsList}
               edit={EditGuesser}
               icon={SettingsIcon}
               options={{ label: 'System Settings' }}

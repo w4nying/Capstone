@@ -180,10 +180,43 @@ const applyResourceFilters = (
       return applyAnalyticsFilters(items, filter);
     case 'reports':
       return applyReportsFilters(items, filter);
+    case 'settings':
+      return applySettingsFilters(items, filter);
     default:
       return applyGenericFilters(items, filter);
   }
 };
+
+const applySettingsFilters = (items: any[], filter: Record<string, any>) => {
+  let filtered = [...items];
+
+  if (filter.q) {
+    const q = toSearchableString(filter.q);
+    filtered = filtered.filter((item) =>
+      [
+        item.id,
+        item.category,
+        item.name,
+        item.value,
+        item.description,
+        item.modifiedBy,
+        item.lastModified,
+      ]
+        .filter((value) => value !== undefined && value !== null)
+        .some((value) => toSearchableString(value).includes(q))
+    );
+  }
+
+  if (filter.category) {
+    filtered = filtered.filter(
+      (item) =>
+        toSearchableString(item.category) === toSearchableString(filter.category)
+    );
+  }
+
+  return filtered;
+};
+
 
 const compareValues = (aVal: any, bVal: any, order: 'ASC' | 'DESC') => {
   if (aVal == null && bVal == null) return 0;

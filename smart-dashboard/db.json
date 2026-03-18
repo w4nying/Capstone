@@ -2541,148 +2541,148 @@
       "trend": "stable"
     },
     {
-    "id": "13",
-    "name": "CPU Utilization (Prod Servers)",
-    "value": 78,
-    "category": "Infrastructure",
-    "status": "warning",
-    "date": "2025-01-16T08:00:00Z",
-    "description": "Average CPU utilization across production servers",
-    "target": 70,
-    "trend": "degrading"
-  },
-  {
-    "id": "14",
-    "name": "Memory Usage (Cluster)",
-    "value": 64,
-    "category": "Infrastructure",
-    "status": "active",
-    "date": "2025-01-16T08:10:00Z",
-    "description": "Average memory usage across compute cluster",
-    "target": 75,
-    "trend": "stable"
-  },
-  {
-    "id": "15",
-    "name": "Error Rate (API)",
-    "value": 1.8,
-    "category": "Backend",
-    "status": "warning",
-    "date": "2025-01-16T08:20:00Z",
-    "description": "Percentage of failed API requests",
-    "target": 1,
-    "trend": "degrading"
-  },
-  {
-    "id": "16",
-    "name": "Failed Login Attempts",
-    "value": 23,
-    "category": "Security",
-    "status": "critical",
-    "date": "2025-01-16T08:30:00Z",
-    "description": "Number of failed login attempts detected in last hour",
-    "target": 5,
-    "trend": "degrading"
-  },
-  {
-    "id": "17",
-    "name": "Data Pipeline Latency",
-    "value": 3.2,
-    "category": "Data Engineering",
-    "status": "warning",
-    "date": "2025-01-16T08:40:00Z",
-    "description": "End-to-end latency of data processing pipelines (seconds)",
-    "target": 2,
-    "trend": "degrading"
-  },
-  {
-    "id": "18",
-    "name": "Database Query Performance",
-    "value": 120,
-    "category": "Backend",
-    "status": "active",
-    "date": "2025-01-16T08:50:00Z",
-    "description": "Average database query execution time in ms",
-    "target": 150,
-    "trend": "improving"
-  },
-  {
-    "id": "19",
-    "name": "Disk Usage (Primary Storage)",
-    "value": 82,
-    "category": "Infrastructure",
-    "status": "warning",
-    "date": "2025-01-16T09:00:00Z",
-    "description": "Percentage of disk usage on primary storage systems",
-    "target": 80,
-    "trend": "stable"
-  },
-  {
-    "id": "20",
-    "name": "Notification Delivery Rate",
-    "value": 96,
-    "category": "Operations",
-    "status": "active",
-    "date": "2025-01-16T09:10:00Z",
-    "description": "Percentage of notifications successfully delivered",
-    "target": 95,
-    "trend": "achieved"
-  },
-  {
-    "id": "21",
-    "name": "User Session Duration",
-    "value": 12,
-    "category": "User Experience",
-    "status": "active",
-    "date": "2025-01-16T09:20:00Z",
-    "description": "Average session duration in minutes",
-    "target": 10,
-    "trend": "improving"
-  },
-  {
-    "id": "22",
-    "name": "Concurrent Active Users",
-    "value": 132,
-    "category": "Adoption",
-    "status": "active",
-    "date": "2025-01-16T09:30:00Z",
-    "description": "Number of concurrent users accessing the dashboard",
-    "target": 150,
-    "trend": "improving"
-  },
-  {
-    "id": "23",
-    "name": "Alert Resolution Time",
-    "value": 18,
-    "category": "Operations",
-    "status": "warning",
-    "date": "2025-01-16T09:40:00Z",
-    "description": "Average time to resolve alerts in minutes",
-    "target": 15,
-    "trend": "degrading"
-  },
-  {
-    "id": "24",
-    "name": "Backup Success Rate",
-    "value": 100,
-    "category": "Reliability",
-    "status": "active",
-    "date": "2025-01-16T09:50:00Z",
-    "description": "Percentage of successful system backups",
-    "target": 100,
-    "trend": "achieved"
-  },
-  {
-    "id": "25",
-    "name": "Cache Hit Rate",
-    "value": 91,
-    "category": "Performance",
-    "status": "active",
-    "date": "2025-01-16T10:00:00Z",
-    "description": "Percentage of cache hits in system",
-    "target": 90,
-    "trend": "achieved"
-  }
+      "id": "13",
+      "name": "CPU Utilization (Prod Servers)",
+      "value": 78,
+      "category": "Infrastructure",
+      "status": "warning",
+      "date": "2025-01-16T08:00:00Z",
+      "description": "Average CPU utilization across production servers",
+      "target": 70,
+      "trend": "degrading"
+    },
+    {
+      "id": "14",
+      "name": "Memory Usage (Cluster)",
+      "value": 64,
+      "category": "Infrastructure",
+      "status": "active",
+      "date": "2025-01-16T08:10:00Z",
+      "description": "Average memory usage across compute cluster",
+      "target": 75,
+      "trend": "stable"
+    },
+    {
+      "id": "15",
+      "name": "Error Rate (API)",
+      "value": 1.8,
+      "category": "Backend",
+      "status": "warning",
+      "date": "2025-01-16T08:20:00Z",
+      "description": "Percentage of failed API requests",
+      "target": 1,
+      "trend": "degrading"
+    },
+    {
+      "id": "16",
+      "name": "Failed Login Attempts",
+      "value": 23,
+      "category": "Security",
+      "status": "critical",
+      "date": "2025-01-16T08:30:00Z",
+      "description": "Number of failed login attempts detected in last hour",
+      "target": 5,
+      "trend": "degrading"
+    },
+    {
+      "id": "17",
+      "name": "Data Pipeline Latency",
+      "value": 3.2,
+      "category": "Data Engineering",
+      "status": "warning",
+      "date": "2025-01-16T08:40:00Z",
+      "description": "End-to-end latency of data processing pipelines (seconds)",
+      "target": 2,
+      "trend": "degrading"
+    },
+    {
+      "id": "18",
+      "name": "Database Query Performance",
+      "value": 120,
+      "category": "Backend",
+      "status": "active",
+      "date": "2025-01-16T08:50:00Z",
+      "description": "Average database query execution time in ms",
+      "target": 150,
+      "trend": "improving"
+    },
+    {
+      "id": "19",
+      "name": "Disk Usage (Primary Storage)",
+      "value": 82,
+      "category": "Infrastructure",
+      "status": "warning",
+      "date": "2025-01-16T09:00:00Z",
+      "description": "Percentage of disk usage on primary storage systems",
+      "target": 80,
+      "trend": "stable"
+    },
+    {
+      "id": "20",
+      "name": "Notification Delivery Rate",
+      "value": 96,
+      "category": "Operations",
+      "status": "active",
+      "date": "2025-01-16T09:10:00Z",
+      "description": "Percentage of notifications successfully delivered",
+      "target": 95,
+      "trend": "achieved"
+    },
+    {
+      "id": "21",
+      "name": "User Session Duration",
+      "value": 12,
+      "category": "User Experience",
+      "status": "active",
+      "date": "2025-01-16T09:20:00Z",
+      "description": "Average session duration in minutes",
+      "target": 10,
+      "trend": "improving"
+    },
+    {
+      "id": "22",
+      "name": "Concurrent Active Users",
+      "value": 132,
+      "category": "Adoption",
+      "status": "active",
+      "date": "2025-01-16T09:30:00Z",
+      "description": "Number of concurrent users accessing the dashboard",
+      "target": 150,
+      "trend": "improving"
+    },
+    {
+      "id": "23",
+      "name": "Alert Resolution Time",
+      "value": 18,
+      "category": "Operations",
+      "status": "warning",
+      "date": "2025-01-16T09:40:00Z",
+      "description": "Average time to resolve alerts in minutes",
+      "target": 15,
+      "trend": "degrading"
+    },
+    {
+      "id": "24",
+      "name": "Backup Success Rate",
+      "value": 100,
+      "category": "Reliability",
+      "status": "active",
+      "date": "2025-01-16T09:50:00Z",
+      "description": "Percentage of successful system backups",
+      "target": 100,
+      "trend": "achieved"
+    },
+    {
+      "id": "25",
+      "name": "Cache Hit Rate",
+      "value": 91,
+      "category": "Performance",
+      "status": "active",
+      "date": "2025-01-16T10:00:00Z",
+      "description": "Percentage of cache hits in system",
+      "target": 90,
+      "trend": "achieved"
+    }
   ],
   "reports": [
     {
@@ -2705,7 +2705,6 @@
       "date": "2025-01-08T16:30:00Z",
       "summary": "Detailed analysis of Chart.js performance with large datasets and optimization recommendations"
     },
-
     {
       "id": "7",
       "title": "System Monitoring Dashboard Enhancement Proposal",

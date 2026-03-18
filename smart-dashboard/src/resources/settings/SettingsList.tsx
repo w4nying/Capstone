@@ -1,4 +1,4 @@
-import { List, ShowButton, useListContext } from 'react-admin';
+import { List, useListContext, useNotify, useRefresh, useUpdate } from 'react-admin';
 import {
   Box,
   Button,
@@ -7,6 +7,7 @@ import {
   Paper,
   Skeleton,
   Stack,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -24,7 +25,7 @@ import {
   PsychologyOutlined,
   TuneOutlined,
 } from '@mui/icons-material';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type SettingRecord = {
   id: string | number;
@@ -89,6 +90,38 @@ const getCategoryIcon = (category?: string) => {
     default:
       return <BuildOutlined fontSize="small" />;
   }
+};
+
+const isBooleanSetting = (record: SettingRecord) => {
+  const name = String(record.name || '').toLowerCase();
+  return (
+    name.includes('enabled') ||
+    name.includes('auto-save') ||
+    record.value === 'true' ||
+    record.value === 'false'
+  );
+};
+
+const isSelectSetting = (record: SettingRecord) => {
+  const name = String(record.name || '').toLowerCase();
+  return (
+    name.includes('default theme') ||
+    name.includes('default chart library')
+  );
+};
+
+const getSelectOptions = (record: SettingRecord) => {
+  const name = String(record.name || '').toLowerCase();
+
+  if (name.includes('default theme')) {
+    return ['Professional Light', 'Professional Dark', 'System Default'];
+  }
+
+  if (name.includes('default chart library')) {
+    return ['Chart.js', 'Recharts', 'ECharts'];
+  }
+
+  return [];
 };
 
 const FilterBar = () => {
@@ -172,8 +205,6 @@ const FilterBar = () => {
           <MenuItem value="name|DESC">Name (Z-A)</MenuItem>
           <MenuItem value="category|ASC">Category (A-Z)</MenuItem>
           <MenuItem value="category|DESC">Category (Z-A)</MenuItem>
-          <MenuItem value="modifiedBy|ASC">Modified By (A-Z)</MenuItem>
-          <MenuItem value="modifiedBy|DESC">Modified By (Z-A)</MenuItem>
         </TextField>
 
         <Button
@@ -192,6 +223,121 @@ const FilterBar = () => {
         </Button>
       </Stack>
     </Box>
+  );
+};
+
+const SettingValueEditor = ({ record }: { record: SettingRecord }) => {
+  const notify = useNotify();
+  const refresh = useRefresh();
+  const [update, { isPending }] = useUpdate();
+
+  const [value, setValue] = useState(record.value ?? '');
+
+  useEffect(() => {
+    setValue(record.value ?? '');
+  }, [record.value]);
+
+  const changed = value !== (record.value ?? '');
+
+  const handleSave = () => {
+    update(
+      'settings',
+      {
+        id: record.id,
+        data: {
+          ...record,
+          value,
+          lastModified: new Date().toISOString(),
+          modifiedBy: 'System Administrator',
+        },
+        previousData: record,
+      },
+      {
+        onSuccess: () => {
+          notify('Setting updated');
+          refresh();
+        },
+        onError: () => {
+          notify('Failed to update setting', { type: 'error' });
+        },
+      }
+    );
+  };
+
+  if (isBooleanSetting(record)) {
+    const checked = String(value).toLowerCase() === 'true';
+
+    return (
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Switch
+          checked={checked}
+          onChange={(e) => setValue(String(e.target.checked))}
+        />
+        <Typography variant="body2" sx={{ minWidth: 48 }}>
+          {checked ? 'On' : 'Off'}
+        </Typography>
+        <Button
+          variant="contained"
+          size="small"
+          disabled={!changed || isPending}
+          onClick={handleSave}
+          sx={{ textTransform: 'none', borderRadius: 2 }}
+        >
+          Save
+        </Button>
+      </Stack>
+    );
+  }
+
+  if (isSelectSetting(record)) {
+    const options = getSelectOptions(record);
+
+    return (
+      <Stack direction="row" spacing={1} alignItems="center">
+        <TextField
+          select
+          size="small"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          sx={{ minWidth: 180 }}
+        >
+          {options.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Button
+          variant="contained"
+          size="small"
+          disabled={!changed || isPending}
+          onClick={handleSave}
+          sx={{ textTransform: 'none', borderRadius: 2 }}
+        >
+          Save
+        </Button>
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack direction="row" spacing={1} alignItems="center">
+      <TextField
+        size="small"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        sx={{ minWidth: 180 }}
+      />
+      <Button
+        variant="contained"
+        size="small"
+        disabled={!changed || isPending}
+        onClick={handleSave}
+        sx={{ textTransform: 'none', borderRadius: 2 }}
+      >
+        Save
+      </Button>
+    </Stack>
   );
 };
 
@@ -243,7 +389,7 @@ const SettingsTable = () => {
       }}
     >
       <TableContainer sx={{ width: '100%', overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 1280 }}>
+        <Table sx={{ minWidth: 1320 }}>
           <TableHead>
             <TableRow
               sx={{
@@ -257,14 +403,11 @@ const SettingsTable = () => {
               }}
             >
               <TableCell sx={{ width: '14%' }}>Category</TableCell>
-              <TableCell sx={{ width: '20%' }}>Setting Name</TableCell>
-              <TableCell sx={{ width: '16%' }}>Value</TableCell>
-              <TableCell sx={{ width: '26%' }}>Description</TableCell>
+              <TableCell sx={{ width: '18%' }}>Setting Name</TableCell>
+              <TableCell sx={{ width: '22%' }}>Value / Control</TableCell>
+              <TableCell sx={{ width: '22%' }}>Description</TableCell>
               <TableCell sx={{ width: '12%' }}>Modified By</TableCell>
               <TableCell sx={{ width: '12%' }}>Last Modified</TableCell>
-              <TableCell align="right" sx={{ width: '8%' }}>
-                Action
-              </TableCell>
             </TableRow>
           </TableHead>
 
@@ -305,9 +448,7 @@ const SettingsTable = () => {
                   </TableCell>
 
                   <TableCell>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {record.value || '-'}
-                    </Typography>
+                    <SettingValueEditor record={record} />
                   </TableCell>
 
                   <TableCell>
@@ -329,19 +470,6 @@ const SettingsTable = () => {
                       {formatDateTime(record.lastModified)}
                     </Typography>
                   </TableCell>
-
-                  <TableCell align="right">
-                    <ShowButton
-                      label="View"
-                      record={record}
-                      sx={{
-                        borderRadius: 2,
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        minWidth: 72,
-                      }}
-                    />
-                  </TableCell>
                 </TableRow>
               );
             })}
@@ -360,7 +488,7 @@ const SettingsListContent = () => {
           System Settings
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Manage application-wide configuration and defaults.
+          Manage application-wide configuration and controls.
         </Typography>
       </Box>
 

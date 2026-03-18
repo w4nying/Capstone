@@ -2878,19 +2878,19 @@
       "id": "4",
       "category": "User Experience",
       "name": "Personalization Enabled",
-      "value": "true",
+      "value": "false",
       "description": "Enable role-based dashboard personalization features",
-      "modifiedBy": "Huang Wan Ying",
-      "lastModified": "2025-01-12T11:00:00Z"
+      "modifiedBy": "System Administrator",
+      "lastModified": "2026-03-18T03:49:11.173Z"
     },
     {
       "id": "5",
       "category": "User Experience",
       "name": "Auto-save Dashboard Layout",
-      "value": "true",
+      "value": "false",
       "description": "Automatically save user dashboard customizations",
-      "modifiedBy": "Huang Wan Ying",
-      "lastModified": "2025-01-12T11:00:00Z"
+      "modifiedBy": "System Administrator",
+      "lastModified": "2026-03-18T03:49:53.880Z"
     },
     {
       "id": "6",
@@ -2914,10 +2914,10 @@
       "id": "8",
       "category": "Display",
       "name": "Default Theme",
-      "value": "Professional Light",
+      "value": "Professional Dark",
       "description": "Default color theme for dashboard interface",
-      "modifiedBy": "Huang Wan Ying",
-      "lastModified": "2025-01-05T16:20:00Z"
+      "modifiedBy": "System Administrator",
+      "lastModified": "2026-03-18T03:50:26.727Z"
     }
   ]
 }

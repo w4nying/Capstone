@@ -19,6 +19,7 @@ import { AdminDashboard } from './components/dashboard/AdminDashboard';
 import { OfficerDashboard } from './components/dashboard/OfficerDashboard';
 import { AssociateDashboard } from './components/dashboard/AssociateDashboard';
 import { AppLayout } from './components/layout/AppLayout';
+import { UserManagementList } from './components/users/UserManagementList';
 import { lightTheme, darkTheme } from './theme';
 import { AnalyticsList } from './resources/analytics/AnalyticsList';
 import { AnalyticsShow } from './resources/analytics/AnalyticsShow';
@@ -26,7 +27,6 @@ import { ReportsList } from './resources/reports/ReportsList';
 import { ReportsShow } from './resources/reports/ReportsShow';
 import { SettingsList } from './resources/settings/SettingsList';
 import { SystemSettingsProvider } from './contexts/SystemSettingsContext';
-import { UserManagementList } from './components/users/UserManagementList';
 
 const RoleDashboard = () => {
   const role = localStorage.getItem('role') as UserRole;
@@ -37,7 +37,6 @@ const RoleDashboard = () => {
     case 'officer':
       return <OfficerDashboard />;
     case 'associate':
-      return <AssociateDashboard />;
     default:
       return <AssociateDashboard />;
   }
@@ -47,12 +46,25 @@ function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getCurrentTheme());
 
   useEffect(() => {
-    setThemeMode(getCurrentTheme());
+    const syncTheme = () => {
+      setThemeMode(getCurrentTheme());
+    };
+
+    syncTheme();
+
+    window.addEventListener('themeChanged', syncTheme);
+    window.addEventListener('storage', syncTheme);
+
+    return () => {
+      window.removeEventListener('themeChanged', syncTheme);
+      window.removeEventListener('storage', syncTheme);
+    };
   }, []);
 
   return (
     <SystemSettingsProvider>
       <Admin
+        key={themeMode}
         loginPage={LoginPage}
         dataProvider={dataProvider}
         authProvider={authProvider}
@@ -73,17 +85,20 @@ function App() {
           show={AnalyticsShow}
           icon={AssessmentIcon}
         />
+
         <Resource
           name="reports"
           list={ReportsList}
           show={ReportsShow}
           icon={DescriptionIcon}
         />
+
         <Resource
           name="users"
           list={UserManagementList}
           icon={PeopleIcon}
         />
+
         <Resource
           name="settings"
           list={SettingsList}

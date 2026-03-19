@@ -119,9 +119,7 @@
               "x": 3,
               "y": 0,
               "w": 3,
-              "h": 2,
-              "moved": false,
-              "static": false
+              "h": 2
             },
             {
               "i": "adminReports",
@@ -821,7 +819,7 @@
       "department": "Data & Technology",
       "avatar": "https://i.pravatar.cc/150?img=3",
       "status": "inactive",
-      "theme": "light",
+      "theme": "dark",
       "dashboardLayouts": {
         "associate-dashboard": {
           "lg": [

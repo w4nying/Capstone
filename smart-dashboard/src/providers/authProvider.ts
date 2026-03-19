@@ -166,6 +166,10 @@ const emitDashboardLayoutChanged = () => {
   window.dispatchEvent(new Event('dashboardLayoutChanged'));
 };
 
+const emitAuthChanged = () => {
+  window.dispatchEvent(new Event('authChanged'));
+};
+
 const fetchUserFromServer = async (email: string): Promise<Partial<User> | null> => {
   try {
     const response = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
@@ -201,6 +205,7 @@ export const authProvider: AuthProvider = {
     localStorage.setItem('auth', JSON.stringify(loggedInUser));
     localStorage.setItem('role', loggedInUser.role);
     emitThemeChanged();
+    emitAuthChanged();
 
     return '/';
   },
@@ -209,6 +214,8 @@ export const authProvider: AuthProvider = {
     localStorage.removeItem('auth');
     localStorage.removeItem('role');
     emitThemeChanged();
+    emitAuthChanged();
+    
     return '/login';
   },
 

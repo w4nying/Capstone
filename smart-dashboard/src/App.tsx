@@ -10,6 +10,7 @@ import {
 import {
   authProvider,
   getCurrentTheme,
+  getCurrentUser,
   ThemeMode,
   UserRole,
 } from './providers/authProvider';
@@ -29,7 +30,7 @@ import { SettingsList } from './resources/settings/SettingsList';
 import { SystemSettingsProvider } from './contexts/SystemSettingsContext';
 
 const RoleDashboard = () => {
-  const role = localStorage.getItem('role') as UserRole;
+  const role = getCurrentUser()?.role || 'associate';
 
   switch (role) {
     case 'admin':
@@ -44,28 +45,39 @@ const RoleDashboard = () => {
 
 function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getCurrentTheme());
-  const role = (localStorage.getItem('role') as UserRole) || 'associate';
+  const [role, setRole] = useState<UserRole>(getCurrentUser()?.role || 'associate');
 
   useEffect(() => {
     const syncTheme = () => {
       setThemeMode(getCurrentTheme());
     };
 
+    const syncRole = () => {
+      setRole(getCurrentUser()?.role || 'associate');
+    };
+
     syncTheme();
+    syncRole();
 
     window.addEventListener('themeChanged', syncTheme);
     window.addEventListener('storage', syncTheme);
 
+    window.addEventListener('authChanged', syncRole);
+    window.addEventListener('storage', syncRole);
+
     return () => {
       window.removeEventListener('themeChanged', syncTheme);
       window.removeEventListener('storage', syncTheme);
+
+      window.removeEventListener('authChanged', syncRole);
+      window.removeEventListener('storage', syncRole);
     };
   }, []);
 
   return (
     <SystemSettingsProvider>
       <Admin
-        key={themeMode}
+        key={`${themeMode}-${role}`}
         loginPage={LoginPage}
         dataProvider={dataProvider}
         authProvider={authProvider}

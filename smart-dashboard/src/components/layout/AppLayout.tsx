@@ -179,41 +179,20 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
     <>
       <AppBar
         {...props}
-        color="default"
-        elevation={0}
+        toolbar={false}
+        userMenu={false}
         sx={{
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          backgroundColor: 'background.paper',
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          height: { xs: 60, md: 72 },
-          justifyContent: 'center',
+          '& .RaAppBar-toolbar': {
+            minHeight: { xs: 60, md: 72 },
+            px: { xs: 1.5, sm: 2, md: 3 },
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          },
         }}
       >
         <TitlePortal />
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            minWidth: 0,
-            flex: 1,
-            overflow: 'hidden',
-          }}
-        >
-          <Typography
-            variant="h6"
-            noWrap
-            sx={(theme) => ({
-              fontWeight: 800,
-              letterSpacing: '-0.01em',
-              color: theme.palette.mode === 'dark' ? '#f8fafc' : '#0f172a',
-              display: { xs: 'none', sm: 'block' },
-            })}
-          >
-            {applicationName}
-          </Typography>
-        </Box>
+        <Box sx={{ flex: 1 }} />
 
         <Tooltip title="Account">
           <IconButton
@@ -465,34 +444,31 @@ const CustomAppBar = ({ onThemeChange, ...props }: CustomAppBarProps) => {
             />
           </MenuItem>
 
-          {personalizationEnabled && (
-            <>
-              <Divider />
-              <MenuItem
-                onClick={handleOpenManageWidgets}
-                sx={(theme) => ({
-                  py: 1.4,
-                  px: 2.2,
-                  '&:hover': {
-                    backgroundColor:
-                      theme.palette.mode === 'dark' ? '#172033' : '#f8fafc',
-                  },
-                })}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 34,
-                    color: 'inherit',
-                  }}
-                >
-                  <ViewQuiltIcon fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  Manage Widgets
-                </Typography>
-              </MenuItem>
-            </>
-          )}
+          <Divider />
+
+          <MenuItem
+            onClick={handleOpenManageWidgets}
+            sx={(theme) => ({
+              py: 1.4,
+              px: 2.2,
+              '&:hover': {
+                backgroundColor:
+                  theme.palette.mode === 'dark' ? '#172033' : '#f8fafc',
+              },
+            })}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 34,
+                color: 'inherit',
+              }}
+            >
+              <ViewQuiltIcon fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>
+              Manage Widgets
+            </Typography>
+          </MenuItem>
 
           <Divider />
 
@@ -575,17 +551,6 @@ export const AppLayout = ({ onThemeChange, ...props }: AppLayoutProps) => (
         minWidth: 0,
         boxSizing: 'border-box',
       },
-
-      // '& .RaSidebar-root': {
-      //   borderRight: '1px solid',
-      //   borderColor: 'divider',
-      //   flexShrink: 0,
-      // },
-
-      // '& .RaSidebar-fixed': {
-      //   backgroundColor: (theme) =>
-      //     theme.palette.mode === 'dark' ? '#111827' : '#ffffff',
-      // },
 
       '& .RaMenu-root': {
         paddingTop: 0.5,

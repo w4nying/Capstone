@@ -44,6 +44,7 @@ const RoleDashboard = () => {
 
 function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(getCurrentTheme());
+  const role = (localStorage.getItem('role') as UserRole) || 'associate';
 
   useEffect(() => {
     const syncTheme = () => {
@@ -93,17 +94,21 @@ function App() {
           icon={DescriptionIcon}
         />
 
-        <Resource
-          name="users"
-          list={UserManagementList}
-          icon={PeopleIcon}
-        />
+        {(role === 'admin' || role === 'officer') && (
+          <Resource
+            name="users"
+            list={UserManagementList}
+            icon={PeopleIcon}
+          />
+        )}
 
-        <Resource
-          name="settings"
-          list={SettingsList}
-          icon={SettingsIcon}
-        />
+        {role === 'admin' && (
+          <Resource
+            name="settings"
+            list={SettingsList}
+            icon={SettingsIcon}
+          />
+        )}
       </Admin>
     </SystemSettingsProvider>
   );
